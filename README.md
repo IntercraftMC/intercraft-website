@@ -1,2 +1,2 @@
-#InterCraft Official Website
+# InterCraft Official Website
 The InterCraft official website
