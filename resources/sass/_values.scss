@@ -1,0 +1,34 @@
+@import 'variables';
+
+$background-color: white;
+$overlay-opacity: 0.5;
+$overlay-padding: 120px;
+$viewport-width-large: 992px;
+
+$nav-bg: #333;
+$nav-bg-large: transparent;
+$nav-brand-text-size: 25px;
+$nav-icon: 30px;
+$nav-icon-large: 40px;
+$nav-link-text-size: 1.1em;
+$nav-link-margin: 0 10px;
+$nav-link-margin-normal: 0 5px;
+$nav-link-active-border: 2px solid white;
+$nav-transition: background 0.3s ease-in-out;
+
+$section-heading-margin: 40px;
+$section-heading-weight: 400;
+$section-padding: 0 0;
+
+$blog-info-spacing: 30px;
+$blog-info-spacing-small: 15px;
+$blog-info-text-size: 0.9rem;
+$blog-card-hr-margin: 60px;
+$blog-sidebar-recent-info-spacing: 20px;
+$blog-sidebar-recent-title-text-size: 1.1rem;
+$blog-header-margin: 60px;
+
+$video-height: 70vh;
+$video-overlay-color: rgba(0, 0, 0, 0.4);
+$video-overlay-text-color: white;
+$video-overlay-text-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);

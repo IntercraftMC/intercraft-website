@@ -1,0 +1,54 @@
+
+@import 'variables';
+@import 'values';
+@import 'colors';
+@import 'blog';
+@import 'header';
+@import 'gallery';
+@import 'join';
+@import 'member';
+@import 'members';
+@import 'navbar';
+@import 'footer';
+
+body {
+	min-height: 100%;
+	margin: 0 auto;
+	overflow-x: hidden; // Prevent x scroll on narrow devices
+	position: absolute;
+	padding: 0;
+	width: 100%;
+}
+
+* {
+	transition: color 0.1s ease-in-out,
+				background-color 0.1s ease-in-out;
+}
+
+section {
+	position: relative;
+	padding: $section-padding;
+	height: auto;
+	z-index: 999;
+}
+
+section .container {
+	position: relative;
+}
+
+section .heading {
+	margin-bottom: $section-heading-margin;
+	font-weight: $section-heading-weight;
+}
+
+nav.navbar-color {
+	background: #111;
+}
+
+.pointer {
+	cursor: pointer !important;
+}
+
+.pointer * {
+	cursor: pointer !important;
+}

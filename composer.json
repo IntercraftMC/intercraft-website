@@ -1,0 +1,23 @@
+{
+    "name": "sirdavidludwig/intercraftmc.com",
+    "description": "InterCraft Minecraft Server Website",
+    "authors": [
+        {
+            "name": "David Ludwig",
+            "email": "davidludwigii@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "phpmailer/phpmailer": "^5.2",
+        "mobiledetect/mobiledetectlib": "^2.8"
+    },
+    "autoload": {
+        "files": [
+            "app/Utils/utils.php"
+        ],
+        "psr-4": {
+            "App\\" : "app/"
+        }
+    }
+}

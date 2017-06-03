@@ -1,0 +1,40 @@
+
+@import 'values';
+
+footer {
+	background-color: #222;
+	color: #aaa;
+	margin-top: 40px;
+	padding: 40px 0;
+	width: 100%;
+	z-index: 50;
+}
+
+footer p {
+	line-height: 1.6em;
+	font-size: 0.95rem;
+	font-weight: 400;
+	text-align: left;
+}
+
+footer p.copyright {
+	font-size: 0.9rem;
+	letter-spacing: 0.1em;
+	margin: 0;
+}
+
+footer .image-row .image-container {
+	display: inline-block;
+	box-sizing: border-box;
+	width: 25%;
+	padding: 0px 0px 4px 4px;
+}
+
+footer .image-row .image-container:first-of-type {
+	padding: 0px 0px 4px 0px;
+}
+
+footer .image-container img {
+	height: auto;
+	width: 100%;
+}
