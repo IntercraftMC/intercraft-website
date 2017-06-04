@@ -23,9 +23,6 @@
 	<script src="assets/js/app.js"></script>
 	<script>
 		<?php if (!isMobile()) echo "initParticles();\n"; ?>
-		$(document).ready(function() {
-			navColor();
-		});
 	</script>
 </body>
 </html>

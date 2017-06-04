@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Profile;
+use App\Crypto;
 
 class User
 {
@@ -47,18 +48,7 @@ class User
 		return $users;
 	}
 
-	public static function fromEmail($email)
-	{
-		$query = db()->prepare("SELECT * FROM `users` WHERE `email`=?");
-		$query->execute([$email]);
-
-		if ($query->rowCount() == 0)
-			return Null;
-		
-		return new self($query->fetchAll()[0]);
-	}
-
-	public static function fromId($id)
+	public static function fromId(int $id)
 	{
 		$query = db()->prepare("SELECT * FROM `users` WHERE `id`=?");
 		$query->execute([$id]);
@@ -69,7 +59,18 @@ class User
 		return new self($query->fetchAll()[0]);
 	}
 
-	public static function fromUsername($username)
+	public static function fromEmail(string $email)
+	{
+		$query = db()->prepare("SELECT * FROM `users` WHERE `email`=?");
+		$query->execute([$email]);
+
+		if ($query->rowCount() == 0)
+			return Null;
+		
+		return new self($query->fetchAll()[0]);
+	}
+
+	public static function fromUsername(string $username)
 	{
 		$query = db()->prepare("SELECT * FROM `users` WHERE `username`=?");
 		$query->execute([$username]);
@@ -80,16 +81,28 @@ class User
 		return new self($query->fetchAll()[0]);
 	}
 
+	public static function fromToken(string $token)
+	{
+		$query = db()->prepare("SELECT * FROM `users` WHERE `token`=?");
+		$query->execute([$token]);
+
+		if ($query->rowCount() == 0)
+			return Null;
+		
+		return new self($query->fetchAll()[0]);
+	}
+
 	public function __construct(array $fields = [])
 	{
 		$this->_id        = fieldInt($fields, 'id');
-		$this->_privilege = field($fields, 'privilege', 0);
-		$this->_active    = field($fields, 'active', 0);
+		$this->_privilege = fieldInt($fields, 'privilege', 0);
+		$this->_active    = fieldInt($fields, 'active', 0);
 		$this->_email     = field($fields, 'email');
 		$this->_username  = field($fields, 'username');
 		$this->_password  = field($fields, 'password');
 		$this->_date      = field($fields, 'date', date('Y-m-d H:i:s'));
 		$this->_uuid      = field($fields, 'uuid');
+		$this->_token     = field($fields, 'token');
 
 		if ($this->_id === Null)
 			$this->_profile = new Profile(['user_id' => $this->_id]);
@@ -102,7 +115,7 @@ class User
 		$new = False;
 		if ($this->_id === Null) {
 			$new = True;
-			$queryString = "INSERT INTO `users` VALUES(NULL, ?, ?, ?, ?, ?, ?, ?)";
+			$queryString = "INSERT INTO `users` VALUES(NULL, ?, ?, ?, ?, ?, ?, ?, NULL)";
 			$args = [
 				$this->_privilege,
 				$this->_active,
@@ -113,7 +126,7 @@ class User
 				$this->_uuid
 			];
 		} else {
-			$queryString = "UPDATE `users` SET `privilege`=?, `active`=?, `email`=?, `username`=?, `password`=?, `uuid`=? WHERE `id`=?";
+			$queryString = "UPDATE `users` SET `privilege`=?, `active`=?, `email`=?, `username`=?, `password`=?, `uuid`=?, `token`=? WHERE `id`=?";
 			$args = [
 				$this->_privilege,
 				$this->_active,
@@ -121,6 +134,7 @@ class User
 				$this->_username,
 				$this->_password,
 				$this->_uuid,
+				$this->_token,
 				$this->_id
 			];
 		}
@@ -187,6 +201,13 @@ class User
 	public function setUuid($uuid)
 	{
 		$this->_uuid = $uuid;
+		return $this;
+	}
+
+	public function token() { return $this->_token; }
+	public function generateToken()
+	{
+		$this->_token = Crypto::generateAccessToken();
 		return $this;
 	}
 }

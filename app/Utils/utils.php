@@ -37,6 +37,14 @@ function db()
 	return Database::instance();
 }
 
+function fieldsExist($array, ...$values)
+{
+	foreach ($values as $value)
+		if (!isset($array[$value]))
+			return False;
+	return True;
+}
+
 function field($array, $value, $defaultValue = Null)
 {
 	if (isset($array[$value]))

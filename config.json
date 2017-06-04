@@ -3,14 +3,14 @@
 		"hostname": "dev.intercraftmc.com"
 	},
 	"captcha": {
-		"site_key": "ReCaptcha Site Key",
-		"secret_key": "ReCaptcha Secret Key",
+		"site_key": "6Ld0sCMUAAAAABddF8B0Fsl_F72QncZf-Wf8CgJv",
+		"secret_key": "6Ld0sCMUAAAAAPSt0KO3_s5g5rQzt7MeRFUcc10h",
 		"url": "https://www.google.com/recaptcha/api/siteverify"
 	},
 	"database": {
 		"host": "127.0.0.1",
-		"username": "user",
-		"password": "password",
+		"username": "intercraft",
+		"password": "7hqmRu<qFKcMjM+/",
 		"database": "intercraft"
 	},
 	"questionnaire": [
