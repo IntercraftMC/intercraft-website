@@ -13,7 +13,7 @@ class Application
 
 	public static function all()
 	{
-		$query = $db()->prepare("SELECT * FROM `applications`");
+		$query = db()->prepare("SELECT * FROM `applications`");
 		$query->execute();
 
 		$applications = [];
@@ -30,7 +30,7 @@ class Application
 		$this->_email    = field($fields, 'email', '');
 		$this->_username = field($fields, 'username', '');
 		$this->_uuid     = field($fields, 'uuid', '');
-		$this->_answers  = field($fields, 'answers', '');
+		$this->_answers  = field($fields, 'answers', '{}');
 		$this->_date     = field($fields, 'date', date('Y-m-d H:i:s'));
 	}
 
