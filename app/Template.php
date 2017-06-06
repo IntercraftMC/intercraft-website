@@ -7,7 +7,7 @@ class Template
 	private static $_config;
 	private $m_html;
 
-	public function configure($config)
+	public static function configure($config)
 	{
 		self::$_config = $config;
 	}

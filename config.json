@@ -7,6 +7,9 @@
 		"secret_key": "6Ld0sCMUAAAAAPSt0KO3_s5g5rQzt7MeRFUcc10h",
 		"url": "https://www.google.com/recaptcha/api/siteverify"
 	},
+	"blog": {
+		"image_path": "/var/www/dev.intercraftmc.com/public/img/blog"
+	},
 	"database": {
 		"host": "127.0.0.1",
 		"username": "intercraft",
