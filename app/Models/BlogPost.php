@@ -18,8 +18,8 @@ class BlogPost
 		$query->execute();
 
 		$blogs = [];
-		foreach ($query->fetchAll() as $blogs) {
-			$blogs[] = new self($blogs);
+		foreach ($query->fetchAll() as $blog) {
+			$blogs[] = new self($blog);
 		}
 
 		return $blogs;
@@ -29,11 +29,11 @@ class BlogPost
 	{
 		$this->_id        = fieldInt($fields, 'id');
 		$this->_userId    = fieldInt($fields, 'user_id');
-		$this->_title			= field($fields, 'title', '');
-		$this->_image			= field($fields, 'image', '');
-		$this->_body			= field($fields, 'body', '');
-		$this->_views			= fieldInt($fields, 'views', 0);
-		$this->_date			= field($fields, 'date', date('Y-m-d H:i:s'));
+		$this->_title     = field($fields, 'title', '');
+		$this->_image     = field($fields, 'image', '');
+		$this->_body      = field($fields, 'body', '');
+		$this->_views     = fieldInt($fields, 'views', 0);
+		$this->_date      = field($fields, 'date', date('Y-m-d H:i:s'));
 	}
 
 	public function save()
