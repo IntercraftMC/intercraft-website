@@ -5,6 +5,7 @@ import MySQLdb
 import os
 import PythonMagick
 import requests
+import sys
 
 API_RESOLVE_NAME = 'https://api.mojang.com/users/profiles/minecraft/{}'
 API_SKIN = 'https://sessionserver.mojang.com/session/minecraft/profile/{}'
@@ -13,7 +14,7 @@ SCRIPT_LOCATION = os.path.dirname(__file__)
 FOLDER_SKINS = SCRIPT_LOCATION + '/../public/assets/skins/'
 FILE_SKIN = FOLDER_SKINS + '{}.png'
 FILE_FACE = FOLDER_SKINS + '{}_face.png'
-FILE_CONFIG = SCRIPT_LOCATION + '/../config.json'
+FILE_CONFIG = SCRIPT_LOCATION + '/../config/config.json'
 
 
 def resolve_name(name):
@@ -48,8 +49,13 @@ def process_uuid(uuid):
 
 
 def get_all_uuids():
-    with open(FILE_CONFIG) as f:
-        db_login = json.load(f)['database']
+    try:
+        with open(FILE_CONFIG) as f:
+            db_login = json.load(f)['database']
+    except OSError:
+        print('Please add and configure a database in config.json.')
+        sys.exit(1)
+
     db = MySQLdb.connect(host=db_login['host'],
                          user=db_login['username'],
                          passwd=db_login['password'],
