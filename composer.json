@@ -10,8 +10,15 @@
     "minimum-stability": "stable",
     "require": {
         "phpmailer/phpmailer": "^5.2",
-        "mobiledetect/mobiledetectlib": "^2.8"
+        "mobiledetect/mobiledetectlib": "^2.8",
+		"valib/scout": "dev-master"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:SirDavidLudwig/Scout.git"
+        }
+    ],
     "autoload": {
         "files": [
             "app/Utils/utils.php"

@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "678fe4f365d33620845c5ea6d4794607",
-    "content-hash": "fb9808ff54f42e749dabe70733de36d5",
+    "hash": "21a5d6c9a76aaff656a6595d51d27a19",
+    "content-hash": "dd40d50a6df1ae86558682be060495b1",
     "packages": [
         {
             "name": "mobiledetect/mobiledetectlib",
@@ -134,12 +134,62 @@
             ],
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
             "time": "2017-03-15 19:32:56"
+        },
+        {
+            "name": "valib/scout",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/SirDavidLudwig/Scout.git",
+                "reference": "c00e056347d9eea4668ef4f6b9eeb1aaf680397a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/SirDavidLudwig/Scout/zipball/c00e056347d9eea4668ef4f6b9eeb1aaf680397a",
+                "reference": "c00e056347d9eea4668ef4f6b9eeb1aaf680397a",
+                "shasum": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "files": [],
+                "psr-4": {
+                    "Scout\\": "src/Scout/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David Ludwig",
+                    "email": "davidludwigii@gmail.com"
+                }
+            ],
+            "description": "Scout form validation engine",
+            "keywords": [
+                "engine",
+                "form",
+                "scout",
+                "validation"
+            ],
+            "support": {
+                "source": "https://github.com/SirDavidLudwig/Scout/tree/master",
+                "issues": "https://github.com/SirDavidLudwig/Scout/issues"
+            },
+            "time": "2017-06-19 23:30:18"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "valib/scout": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

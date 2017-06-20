@@ -5,13 +5,15 @@
 	<?php component("metadata"); ?>
 </head>
 <body>
-	<?php component("navbar", ['active' => 1]); ?>
-	<?php component("sub_header", [
-									'image' => 'https://placekitten.com/1920/931',
-									'heading' => 'About InterCraft',
-									'lead' => 'InterCraft is a lightly modded Minecraft survival server'
-								]); ?>
-	<?php component("about"); ?>
+	<div class="page">
+		<?php component("navbar", ['active' => 1]); ?>
+		<?php component("sub_header", [
+										'image' => 'https://placekitten.com/1920/931',
+										'heading' => 'About InterCraft',
+										'lead' => 'InterCraft is a lightly modded Minecraft survival server'
+									]); ?>
+		<?php component("about"); ?>
+	</div>
 	<?php component('footer'); ?>
 
 	<script src="assets/js/jquery-2.2.3.min.js"></script>

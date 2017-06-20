@@ -3,8 +3,8 @@
 		"hostname": "dev.intercraftmc.com"
 	},
 	"captcha": {
-		"site_key": "6Ld0sCMUAAAAABddF8B0Fsl_F72QncZf-Wf8CgJv",
-		"secret_key": "6Ld0sCMUAAAAAPSt0KO3_s5g5rQzt7MeRFUcc10h",
+		"site_key": "",
+		"secret_key": "",
 		"url": "https://www.google.com/recaptcha/api/siteverify"
 	},
 	"blog": {
@@ -13,7 +13,7 @@
 	"database": {
 		"host": "127.0.0.1",
 		"username": "intercraft",
-		"password": "7hqmRu<qFKcMjM+/",
+		"password": "",
 		"database": "intercraft"
 	},
 	"questionnaire": [

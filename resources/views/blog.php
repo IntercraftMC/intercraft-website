@@ -5,17 +5,19 @@
 	<?php component("metadata"); ?>
 </head>
 <body>
-	<?php component("navbar", ['active' => 2]); ?>
-	<section id="blog">
-		<?php component("sub_header", [
-										'heading' => $blogPosts[0]['title'],
-										'image' => 'https://placekitten.com/1920/931',
-										'lead' => $blogPosts[0]['desc'],
-										'buttonText' => 'Read More',
-										'buttonUrl' => 'blog_post?id='.$blogPosts[0]['id']
-									]); ?>
-		<?php component("blog_posts", ['blogPosts' => $blogPosts]) ?>
-	</section>
+	<div class="page">
+		<?php component("navbar", ['active' => 2]); ?>
+		<section id="blog">
+			<?php component("sub_header", [
+											'heading' => $blogPosts[0]['title'],
+											'image' => 'https://placekitten.com/1920/931',
+											'lead' => $blogPosts[0]['desc'],
+											'buttonText' => 'Read More',
+											'buttonUrl' => 'blog_post?id='.$blogPosts[0]['id']
+										]); ?>
+			<?php component("blog_posts", ['blogPosts' => $blogPosts]) ?>
+		</section>
+	</div>
 	<?php component('footer'); ?>
 
 	<script src="assets/js/jquery-2.2.3.min.js"></script>

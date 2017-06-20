@@ -39,6 +39,12 @@ class Response
 		return $this;
 	}
 
+	public function content() { return $this->_content; }
+	public function setContent(string $content)
+	{
+		$this->_content = $content;
+	}
+
 	public function send()
 	{
 		http_response_code($this->_statusCode);

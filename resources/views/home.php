@@ -5,8 +5,10 @@
 	<?php component("metadata"); ?>
 </head>
 <body>
-	<?php component("navbar_home", ['active' => 0]); ?>
-	<?php component("header"); ?>
+	<div class="page">
+		<?php component("navbar_home", ['active' => 0]); ?>
+		<?php component("header"); ?>
+	</div>
 	<?php component('footer'); ?>
 	
 	<script src="assets/js/jquery-2.2.3.min.js"></script>

@@ -13,12 +13,12 @@ class Captcha
 		self::$_config = $config;
 	}
 
-	public static function response()
+	public static function response($responseKey)
 	{
 		$url = self::$_config['url'];
 		$fields = [
 			'secret' => self::$_config['secret_key'],
-			'response' => post('g-recaptcha-response'),
+			'response' => $responseKey,
 		];
 
 		$fieldString = '';

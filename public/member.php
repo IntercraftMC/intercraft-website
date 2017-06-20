@@ -1,6 +1,7 @@
 <?php
 
 require '../bootstrap/bootstrap.php';
+
 use App\Models\User;
 
 $user = User::fromUsername(get('profile'));

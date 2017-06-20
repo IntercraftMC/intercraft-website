@@ -6,13 +6,15 @@
 	<script src='https://www.google.com/recaptcha/api.js'></script>
 </head>
 <body>
-	<?php component('navbar', ['active' => 6]); ?>
-	<?php component("sub_header", [
-									'image' => 'https://placekitten.com/1920/931',
-									'heading' => 'Become a Member',
-									'lead' => 'While InterCraft is a private whitelisted server, we do accept applications to join!'
-								]); ?>
-	<?php component('join', ['questions' => $questions]); ?>
+	<div class="page">
+		<?php component('navbar', ['active' => 6]); ?>
+		<?php component("sub_header", [
+										'image' => 'https://placekitten.com/1920/931',
+										'heading' => 'Become a Member',
+										'lead' => 'While InterCraft is a private whitelisted server, we do accept applications to join!'
+									]); ?>
+		<?php component('join', ['signUp' => $signUp, 'questions' => $questions]); ?>
+	</div>
 	<?php component('footer'); ?>
 
 	<script src="assets/js/jquery-2.2.3.min.js"></script>

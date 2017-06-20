@@ -19,6 +19,7 @@ class User
 	private $_password;
 	private $_date;
 	private $_uuid;
+	private $_altUuids;
 
 	private $_profile;
 
@@ -102,6 +103,7 @@ class User
 		$this->_password  = field($fields, 'password');
 		$this->_date      = field($fields, 'date', date('Y-m-d H:i:s'));
 		$this->_uuid      = field($fields, 'uuid');
+		$this->_altUuids  = fieldJson($fields, 'alt_uuids');
 		$this->_token     = field($fields, 'token');
 
 		if ($this->_id === Null)
@@ -115,7 +117,7 @@ class User
 		$new = False;
 		if ($this->_id === Null) {
 			$new = True;
-			$queryString = "INSERT INTO `users` VALUES(NULL, ?, ?, ?, ?, ?, ?, ?, NULL)";
+			$queryString = "INSERT INTO `users` VALUES(NULL, ?, ?, ?, ?, ?, ?, ?, ?, NULL)";
 			$args = [
 				$this->_privilege,
 				$this->_active,
@@ -126,7 +128,7 @@ class User
 				$this->_uuid
 			];
 		} else {
-			$queryString = "UPDATE `users` SET `privilege`=?, `active`=?, `email`=?, `username`=?, `password`=?, `uuid`=?, `token`=? WHERE `id`=?";
+			$queryString = "UPDATE `users` SET `privilege`=?, `active`=?, `email`=?, `username`=?, `password`=?, `uuid`=?, `alt_uuids`=?, `token`=? WHERE `id`=?";
 			$args = [
 				$this->_privilege,
 				$this->_active,
@@ -134,6 +136,7 @@ class User
 				$this->_username,
 				$this->_password,
 				$this->_uuid,
+				json_encode($this->_altUuids),
 				$this->_token,
 				$this->_id
 			];
@@ -164,7 +167,7 @@ class User
 		return $this;
 	}
 
-	public function active() { return $this->active; }
+	public function isActive() { return $this->_active; }
 	public function setActive(bool $active)
 	{
 		$this->_active = $active;
@@ -201,6 +204,20 @@ class User
 	public function setUuid($uuid)
 	{
 		$this->_uuid = $uuid;
+		return $this;
+	}
+
+	public function altUuids() { return $this->_altUuids; }
+	public function addAltUuid(string $uuid)
+	{
+		if (!in_array($uuid, $this->_altUuids))
+			$this->_altUuids[] = $uuid;
+		return $this;
+	}
+	public function removeAltUuid(string $uuid)
+	{
+		if(($key = array_search($uuid, $this->_altUuids)) !== False)
+			unset($this->_altUuids[$key]);
 		return $this;
 	}
 

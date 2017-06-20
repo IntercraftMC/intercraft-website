@@ -1,6 +1,7 @@
 <?php
 
 define("ROOT_DIR", __DIR__ . "/..");
+define("RES_DIR", __DIR__ . "/../resources");
 define("CONFIG_LOCATION", ROOT_DIR . "/config.json");
 
 require ROOT_DIR . "/vendor/autoload.php";

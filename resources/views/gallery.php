@@ -5,13 +5,15 @@
 	<?php component("metadata"); ?>
 </head>
 <body>
-	<?php component("navbar", ['active' => 3]); ?>
-	<?php component("sub_header", [
-									'image' => 'https://placekitten.com/1920/931',
-									'heading' => 'The InterCraft Gallery',
-									'lead' => 'The gallery is comprised of the various builds that members have put together on the InterCraft server.'
-								]); ?>
-	<?php component("gallery", ['images' => $images]); ?>
+	<div class="page">
+		<?php component("navbar", ['active' => 3]); ?>
+		<?php component("sub_header", [
+										'image' => 'https://placekitten.com/1920/931',
+										'heading' => 'The InterCraft Gallery',
+										'lead' => 'The gallery is comprised of the various builds that members have put together on the InterCraft server.'
+									]); ?>
+		<?php component("gallery", ['images' => $images]); ?>
+	</div>
 	<?php component("footer"); ?>
 	
 	<script src="assets/js/jquery-2.2.3.min.js"></script>

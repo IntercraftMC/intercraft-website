@@ -11,18 +11,26 @@
 @import 'navbar';
 @import 'footer';
 
-body {
-	min-height: 100%;
-	margin: 0 auto;
-	overflow-x: hidden; // Prevent x scroll on narrow devices
-	position: absolute;
-	padding: 0;
-	width: 100%;
-}
-
 * {
 	transition: color 0.1s ease-in-out,
 				background-color 0.1s ease-in-out;
+}
+
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	overflow-x: hidden; // Prevent x scroll on narrow devices
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+}
+
+.page {
+	flex: 1 0 auto;
 }
 
 section {

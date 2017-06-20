@@ -30,7 +30,7 @@ class Application
 		$this->_email    = field($fields, 'email', '');
 		$this->_username = field($fields, 'username', '');
 		$this->_uuid     = field($fields, 'uuid', '');
-		$this->_answers  = field($fields, 'answers', '{}');
+		$this->_answers  = fieldJson($fields, 'answers', '{}');
 		$this->_date     = field($fields, 'date', date('Y-m-d H:i:s'));
 	}
 
@@ -42,7 +42,7 @@ class Application
 				$this->_email,
 				$this->_username,
 				$this->_uuid,
-				$this->_answers,
+				json_encode($this->_answers),
 				$this->_date
 			];
 		} else {
@@ -51,7 +51,7 @@ class Application
 				$this->_email,
 				$this->_username,
 				$this->_uuid,
-				$this->_answers,
+				json_encode($this->_answers),
 				$this->_date,
 				$this->_id
 			];
@@ -85,7 +85,7 @@ class Application
 	}
 
 	public function answers() { return $this->_answers; }
-	public function setAnswers(string $answers)
+	public function setAnswers(array $answers)
 	{
 		$this->_answers = $answers;
 		return $this;
