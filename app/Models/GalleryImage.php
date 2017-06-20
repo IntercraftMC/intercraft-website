@@ -12,7 +12,7 @@ class GalleryImage
 
 	public static function all()
 	{
-		$query = db()->prepare("SELECT * FROM `applications`");
+		$query = db()->prepare("SELECT * FROM `gallery`");
 		$query->execute();
 
 		$galleryImages = [];
@@ -82,7 +82,8 @@ class GalleryImage
 		return $this;
 	}
 
-	public function image() { return $this->_image; }
+	public function image() { return $this->_image . '.png'; }
+	public function thumbnail() { return $this->_image . '_thumb.png'; }
 	public function setImage(string $image)
 	{
 		$this->_image = $image;

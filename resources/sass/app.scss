@@ -2,9 +2,11 @@
 @import 'variables';
 @import 'values';
 @import 'colors';
+
 @import 'blog';
-@import 'header';
+@import 'features';
 @import 'gallery';
+@import 'header';
 @import 'join';
 @import 'member';
 @import 'members';
@@ -36,6 +38,7 @@ body {
 section {
 	position: relative;
 	padding: $section-padding;
+	margin-bottom: $section-spacing;
 	height: auto;
 	z-index: 999;
 }
@@ -47,6 +50,10 @@ section .container {
 section .heading {
 	margin-bottom: $section-heading-margin;
 	font-weight: $section-heading-weight;
+}
+
+section .header {
+	margin: $section-heading-margin 0;
 }
 
 nav.navbar-color {

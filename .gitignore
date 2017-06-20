@@ -1,4 +1,11 @@
+
+# Configurations
+config/config.json
+
+# Composer
 composer.phar
-/vendor/
-/.sass-cache/
-/public/assets/skins
+vendor/
+
+# Cache
+.sass-cache/
+public/assets/skins

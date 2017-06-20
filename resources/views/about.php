@@ -8,11 +8,13 @@
 	<div class="page">
 		<?php component("navbar", ['active' => 1]); ?>
 		<?php component("sub_header", [
-										'image' => 'https://placekitten.com/1920/931',
+										'image' => 'assets/img/background_1.png',
 										'heading' => 'About InterCraft',
-										'lead' => 'InterCraft is a lightly modded Minecraft survival server'
+										'lead' => 'InterCraft is a lightly modded Minecraft survival server...'
 									]); ?>
 		<?php component("about"); ?>
+		<?php component("features"); ?>
+		<?php component("modpack", ['mods' => $mods]); ?>
 	</div>
 	<?php component('footer'); ?>
 

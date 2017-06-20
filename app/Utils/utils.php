@@ -9,6 +9,7 @@ use App\Template;
 use App\Validation\ScoutEnv;
 use Detection\MobileDetect;
 use Scout\Scout;
+use Scout\ScoutResult;
 
 $m_scoutResult = Null;
 
@@ -180,6 +181,27 @@ function captcha()
 }
 
 /**
+ * Generate a path starting from the project's root directory
+ * @param  string $path
+ * @return [type]       [description]
+ */
+function path(string $path)
+{
+	return ROOT_DIR . '/' . ltrim($path, '/');
+}
+
+/**
+ * Join a path
+ * @param  string $currentPath [description]
+ * @param  string $to          [description]
+ * @return string
+ */
+function joinPath(string $currentPath, string $to)
+{
+	return rtrim($currentPath, '/') . '/' . ltrim($to, '/');
+}
+
+/**
  * Render a component
  * @param  string
  * @param  array
@@ -264,6 +286,10 @@ function checkBox($name, $id = Null, $value = Null, $checked = Null)
 	echo FormBuilder::checkBox('form-check-input', $name, $id, $value, $checked);
 }
 
+/**
+ * Get the current scout instance
+ * @return Scout\Scout
+ */
 function scout()
 {
 	static $_scout;
@@ -275,7 +301,12 @@ function scout()
 	return $_scout;
 }
 
-function scoutResult($result = Null)
+/**
+ * Get the result from the last Scout validation
+ * @param  Scout\ScoutResult $result (Optional), assign a new result
+ * @return Scout\ScoutResult
+ */
+function scoutResult(ScoutResult $result = Null)
 {
 	static $scoutResult;
 	if ($result !== Null)
@@ -283,7 +314,12 @@ function scoutResult($result = Null)
 	return $scoutResult;
 }
 
-function validate($form)
+/**
+ * Validate a form of values
+ * @param  array  $form       name, rule string, custom messages
+ * @return Scout\ScoutResult
+ */
+function validate(array $form)
 {
 	$fields = [];
 	foreach ($form as $field) {
@@ -295,14 +331,24 @@ function validate($form)
 	return scoutResult(scout()->validate($fields));
 }
 
-function hasError($name)
+/**
+ * Check if an error exists for the given field
+ * @param  string  $name
+ * @return boolean
+ */
+function hasError(string $name)
 {
 	if (scoutResult() === Null)
 		return false;
 	return scoutResult()->has($name);
 }
 
-function error($name)
+/**
+ * Generate the feedback if the error exists for the given field
+ * @param  string name
+ * @return string
+ */
+function error(string $name)
 {
 	if (scoutResult() === Null)
 		return Null;
@@ -311,11 +357,20 @@ function error($name)
 
 /**
  * Redirect to the giver URI
- * @param  [string]
+ * @param  string url
  * @return void
  */
 function redirect(string $uri)
 {
 	header("Location: $uri");
 	exit();
+}
+
+/**
+ * Get the url to the website
+ * @return string
+ */
+function url()
+{
+	return config()['general']['protocol'] . '//' . config()['general']['hostname'] . '/';
 }

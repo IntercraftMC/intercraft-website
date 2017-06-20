@@ -1,0 +1,22 @@
+{
+	"general": {
+		"hostname": "dev.intercraftmc.com",
+		"protocol": "https:"
+	},
+	"captcha": {
+		"site_key": "",
+		"secret_key": "",
+		"url": "https://www.google.com/recaptcha/api/siteverify"
+	},
+	"database": {
+		"host": "",
+		"username": "",
+		"password": "",
+		"database": ""
+	},
+	"template": {
+		"component_directory": "/resources/components",
+		"fragment_directory": "/resources/fragments",
+		"view_directory": "/resources/views"
+	}
+}

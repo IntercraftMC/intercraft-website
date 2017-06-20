@@ -2,9 +2,9 @@
 
 require '../bootstrap/bootstrap.php';
 
-$images = [];
-for ($i = 0; $i < 11; $i++)
-	$images[] = 1;
+use App\Models\GalleryImage;
+
+$images = GalleryImage::all();
 
 view('gallery', [
 	'title' => 'Gallery - InterCraft',

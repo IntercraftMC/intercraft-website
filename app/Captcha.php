@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Models\CaptchaResponse;
+use App\Http\CaptchaResponse;
 
 class Captcha
 {
