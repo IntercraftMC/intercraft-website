@@ -8,7 +8,7 @@
 		<div class="row">
 			<div class="col-md-2">
 				<div>
-					<img src="<?php echo "assets/img/skin/{$user->uuid()}.png"; ?>" alt="" class="rounded" style="width: 100%;">
+					<img src="<?php echo "assets/skins/{$user->uuid()}_face.png"; ?>" alt="" class="rounded" style="width: 100%;">
 				</div>
 			</div>
 			<div class="col-sm-10">

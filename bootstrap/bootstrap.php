@@ -1,11 +1,12 @@
 <?php
 
 define("ROOT_DIR", __DIR__ . "/..");
+define("CONFIG_DIR", ROOT_DIR . "/config");
 define("RES_DIR", __DIR__ . "/../resources");
-define("CONFIG_LOCATION", ROOT_DIR . "/config.json");
 
 require ROOT_DIR . "/vendor/autoload.php";
-$config = new App\Config(CONFIG_LOCATION);
+
+$config = new App\Config(CONFIG_DIR);
 
 define("HOST_NAME", $config['general']['hostname']);
 

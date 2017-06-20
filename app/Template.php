@@ -18,19 +18,19 @@ class Template
 
 	public function loadComponent($name, $variables)
 	{
-		$path = self::$_config['component_directory'] . "/$name.php";
+		$path = joinPath(path(self::$_config['component_directory']), "/$name.php");
 		return $this->load($path, $variables);
 	}
 
 	public function loadFragment($name, $variables)
 	{
-		$path = self::$_config['fragment_directory'] . "/$name.php";
+		$path = joinPath(path(self::$_config['fragment_directory']), "/$name.php");
 		return $this->load($path, $variables);
 	}
 
 	public function loadView($name, $variables)
 	{
-		$path = self::$_config['view_directory'] . "/$name.php";
+		$path = joinPath(path(self::$_config['view_directory']), "/$name.php");
 		return $this->load($path, $variables);
 	}
 

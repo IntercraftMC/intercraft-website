@@ -8,6 +8,8 @@
 	<div class="page">
 		<?php component("navbar_home", ['active' => 0]); ?>
 		<?php component("header"); ?>
+		<?php component("home_about"); ?>
+		<?php component("features"); ?>
 	</div>
 	<?php component('footer'); ?>
 	

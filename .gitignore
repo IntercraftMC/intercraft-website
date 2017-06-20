@@ -1,3 +1,10 @@
+
+# Configurations
+config/config.json
+
+# Composer
 composer.phar
-/vendor/
-/.sass-cache/
+vendor/
+
+# Cache
+.sass-cache/

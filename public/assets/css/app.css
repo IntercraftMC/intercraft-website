@@ -98,6 +98,58 @@
 
   #blog .sidebar-offcanvas .card:first-of-type {
     margin-top: 60px; } }
+#section-features {
+  position: relative;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../img/iron_storage.png");
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: white;
+  text-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+  z-index: 0 !important; }
+  #section-features i {
+    border: 3px solid white;
+    border-radius: 100%;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+    color: white;
+    display: inline-block;
+    font-size: 2.5rem;
+    height: 120px;
+    line-height: 120px;
+    margin: 20px;
+    text-align: center;
+    width: 120px;
+    transition: background 0.3s ease-in-out, border-color 0.3s ease-in-out, color 0.3s ease-in-out; }
+    #section-features i:hover {
+      background: #0275d8;
+      /* Bootstrap primary color */
+      border-color: #0275d8; }
+  #section-features #particles-features {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0; }
+
+#gallery .thumbnail {
+  display: inline-block;
+  margin-bottom: 30px;
+  position: relative;
+  width: 100%; }
+
+#gallery .thumbnail img {
+  width: 100%;
+  height: auto; }
+
+#gallery .thumbnail .info-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 15px; }
+
 header {
   position: relative;
   z-index: 50; }
@@ -164,24 +216,6 @@ header {
 
   .video-header .video-overlay .header-motto {
     font-size: 1.6rem; } }
-#gallery .thumbnail {
-  display: inline-block;
-  margin-bottom: 30px;
-  position: relative;
-  width: 100%; }
-
-#gallery .thumbnail img {
-  width: 100%;
-  height: auto; }
-
-#gallery .thumbnail .info-overlay {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 10px 15px; }
-
 #join h3 {
   margin-top: 20px; }
 
@@ -250,7 +284,6 @@ nav.navbar-absolute {
 footer {
   background-color: #222;
   color: #aaa;
-  margin-top: 40px;
   padding: 30px 0;
   width: 100%;
   vertical-align: bottom;
@@ -300,6 +333,7 @@ body {
 section {
   position: relative;
   padding: 0 0;
+  margin-bottom: 60px;
   height: auto;
   z-index: 999; }
 
@@ -309,6 +343,9 @@ section .container {
 section .heading {
   margin-bottom: 40px;
   font-weight: 400; }
+
+section .header {
+  margin: 40px 0; }
 
 nav.navbar-color {
   background: #111; }

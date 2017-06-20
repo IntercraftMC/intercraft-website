@@ -1,5 +1,5 @@
-<div class="col-6 col-md-4">
+<div class="col-6 col-md-4" data-src="<?php echo "assets/gallery/" . $image->image(); ?>">
 	<a href="#" class="thumbnail">
-		<img src="https://placekitten.com/252/189" alt="" class="img-thumbnail">
+		<img src="assets/gallery/<?php echo $image->thumbnail(); ?>" alt="" class="img-thumbnail">
 	</a>
 </div>
