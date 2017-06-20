@@ -12,7 +12,7 @@ API_SKIN = 'https://sessionserver.mojang.com/session/minecraft/profile/{}'
 SCRIPT_LOCATION = os.path.dirname(__file__)
 FOLDER_SKINS = SCRIPT_LOCATION + '/../public/assets/skins/'
 FILE_SKIN = FOLDER_SKINS + '{}.png'
-FILE_FACE = FOLDER_SKINS + '{}-face.png'
+FILE_FACE = FOLDER_SKINS + '{}_face.png'
 FILE_CONFIG = SCRIPT_LOCATION + '/../config.json'
 
 
@@ -60,7 +60,7 @@ def get_all_uuids():
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Download and crop a skin.",
+    parser = argparse.ArgumentParser(description='Download and crop a skin.',
                                      epilog='''If no UUID or name is specified,
                                      this will update the skins for all users
                                      in the database, login details in

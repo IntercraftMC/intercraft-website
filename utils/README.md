@@ -18,6 +18,15 @@ Option | Description
 --name | Specify username.
 -h     | Get usage/help.
 
+### Dependencies
+
+`update_skins.py` uses the following packages
+to provide functionality:
+
+* `MySQLdb` for database access.
+* `PythonMagick` for image processing.
+* `requests` for simple HTTP requests.
+
 ### Cron scheduling
 
 This can be easily scheduled
