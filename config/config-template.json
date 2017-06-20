@@ -1,7 +1,7 @@
 {
 	"general": {
 		"hostname": "dev.intercraftmc.com",
-		"https:"
+		"protocol": "https:"
 	},
 	"captcha": {
 		"site_key": "",
