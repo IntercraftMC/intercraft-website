@@ -8,4 +8,4 @@ vendor/
 
 # Cache
 .sass-cache/
-public/assets/skins
+public/assets/skins/
