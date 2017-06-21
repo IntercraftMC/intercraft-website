@@ -18,5 +18,9 @@
 		"component_directory": "/resources/components",
 		"fragment_directory": "/resources/fragments",
 		"view_directory": "/resources/views"
+	},
+	"minecraft": {
+		"server_root": "",
+		"world_name": ""
 	}
 }
