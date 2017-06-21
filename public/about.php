@@ -2,9 +2,7 @@
 
 require '../bootstrap/bootstrap.php';
 
-$mods = [
-	
-];
+$mods = config()['modpack'];
 
 view('about', [
 	'title' => "About InterCraft - InterCraft",

@@ -7,6 +7,7 @@
 <body>
 	<div class="page">
 		<?php component('navbar', ['active' => 2]); ?>
+		<?php // component('blog_post', ['active' => 2]); ?>
 	</div>
 	<?php component('footer'); ?>
 

@@ -1,4 +1,5 @@
 <header class="video-header" data-vide-bg="assets/video/IronTitan" data-vide-options="posterType: png, loop: true, muted: true, position: 50% 50%, resizing: true">
+	<?php component("navbar_home", ['active' => 0]); ?>
 	<div id="particles-header"></div>
 	<div class="video-overlay container-fluid">
 		<div class="row h-100">

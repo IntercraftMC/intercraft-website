@@ -23,6 +23,5 @@
 				<p>InterCraft was created and maintained by software developers</p>
 			</div>
 		</div>
-		</div>
 	</div>
 </section>

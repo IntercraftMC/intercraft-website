@@ -38,9 +38,13 @@ body {
 section {
 	position: relative;
 	padding: $section-padding;
-	margin-bottom: $section-spacing;
+	margin-top: $section-spacing;
 	height: auto;
 	z-index: 999;
+
+	&:last-of-type {
+		margin-bottom: $section-spacing;
+	}
 }
 
 section .container {
@@ -53,7 +57,7 @@ section .heading {
 }
 
 section .header {
-	margin: $section-heading-margin 0;
+	margin-bottom: $section-heading-margin;
 }
 
 nav.navbar-color {
