@@ -38,3 +38,16 @@ and adding the following line:
 This will run the script every 3 hours.
 See the cron documentation
 for more scheduling options.
+
+## send_stats.py
+
+This script sends the minecraft statistics
+from a minecraft server to the database.
+The path to the minecraft server
+and database login information
+are stored in `config/config.json`.
+
+### Dependencies
+
+`send_stats.py` uses `MySQLdb`
+to provide database functionality.
