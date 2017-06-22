@@ -8,16 +8,17 @@
 	<div class="page">
 		<?php component("navbar", ['active' => 2]); ?>
 		<?php component("sub_header", [
-				'heading' => $blogPosts[0]['title'],
-				'image' => 'https://placekitten.com/1920/931',
-				'lead' => $blogPosts[0]['desc'],
+				'heading' => $mainBlogPost->title(),
+				'image' => $mainBlogPost->image(),
+				'lead' => strip_tags($mainBlogPost->body()),
 				'buttonText' => 'Read More',
-				'buttonUrl' => 'blog_post?id='.$blogPosts[0]['id']
+				'buttonUrl' => 'blog_post?id='.$mainBlogPost->id()
 			]); 
 		?>
-		<section id="blog">
-			<?php component("blog_posts", ['blogPosts' => $blogPosts]) ?>
-		</section>
+		<?php component("blog_posts", ['blogPosts' => $blogPosts, 
+		                               'recent' => $recent, 
+		                               'archives' => $archives,
+		                               'categories' => $categories]); ?>
 	</div>
 	<?php component('footer'); ?>
 

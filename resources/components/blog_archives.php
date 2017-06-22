@@ -3,16 +3,14 @@
 		<h5>Archives</h5>
 	</div>
 	<div class="card-block">
-		<div>
-			<a href="">May 2017 (1)</a>
-			<hr>
-		</div>
-		<div>
-			<a href="">Jan 2017 (2)</a>
-			<hr>
-		</div>
-		<div>
-			<a href="">Dec 2016 (1)</a>
-		</div>
+		<?php $i = 0; ?>
+		<?php foreach ($archives as $archive): ?>
+			<div>
+				<?php echo $i++ ? '<hr>' : '' ?>
+				<a href="blog?archive=<?php echo $archive['date'] ?>">
+					<?php echo $archive['date'] . ' (' . $archive['total'] . ')'; ?>	
+				</a>
+			</div>
+		<?php endforeach; ?>
 	</div>
 </div>

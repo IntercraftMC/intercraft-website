@@ -6,8 +6,15 @@
 </head>
 <body>
 	<div class="page">
-		<?php component('navbar', ['active' => 2]); ?>
-		<?php // component('blog_post', ['active' => 2]); ?>
+		<?php 
+			component('navbar', ['active' => 2]);
+			component('blog_post', [
+				'post' => $post,
+				'recent' => $recent,
+				'archives' => $archives,
+				'categories' => $categories
+		    ]);
+		?>
 	</div>
 	<?php component('footer'); ?>
 

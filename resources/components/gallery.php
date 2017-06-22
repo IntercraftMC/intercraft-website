@@ -5,11 +5,11 @@
 				<?php fragment('gallery_card', ['image' => $images[$i]]); ?>
 			<?php endfor; ?>
 		</div>
-		<div class="row">
+		<!-- <div class="row">
 			<div class="col-12 text-center">
 				<hr>
 				<button class="btn btn-primary">Load More</button>
 			</div>
-		</div>
+		</div> -->
 	</div>
 </section>

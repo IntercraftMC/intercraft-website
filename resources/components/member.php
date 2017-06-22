@@ -31,10 +31,14 @@
 						</div>
 					</div>
 					<div class="tab-pane fade" id="member-gallery">
-
+						<div class="col-12">
+							<p><?php echo $user->username() . ' has not posted any images.' ?></p>
+						</div>
 					</div>
 					<div class="tab-pane fade" id="member-stats">
-
+						<div class="col-12">
+							<p>(User statistics coming soon!)</p>
+						</div>
 					</div>
 				</div>
 			</div>

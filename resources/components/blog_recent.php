@@ -3,25 +3,17 @@
 		<h5>Recent</h5>
 	</div>
 	<div class="card-block">
-		<div class="blog-title">
-			<a href="">Lorem Ipsum Dolor Sit Amet Consectetur</a>
-		</div>
-		<div class="blog-info text-muted">
-			<i class="fa fa-calendar"></i> May 27, 2017
-		</div>
-		<hr>
-		<div class="blog-title">
-			<a href="">Lorem Ipsum Dolor Sit Amet Consectetur</a>
-		</div>
-		<div class="blog-info text-muted">
-			<i class="fa fa-calendar"></i> May 27, 2017
-		</div>
-		<hr>
-		<div class="blog-title">
-			<a href="">Lorem Ipsum Dolor Sit Amet Consectetur</a>
-		</div>
-		<div class="blog-info text-muted">
-			<i class="fa fa-calendar"></i> May 27, 2017
-		</div>
+		<?php $i = 0; ?>
+		<?php foreach ($recent as $post): ?>
+			<?php echo $i ? '<hr>' : ''; ?>
+			<div class="blog-title">
+				<a href="blog_post?id=<?php echo $post->id(); ?>">
+					<?php echo $post->title(); ?>		
+				</a>
+			</div>
+			<div class="blog-info text-muted">
+				<i class="fa fa-calendar"></i> <?php echo $post->dateReadable(); ?>
+			</div>
+		<?php endforeach; ?>
 	</div>
 </div>

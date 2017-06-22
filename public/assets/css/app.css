@@ -59,8 +59,7 @@
 
 #blog .blog-card .card-block {
   margin-bottom: 0;
-  padding-top: 0;
-  padding-bottom: 0; }
+  padding: 0; }
 
 #blog .info .text-muted {
   font-size: 0.9rem; }
