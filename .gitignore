@@ -4,6 +4,7 @@ config/config.json
 
 # Composer
 composer.phar
+composer.lock
 vendor/
 
 # Cache
