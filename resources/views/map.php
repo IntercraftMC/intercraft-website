@@ -5,10 +5,8 @@
 	<?php component("metadata"); ?>
 </head>
 <body>
-	<div class="page">
-		<?php component("navbar", ['active' => 5]); ?>
-	</div>
-	<?php component('footer'); ?>
+	<?php component("navbar", ['active' => 5]); ?>
+	<iframe src="dynmap/index.html" frameborder="0" class="page"></iframe>
 
 	<script src="assets/js/jquery-2.2.3.min.js"></script>
 	<script src="assets/js/tether.min.js"></script>

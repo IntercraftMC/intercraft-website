@@ -144,6 +144,10 @@ function post($field, $defaultValue = Null)
 	return array_key_exists($field, $_POST) ? $_POST[$field] : $defaultValue;
 }
 
+/**
+ * Get a random header image path from the list
+ * @return string path to an image
+ */
 function randomHeaderImage()
 {
 	$images = config()['template']['header_images'];

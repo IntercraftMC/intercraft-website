@@ -10,3 +10,4 @@ vendor/
 .sass-cache/
 public/assets/blog/
 public/assets/skins/
+public/dynmap/
