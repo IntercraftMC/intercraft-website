@@ -9,7 +9,7 @@
 	<div class="page">
 		<?php component('navbar', ['active' => 6]); ?>
 		<?php component("sub_header", [
-										'image' => 'https://placekitten.com/1920/931',
+										'image' => randomHeaderImage(),
 										'heading' => 'Become a Member',
 										'lead' => 'While InterCraft is a private whitelisted server, we do accept applications to join!'
 									]); ?>

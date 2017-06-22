@@ -8,7 +8,7 @@
 	<div class="page">
 		<?php component("navbar", ['active' => 1]); ?>
 		<?php component("sub_header", [
-										'image' => 'assets/img/background_1.png',
+										'image' => randomHeaderImage(),
 										'heading' => 'About InterCraft',
 										'lead' => 'InterCraft is a lightly modded Minecraft survival server...'
 									]); ?>

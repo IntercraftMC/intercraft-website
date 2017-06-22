@@ -144,6 +144,12 @@ function post($field, $defaultValue = Null)
 	return array_key_exists($field, $_POST) ? $_POST[$field] : $defaultValue;
 }
 
+function randomHeaderImage()
+{
+	$images = config()['template']['header_images'];
+	return 'assets/img/' . $images[rand(0, count($images) - 1)];
+}
+
 /**
  * Generate a random alphanumeric string
  * @param  int

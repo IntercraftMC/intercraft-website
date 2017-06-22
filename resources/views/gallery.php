@@ -10,7 +10,7 @@
 	<div class="page">
 		<?php component("navbar", ['active' => 3]); ?>
 		<?php component("sub_header", [
-										'image' => 'https://placekitten.com/1920/931',
+										'image' => randomHeaderImage(),
 										'heading' => 'The InterCraft Gallery',
 										'lead' => 'The gallery is comprised of the various builds that members have put together on the InterCraft server.'
 									]); ?>

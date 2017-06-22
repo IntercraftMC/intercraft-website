@@ -8,7 +8,7 @@
 	<div class="page">
 		<?php component('navbar', ['active' => 4]); ?>
 		<?php component("sub_header", [
-										'image' => 'https://placekitten.com/1920/931?random',
+										'image' => randomHeaderImage(),
 										'heading' => 'Members of InterCraft',
 										'lead' => 'The complete list of active InterCraft members'
 									]); ?>
