@@ -4,9 +4,9 @@ namespace App\Mojang;
 
 class MojangStatus
 {
-	public const GREEN  = 2;
-	public const YELLOW = 1;
-	public const RED    = 0;
+	const GREEN  = 2;
+	const YELLOW = 1;
+	const RED    = 0;
 
 	private $_serverInfo;
 
