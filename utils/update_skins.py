@@ -3,7 +3,7 @@ import base64
 import json
 import MySQLdb
 import os
-import PythonMagick
+import pgmagick as PythonMagick
 import requests
 import sys
 
