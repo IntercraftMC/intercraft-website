@@ -7,9 +7,9 @@ use App\Crypto;
 
 class User
 {
-	public const ADMIN = 2;
-	public const MODERATOR = 1;
-	public const NORMAL = 0;
+	const ADMIN = 2;
+	const MODERATOR = 1;
+	const NORMAL = 0;
 
 	private $_id;
 	private $_privilege;
