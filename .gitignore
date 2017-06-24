@@ -1,6 +1,6 @@
 
 # Configurations
-config/config.json
+config/*.json
 
 # Composer
 composer.phar
@@ -12,3 +12,5 @@ vendor/
 public/assets/blog/
 public/assets/skins/
 public/dynmap/
+public/installer/
+public/repository/
