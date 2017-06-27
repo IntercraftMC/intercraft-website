@@ -56,7 +56,7 @@
 						<label class="form-check-label">
 							<!-- <input type="checkbox" name="age" id="age" value="yes" class="form-check-input"> -->
 							<?php checkBox('age', 'age', 'yes'); ?>
-							I am at least 13 years of age
+							I am at least 15 years of age
 						</label>
 					</div>
 				</div>
