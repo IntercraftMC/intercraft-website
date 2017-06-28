@@ -5,7 +5,7 @@ namespace App;
 class Template
 {
 	private static $_config;
-	private $m_html;
+	private $_html;
 
 	public static function configure($config)
 	{
@@ -16,41 +16,47 @@ class Template
 	{
 	}
 
-	public function loadComponent($name, $variables)
+	public function loadComponent(string $name, array $variables)
 	{
 		$path = joinPath(path(self::$_config['component_directory']), "/$name.php");
 		return $this->load($path, $variables);
 	}
 
-	public function loadFragment($name, $variables)
+	public function loadEmail(string $name, array $variables)
+	{
+		$path = joinPath(path(self::$_config['email_directory']), "/$name.php");
+		return $this->load($path, $variables);
+	}
+
+	public function loadFragment(string $name, array $variables)
 	{
 		$path = joinPath(path(self::$_config['fragment_directory']), "/$name.php");
 		return $this->load($path, $variables);
 	}
 
-	public function loadView($name, $variables)
+	public function loadView(string $name, array $variables)
 	{
 		$path = joinPath(path(self::$_config['view_directory']), "/$name.php");
 		return $this->load($path, $variables);
 	}
 
-	public function load($path, $variables)
+	public function load(string $path, array $variables)
 	{
 		$variables['variables'] = $variables;
 		ob_start();
 		extract($variables);
 		require $path;
-		$this->m_html = ob_get_contents();
+		$this->_html = ob_get_contents();
 		ob_end_clean();
 	}
 
 	public function render()
 	{
-		echo $this->m_html;
+		echo $this->_html;
 	}
 
 	public function html()
 	{
-
+		return $this->_html;
 	}
 }

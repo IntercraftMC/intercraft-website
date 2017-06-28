@@ -42,7 +42,7 @@
 				<div class="row">
 					<div class="col-12 col-md-6 form-group <?php echo hasError('email') ? 'has-danger' : ''; ?>">
 						<label class="form-control-label" for="email">Email address</label>
-						<?php input('email', 'email'); ?>
+						<?php inputEmail('email', 'email'); ?>
 						<?php echo error('email'); ?>
 					</div>
 					<div class="col-12 col-md-6 form-group <?php echo hasError('username') ? 'has-danger' : ''; ?>">

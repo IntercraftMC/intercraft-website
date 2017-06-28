@@ -14,12 +14,25 @@
 		"password": "",
 		"database": ""
 	},
+	"discord": {
+		"link": ""
+	},
 	"dynmap": {
 		"web_root": ""
+	},
+	"email": {
+		"signup_background": "email_background_1.png",
+		"email": "",
+		"password": ""
+	},
+	"social_media": {
+		"facebook": "",
+		"twitter": ""
 	},
 	"template": {
 		"component_directory": "/resources/components",
 		"fragment_directory": "/resources/fragments",
+		"email_directory": "/resources/email",
 		"view_directory": "/resources/views",
 		"header_images": [
 			"background_1.png",
@@ -28,8 +41,4 @@
 			"background_4.png"
 		]
 	},
-	"minecraft": {
-		"server_root": "",
-		"world_name": ""
-	}
 }

@@ -3,6 +3,7 @@
 require '../bootstrap/bootstrap.php';
 
 use App\Captcha;
+use App\Mail;
 use App\Models\Application;
 use App\Mojang\Mojang;
 
@@ -48,12 +49,16 @@ if (fieldsExist($_POST, ...array_merge($fields, $questionFields))) {
 
 	if ($result->noErrors()) {
 
+		$uuid = Mojang::uuidFromUsername($username);
+		$profile = Mojang::profile($uuid);
+
 		$application = new Application();
 		$application->setEmail($email)
-		            ->setUsername($username)
-		            ->setUuid(Mojang::uuidFromUsername($username))
+		            ->setUsername($profile->username())
+		            ->setUuid($uuid)
 		            ->setAnswers($questionnaire)
 		            ->save();
+		Mail::signUp($email, $profile->username());
 		$signUp = True;
 	}
 }

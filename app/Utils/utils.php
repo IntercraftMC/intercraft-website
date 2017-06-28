@@ -219,7 +219,7 @@ function joinPath(string $currentPath, string $to)
  */
 function component(string $name, array $variables = [])
 {
-	$template = new Template($name, $variables);
+	$template = new Template();
 	$template->loadComponent($name, $variables);
 	$template->render();
 }
@@ -232,7 +232,7 @@ function component(string $name, array $variables = [])
  */
 function fragment(string $name, array $variables = [])
 {
-	$template = new Template($name, $variables);
+	$template = new Template();
 	$template->loadFragment($name, $variables);
 	$template->render();
 }
@@ -245,9 +245,22 @@ function fragment(string $name, array $variables = [])
  */
 function view(string $name, array $variables = [])
 {
-	$template = new Template($name, $variables);
+	$template = new Template();
 	$template->loadView($name, $variables);
 	$template->render();
+}
+
+/**
+ * Load an email template
+ * @param  string $name
+ * @param  array  $variables
+ * @return string
+ */
+function email(string $name, array $variables = [])
+{
+	$template = new Template();
+	$template->loadEmail($name, $variables);
+	return $template->html();
 }
 
 /**
@@ -258,7 +271,7 @@ function view(string $name, array $variables = [])
  * @param  string|Null $placeHolder
  * @return void            
  */
-function email($name, $id = Null, $value = Null, $placeHolder = Null)
+function inputEmail($name, $id = Null, $value = Null, $placeHolder = Null)
 {
 	if ($value === Null)
 		$value = ($name !== Null && isset($_POST[$name])) ? $_POST[$name] : Null;
@@ -380,7 +393,9 @@ function redirect(string $uri)
  * Get the url to the website
  * @return string
  */
-function url()
+function url(string $uri = '')
 {
-	return config()['general']['protocol'] . '//' . config()['general']['hostname'] . '/';
+	if ($uri !== '')
+		$uri = ltrim($uri, '/');
+	return config()['general']['protocol'] . '//' . config()['general']['hostname'] . '/' . $uri;
 }
