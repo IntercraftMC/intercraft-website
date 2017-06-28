@@ -10,7 +10,7 @@ import sys
 API_RESOLVE_NAME = 'https://api.mojang.com/users/profiles/minecraft/{}'
 API_SKIN = 'https://sessionserver.mojang.com/session/minecraft/profile/{}'
 
-SCRIPT_LOCATION = os.path.dirname(__file__)
+SCRIPT_LOCATION = os.path.dirname(os.path.realpath(__file__))
 FOLDER_SKINS = SCRIPT_LOCATION + '/../public/assets/skins/'
 FILE_SKIN = FOLDER_SKINS + '{}.png'
 FILE_FACE = FOLDER_SKINS + '{}_face.png'
@@ -22,18 +22,41 @@ def resolve_name(name):
     return resp.json()['id']
 
 
-def get_texture(uuid):
+def get_skin_url(uuid):
     # First, get the link, which is stored in a base64-encoded JSON
     # object within another JSON object. Why? Because Mojang.
-    resp = requests.get(API_SKIN.format(uuid))
-    url = json.loads(base64.b64decode(resp.json()['properties'][0]['value']).decode())['textures']['SKIN']['url']
+    try:
+        resp = requests.get(API_SKIN.format(uuid))
+    except ConnectionError:
+        print('Failed to connect to {}'.format(API_SKIN.format(uuid)))
+        return
 
+    if resp.status_code != 200:
+        print('Error from Mojang API. Reason:')
+        print(json.dumps(resp.json(), sort_keys=True, indent=4))
+        return
+
+    return json.loads(base64.b64decode(resp.json()['properties'][0]['value']).decode())['textures']['SKIN']['url']
+
+
+def save_skin(url, uuid):
     # Now download and save file.
     if not(os.path.exists(FOLDER_SKINS)):
         os.mkdir(FOLDER_SKINS)
-    skin_resp = requests.get(url)
+
+    try:
+        resp = requests.get(url)
+    except ConnectionError:
+        print('Failed to connect to {}'.format(url))
+        return
+
+    if resp.status_code != 200:
+        print('Error from Mojang textures server. Reason:')
+        print(resp.text)
+        return
+
     with open(FILE_SKIN.format(uuid), 'wb') as f:
-        f.write(skin_resp.content)
+        f.write(resp.content)
 
 
 def scale_face(uuid):
@@ -44,7 +67,9 @@ def scale_face(uuid):
 
 
 def process_uuid(uuid):
-    get_texture(uuid)
+    url = get_skin_url(uuid)
+    if url != None:
+        save_skin(url, uuid)
     scale_face(uuid)
 
 
