@@ -37,6 +37,7 @@ class Mail
 		]);
 		$mail = self::init();
 		$mail->addAddress($email);
+		$mail->addAddress(config()['email']['email']);
 		$mail->Subject = 'Re: InterCraft Application';
 		$mail->msgHTML($template);
 		return $mail->send();
