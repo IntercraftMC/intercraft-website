@@ -33,4 +33,4 @@ if (fieldsExist($_POST, 'email', 'password')) {
 	exit('{}');
 }
 http_response_code(400); // Not enough information
-exit(json_encode({}));
+exit('{}');
