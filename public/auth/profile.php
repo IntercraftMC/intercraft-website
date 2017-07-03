@@ -15,9 +15,10 @@ if (fieldsExist($_POST, 'access_token')) {
 	if ($user !== Null) {
 		http_response_code(200);
 		exit(json_encode([
+			'email'     => $user->email(),
 			'privilege' => $user->privilege(),
-			'active' => $user->isActive(),
-			'uuid' => $user->uuid(),
+			'active'    => $user->isActive(),
+			'uuid'      => $user->uuid(),
 			'alt_uuids' => $user->altUuids()
 		]));
 	}

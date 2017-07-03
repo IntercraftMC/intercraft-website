@@ -25,17 +25,12 @@ if (fieldsExist($_POST, 'email', 'password')) {
 			// Respond
 			http_response_code(200);
 			exit(json_encode([
-				'error_code' => 0,
-				'access_token' => $user->token(),
+				'access_token' => $user->token()
 			]));
 		}
 	}
 	http_response_code(401); // Invalid email/password
-	exit(json_encode([
-		'error_code' => 2
-	]));
+	exit('{}');
 }
 http_response_code(400); // Not enough information
-exit(json_encode([
-	'error_code' => 1
-]));
+exit(json_encode({}));
