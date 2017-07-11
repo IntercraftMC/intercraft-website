@@ -245,11 +245,11 @@ header {
   font-size: 1.1rem; }
 
 nav {
-  background: #333;
+  background: #111;
   transition: background 0.3s ease-in-out; }
 
 nav.navbar-color {
-  background: #333; }
+  background: #111; }
 
 nav .navbar-brand img {
   height: 30px; }

@@ -3,7 +3,8 @@
 		<div class="container alert alert-success">
 			<div class="row">
 				<div class="col-12 text-center">
-					<strong>Application sent successfully!</strong>
+					<strong>Application sent successfully!</strong><br>
+					An email has been sent to your email address with the final application steps.
 				</div>
 			</div>
 		</div>
