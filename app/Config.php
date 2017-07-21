@@ -18,6 +18,7 @@ class Config implements \ArrayAccess
 
 		$this->_container = json_decode(file_get_contents("$directory/config.json"), True);
 		$this->_container['blog'] = json_decode(file_get_contents("$directory/blog.json"), True);
+		$this->_container['minecraft'] = json_decode(file_get_contents("$directory/minecraft.json"), True);
 		$this->_container['modpack'] = json_decode(file_get_contents("$directory/modpack.json"), True);
 		$this->_container['questionnaire'] = json_decode(file_get_contents("$directory/questionnaire.json"), True);
 	}

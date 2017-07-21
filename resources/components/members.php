@@ -2,7 +2,7 @@
 	<div class="container">	
 		<div class="row">
 			<div class="col-12">
-				<h4>Administrators</h4>
+				<h4><?php echo plural(config()['user']['privilege'][2]); ?></h4>
 				<hr>
 			</div>
 		</div>
@@ -17,7 +17,7 @@
 		</div>
 		<div class="row">
 			<div class="col-12">
-				<h4>VIPs</h4>
+				<h4><?php echo plural(config()['user']['privilege'][1]); ?></h4>
 				<hr>
 			</div>
 		</div>
@@ -32,7 +32,7 @@
 		</div>
 		<div class="row">
 			<div class="col-12">
-				<h4>Citizens</h4>
+				<h4><?php echo plural(config()['user']['privilege'][0]); ?></h4>
 				<hr>
 			</div>
 		</div>

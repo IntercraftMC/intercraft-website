@@ -10,6 +10,7 @@ use App\Validation\ScoutEnv;
 use Detection\MobileDetect;
 use Scout\Scout;
 use Scout\ScoutResult;
+use ICanBoogie\Inflector;
 
 $m_scoutResult = Null;
 
@@ -206,9 +207,12 @@ function path(string $path)
  * @param  string $to          [description]
  * @return string
  */
-function joinPath(string $currentPath, string $to)
+function joinPath(string $currentPath, ...$to)
 {
-	return rtrim($currentPath, '/') . '/' . ltrim($to, '/');
+	$result = $currentPath;
+	foreach ($to as $part)
+		$result = rtrim($result, '/') . '/' . ltrim($part, '/');
+	return $result;
 }
 
 /**
@@ -379,6 +383,40 @@ function error(string $name)
 }
 
 /**
+ * Get an inflector instance for manipulating words/phrases
+ * @return ICanBoogie\Inflector
+ */
+function inflector()
+{
+	static $inflector;
+	if (!$inflector)
+		$inflector = Inflector::get('en');
+	return $inflector;
+}
+
+/**
+ * Get the plural of a given word
+ * @param  string $word
+ * @return string
+ */
+function plural(string $word)
+{
+	$inflector = inflector();
+	return $inflector->pluralize($word);
+}
+
+/**
+ * Get the singular of a given word
+ * @param  string $word
+ * @return [string
+ */
+function singular(string $word)
+{
+	$inflector = inflector();
+	return $inflector->singularize($word);
+}
+
+/**
  * Redirect to the giver URI
  * @param  string url
  * @return void
@@ -398,4 +436,17 @@ function url(string $uri = '')
 	if ($uri !== '')
 		$uri = ltrim($uri, '/');
 	return config()['general']['protocol'] . '//' . config()['general']['hostname'] . '/' . $uri;
+}
+
+/**
+ * Execute a utility python script
+ * @param  string $name
+ * @return string
+ */
+function execUtil(string $name, ...$args)
+{
+	$python = '/usr/bin/python3';
+	$script = joinPath(ROOT_DIR, 'utils', "$name.py");
+	$command = "$python $script " . join(' ', $args);
+	return exec($command . ' 2>&1');
 }

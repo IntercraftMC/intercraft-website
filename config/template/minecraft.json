@@ -1,4 +1,5 @@
 {
-	"server_root": "",
-	"world_name": ""
+	"server_address": "example:1234",
+	"server_root": "/path/to/minecraft_server",
+	"world_name": "world"
 }

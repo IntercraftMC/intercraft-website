@@ -41,4 +41,11 @@
 			"background_4.png"
 		]
 	},
+	"user": {
+		"privilege": [
+			"Citizen",
+			"VIP",
+			"Administrator"
+		]
+	}
 }
