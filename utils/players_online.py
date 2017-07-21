@@ -14,9 +14,11 @@ def main(argv):
 	server = MinecraftServer.lookup(argv[1])
 
 	status = server.status()
-	print(json.dumps([player.name for player in status.players.sample]))
-	
-print("Done")
+	if status.players.online > 0:
+		print(json.dumps([player.name for player in status.players.sample]))
+	else:
+		print('[]')
+		
 
 if __name__ == '__main__':
 	main(sys.argv)
