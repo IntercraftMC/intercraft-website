@@ -6,6 +6,8 @@ use App\Minecraft;
 use App\Models\User;
 use App\Nbt\Nbt;
 
+header('Content-Type: application/json');
+
 $members = User::allActive();
 $memberList = [];
 foreach ($members as $member)
