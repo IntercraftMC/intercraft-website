@@ -10,7 +10,7 @@
 		<?php component("sub_header", [
 				'heading' => $mainBlogPost->title(),
 				'image' => $mainBlogPost->image(),
-				'lead' => strip_tags($mainBlogPost->body()),
+				'lead' => strip_tags($mainBlogPost->brief()),
 				'buttonText' => 'Read More',
 				'buttonUrl' => 'blog_post?id='.$mainBlogPost->id()
 			]); 

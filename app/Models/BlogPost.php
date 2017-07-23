@@ -78,6 +78,7 @@ class BlogPost
 		$this->_categoryId = fieldInt($fields, 'category_id');
 		$this->_title      = field($fields, 'title', '');
 		$this->_image      = field($fields, 'image', '');
+		$this->_brief      = field($fields, 'brief', '');
 		$this->_body       = field($fields, 'body', '');
 		$this->_views      = fieldInt($fields, 'views', 0);
 		$this->_date       = field($fields, 'date', date('Y-m-d H:i:s'));
@@ -92,16 +93,18 @@ class BlogPost
 				$this->_categoryId,
 				$this->_title,
 				$this->_image,
+				$this->_brief,
 				$this->_body,
 				$this->_views,
 				$this->_date
 			];
 		} else {
-			$queryString = "UPDATE `blog` SET `category_id`=?, `title`=?, `image`=?, `body`=?, `views`=?, `date`=? WHERE `id`=?";
+			$queryString = "UPDATE `blog` SET `category_id`=?, `title`=?, `image`=?, `brief`=?, `body`=?, `views`=?, `date`=? WHERE `id`=?";
 			$args = [
 				$this->_categoryId,
 				$this->_title,
 				$this->_image,
+				$this->_brief,
 				$this->_body,
 				$this->_views,
 				$this->_date,
@@ -135,6 +138,13 @@ class BlogPost
 	public function setImage(string $image)
 	{
 		$this->_image = $image;
+		return $this;
+	}
+
+	public function brief() { return $this->_brief; }
+	public function setBrief(string $brief)
+	{
+		$this->_brief = $brief;
 		return $this;
 	}
 

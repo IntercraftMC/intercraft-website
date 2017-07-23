@@ -2,7 +2,7 @@
 	<a href="<?php echo "blog_post?id=" . $blog->id(); ?>"><img src="<?php echo $blog->image(); ?>" alt="" class="card-img-top"></a>
 	<div class="card-block">
 		<a href="<?php echo "blog_post?id=" . $blog->id(); ?>" class="blog-heading-link"><h4 class="blog-heading"><?php echo $blog->title(); ?></h4></a>
-		<p><?php echo $blog->body(); ?></p>
+		<?php echo $blog->brief(); ?>
 		<div class="info">
 			<small class="text-muted">
 				<span class="info-left">
