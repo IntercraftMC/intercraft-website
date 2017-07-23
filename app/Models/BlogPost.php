@@ -17,7 +17,7 @@ class BlogPost
 
 	public static function all()
 	{
-		$query = db()->prepare("SELECT * FROM `blog`");
+		$query = db()->prepare("SELECT * FROM `blog` ORDER BY `date` DESC");
 		$query->execute();
 
 		$blogs = [];
@@ -30,7 +30,7 @@ class BlogPost
 
 	public static function fromId(int $id)
 	{
-		$query = db()->prepare("SELECT * FROM `blog` WHERE `id`=?");
+		$query = db()->prepare("SELECT * FROM `blog` WHERE `id`=? ORDER BY `date` DESC");
 		$query->execute([$id]);
 
 		if ($query->rowCount() == 0)
