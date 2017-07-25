@@ -12,7 +12,7 @@ class GalleryImage
 
 	public static function all()
 	{
-		$query = db()->prepare("SELECT * FROM `gallery`");
+		$query = db()->prepare("SELECT * FROM `gallery` ORDER BY `date` DESC");
 		$query->execute();
 
 		$galleryImages = [];
@@ -25,7 +25,7 @@ class GalleryImage
 
 	public static function fromUser(User $user)
 	{
-		$queryString = "SELECT * FROM `gallery` WHERE `user_id`=?";
+		$queryString = "SELECT * FROM `gallery` WHERE `user_id`=? ORDER BY `date` DESC";
 		$args = [ $user->id() ];
 
 		$query = db()->prepare($queryString);
