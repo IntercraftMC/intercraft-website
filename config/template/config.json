@@ -3,6 +3,9 @@
 		"hostname": "dev.intercraftmc.com",
 		"protocol": "https:"
 	},
+	"adsense": {
+		"google_ad_client": ""
+	},
 	"captcha": {
 		"site_key": "",
 		"secret_key": "",
