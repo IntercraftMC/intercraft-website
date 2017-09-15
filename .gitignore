@@ -1,16 +1,13 @@
-
-# Configurations
-config/*.json
-
-# Composer
-composer.phar
-composer.lock
-vendor/
-
-# Cache
-.sass-cache/
-public/assets/blog/
-public/assets/skins/
-public/dynmap/
-public/installer/
-public/repository/
+/.sass-cache
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
+/.idea
+/.vagrant
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+.env
