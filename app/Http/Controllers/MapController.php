@@ -8,8 +8,8 @@ class MapController extends Controller
 {
     public function index()
     {
-    	return view("welcome", [
-    		"title" => "InterCraft - Home"
+    	return view("map", [
+    		"title" => "Live Map"
     	]);
     }
 }

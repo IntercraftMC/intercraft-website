@@ -8,8 +8,8 @@ class GalleryController extends Controller
 {
     public function index()
     {
-    	return view("welcome", [
-    		"title" => "InterCraft - Home"
+    	return view("gallery", [
+    		"title" => "Gallery"
     	]);
     }
 }

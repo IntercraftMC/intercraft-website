@@ -8,11 +8,17 @@
     <meta name="msapplication-navbutton-color" content="#333">
     <meta name="apple-mobile-web-app-status-bar-style" content="#222">
     <link rel="stylesheet" href="css/app.css">
+    <script href="js/app.js"></script>
 
-    <title>{{ $title; }}</title>
+    <title>{{ (isset($title) && $title ? "$title - " : "") }}InterCraft</title>
 
 </head>
 <body>
-    Test <span class="fa fa-user"></span>
+    @yield("body")
+    <script type="text/javascript">
+    	$(document).ready(function() {
+    	document.write("Test");
+    });
+    </script>
 </body>
 </html>

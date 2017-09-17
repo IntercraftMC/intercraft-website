@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "font-awesome": "^4.7.0",
-    "lightgallery.js": "^1.0.1"
+    "lightgallery.js": "^1.0.1",
+    "particles.js": "^2.0.0"
   }
 }

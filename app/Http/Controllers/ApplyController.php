@@ -8,8 +8,8 @@ class ApplyController extends Controller
 {
     public function index()
     {
-    	return view("welcome", [
-    		"title" => "InterCraft - Home"
+    	return view("join", [
+    		"title" => "Join Us"
     	]);
     }
 

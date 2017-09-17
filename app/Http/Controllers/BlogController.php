@@ -8,8 +8,8 @@ class BlogController extends Controller
 {
     public function index()
     {
-    	return view("welcome", [
-    		"title" => "InterCraft - Home"
+    	return view("blog", [
+    		"title" => "Blog"
     	]);
     }
 

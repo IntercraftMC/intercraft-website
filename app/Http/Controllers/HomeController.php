@@ -8,8 +8,8 @@ class HomeController extends Controller
 {
     public function index()
     {
-    	return view("welcome", [
-    		"title" => "InterCraft - Home"
+    	return view("home", [
+    		"title" => "Home"
     	]);
     }
 }
