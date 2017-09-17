@@ -9,5 +9,17 @@
 // Bootstrap
 @import "~bootstrap/scss/bootstrap";
 
-// lightgallery.js
-@import "~lightgallery.js/src/sass/lightgallery.scss"
+// // lightgallery.js
+@import "~lightgallery.js/src/sass/lightgallery";
+
+// InterCraft app styles
+@import "values";
+@import "blog";
+@import "features";
+@import "footer";
+@import "gallery";
+@import "header";
+@import "join";
+@import "member";
+@import "members";
+@import "navbar";

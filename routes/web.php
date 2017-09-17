@@ -11,15 +11,14 @@
 |
 */
 
-Route::get('/',                   'HomeController@index');
-Route::get('/index',              'HomeController@index');
-Route::get('/about',              'AboutController@index');
-Route::get('/blog',               'BlogController@index');
-Route::get('/blog/{slug}',        'BlogController@entry');
-Route::get('/gallery',            'GalleryController@index');
-Route::get('/members',            'MemberController@index');
-Route::get('/members/{username}', 'MemberController@member');
-Route::get('/map',                'MapController@member');
-Route::get('/join',               'ApplyController@index');
+Route::get('/',                   'HomeController@index')->name('home');
+Route::get('/about',              'AboutController@index')->name('about');
+Route::get('/blog',               'BlogController@index')->name('blog');
+Route::get('/blog/{slug}',        'BlogController@entry')->name('blog_entry');
+Route::get('/gallery',            'GalleryController@index')->name('gallery');
+Route::get('/members',            'MemberController@index')->name('members');
+Route::get('/members/{username}', 'MemberController@member')->name('members_member');
+Route::get('/map',                'MapController@member')->name('map');
+Route::get('/join',               'ApplyController@index')->name('join');
 
 Route::post('/join', 'ApplyController@post');
