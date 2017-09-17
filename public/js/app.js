@@ -11022,6 +11022,26 @@ module.exports = __webpack_require__(38);
 
 __webpack_require__(10);
 
+var particlesEnabled = false;
+
+window.resizeParticles = function () {
+	if (!resizeParticles) return;
+
+	var particles = $('#particles-features');
+	particles.height($('#section-features').outerHeight());
+};
+
+$(window).resize(function (event) {
+	resizeParticles();
+});
+
+window.initParticles = function () {
+	particlesEnabled = true;
+	resizeParticles();
+	particlesJS.load('particles-header', 'config/particles_header.json');
+	particlesJS.load('particles-features', 'config/particles.json');
+};
+
 /***/ }),
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {

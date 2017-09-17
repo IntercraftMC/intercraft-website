@@ -6,3 +6,25 @@
  */
 
 require('./bootstrap');
+
+var particlesEnabled = false;
+
+window.resizeParticles = function() {
+	if (!resizeParticles)
+		return;
+
+	var particles = $('#particles-features');
+	particles.height($('#section-features').outerHeight());
+
+};
+
+$(window).resize(function(event) {
+	resizeParticles();
+});
+
+window.initParticles = function() {
+	particlesEnabled = true;
+	resizeParticles();
+	particlesJS.load('particles-header', 'config/particles_header.json');
+	particlesJS.load('particles-features', 'config/particles.json');
+};

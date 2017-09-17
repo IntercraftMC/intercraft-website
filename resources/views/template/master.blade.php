@@ -9,13 +9,16 @@
     <meta name="msapplication-navbutton-color" content="#333">
     <meta name="apple-mobile-web-app-status-bar-style" content="#222">
     <link rel="stylesheet" href="css/app.css">
+    <script src="js/app.js"></script>
 
     <title>{{ (isset($title) && $title ? "$title - " : "") }}InterCraft</title>
 
 </head>
 <body>
     @yield("body")
-    <script src="js/app.js"></script>
-    <script></script>
+    
+    @unless(isMobile())
+        <script>initParticles();</script>
+    @endunless
 </body>
 </html>
