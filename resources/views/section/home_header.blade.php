@@ -1,4 +1,4 @@
-<header class="video-header" data-vide-bg="assets/video/IronTitan" data-vide-options="posterType: png, loop: true, muted: true, position: 50% 50%, resizing: true">
+<header class="video-header" data-vide-bg="video/IronTitan" data-vide-options="posterType: png, loop: true, muted: true, position: 50% 50%, resizing: true">
 	@include("component.navbar", ["active" => 0, "home" => True])
 	<div id="particles-header"></div>
 	<div class="video-overlay container-fluid">

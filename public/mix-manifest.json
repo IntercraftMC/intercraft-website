@@ -1,6 +1,7 @@
 {
     "/js/app.js": "/js/app.js",
     "/css/app.css": "/css/app.css",
-    "/video/IronTitan.mp4": "/video/IronTitan.mp4",
-    "/video/IronTitan.png": "/video/IronTitan.png"
+    "/images/iron_storage.png": "/images/iron_storage.png",
+    "/images/navbar_brand_30.png": "/images/navbar_brand_30.png",
+    "/images/navbar_brand_40.png": "/images/navbar_brand_40.png"
 }

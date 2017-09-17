@@ -10,10 +10,13 @@ window._ = require('lodash');
 try {
     $ = window.$ = window.jQuery = require('jquery');
 
-    require('bootstrap');
-    require('particles.js');
-    require('vide');
-} catch (e) {}
+    window.Tether = require('tether');
+    window.Bootstrap = require('bootstrap');
+    window.Particles = require('particles.js');
+    window.Vide = require('vide');
+} catch (e) {
+	console.error("Error", e);
+}
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests

@@ -23,3 +23,53 @@
 @import "member";
 @import "members";
 @import "navbar";
+
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	overflow-x: hidden; // Prevent x scroll on narrow devices
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+}
+
+.page {
+	flex: 1 0 auto;
+}
+
+section {
+	position: relative;
+	padding: $section-padding;
+	margin-top: $section-spacing;
+	height: auto;
+	z-index: 999;
+
+	&:last-of-type {
+		margin-bottom: $section-spacing;
+	}
+}
+
+section .container {
+	position: relative;
+}
+
+section .heading {
+	margin-bottom: $section-heading-margin;
+	font-weight: $section-heading-weight;
+}
+
+section .header {
+	margin-bottom: $section-heading-margin;
+}
+
+.pointer {
+	cursor: pointer !important;
+}
+
+.pointer * {
+	cursor: pointer !important;
+}
