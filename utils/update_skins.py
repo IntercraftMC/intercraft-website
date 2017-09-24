@@ -1,22 +1,24 @@
 #!/usr/bin/python3
 
 import argparse
+import configparser
 import base64
 import json
 import MySQLdb
 import os
 import pgmagick as PythonMagick
 import requests
+import io
 import sys
 
 API_RESOLVE_NAME = 'https://api.mojang.com/users/profiles/minecraft/{}'
 API_SKIN = 'https://sessionserver.mojang.com/session/minecraft/profile/{}'
 
 SCRIPT_LOCATION = os.path.dirname(os.path.realpath(__file__))
-FOLDER_SKINS = SCRIPT_LOCATION + '/../public/assets/skins/'
+FOLDER_SKINS = SCRIPT_LOCATION + '/../public/uploads/skins/'
 FILE_SKIN = FOLDER_SKINS + '{}.png'
 FILE_FACE = FOLDER_SKINS + '{}_face.png'
-FILE_CONFIG = SCRIPT_LOCATION + '/../config/config.json'
+FILE_CONFIG = SCRIPT_LOCATION + '/../.env'
 
 
 def resolve_name(name):
@@ -76,19 +78,21 @@ def process_uuid(uuid):
 
 
 def get_all_uuids():
+    config = configparser.ConfigParser()
     try:
         with open(FILE_CONFIG) as f:
-            db_login = json.load(f)['database']
+            ini_fp = io.StringIO('[root]\n' + f.read())
+            config.readfp(ini_fp)
     except OSError:
         print('Please add and configure a database in config.json.')
         sys.exit(1)
 
-    db = MySQLdb.connect(host=db_login['host'],
-                         user=db_login['username'],
-                         passwd=db_login['password'],
-                         db=db_login['database'])
+    db = MySQLdb.connect(host=config['root']['DB_HOST'],
+                         user=config['root']['DB_USERNAME'],
+                         passwd=config['root']['DB_PASSWORD'],
+                         db=config['root']['DB_DATABASE'])
     cur = db.cursor()
-    cur.execute('SELECT uuid FROM users')
+    cur.execute('SELECT `uuid` FROM `users` WHERE `active`=1')
     return [i[0] for i in cur.fetchall()]
 
 
