@@ -1,10 +1,12 @@
 <section id="about">
 	<div class="container">
-		<div class="row text-center">
-			<div class="col-12 header">
-				<h2>About InterCraft</h2>
+		@isset($brief)
+			<div class="row text-center">
+				<div class="col-12 header">
+					<h2>About InterCraft</h2>
+				</div>
 			</div>
-		</div>
+		@endisset
 		<div class="row">
 			<div class="col-12 text-justify">
 				<p>InterCraft is a lightly modded Minecraft survival server created and run by software developers. The primary goal is to utilize the central mod, OpenComputers, to build computers, servers, custom software and custom operating systems to form a giant computer network that will essentially become a complete in-game internet.</p>

@@ -25,6 +25,6 @@ $(window).resize(function(event) {
 window.initParticles = function() {
 	particlesEnabled = true;
 	resizeParticles();
-	particlesJS.load('particles-header', 'config/particles_header.json');
-	particlesJS.load('particles-features', 'config/particles.json');
+	particlesJS.load('particles-header', '/config/particles_header.json');
+	particlesJS.load('particles-features', '/config/particles.json');
 };

@@ -18,7 +18,7 @@ Route::get('/blog/{slug}',        'BlogController@entry')->name('blog_entry');
 Route::get('/gallery',            'GalleryController@index')->name('gallery');
 Route::get('/members',            'MemberController@index')->name('members');
 Route::get('/members/{username}', 'MemberController@member')->name('members_member');
-Route::get('/map',                'MapController@member')->name('map');
-Route::get('/join',               'ApplyController@index')->name('join');
+Route::get('/map',                'MapController@index')->name('map');
+Route::get('/join',               'JoinController@index')->name('join');
 
-Route::post('/join', 'ApplyController@post');
+Route::post('/join', 'JoinController@store');

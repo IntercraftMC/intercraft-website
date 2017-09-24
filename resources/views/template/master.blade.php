@@ -8,8 +8,9 @@
     <meta name="theme-color" content="#333">
     <meta name="msapplication-navbutton-color" content="#333">
     <meta name="apple-mobile-web-app-status-bar-style" content="#222">
-    <link rel="stylesheet" href="css/app.css">
-    <script src="js/app.js"></script>
+    <link rel="stylesheet" href="/css/app.css">
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+    <script src="/js/app.js"></script>
 
     <title>{{ (isset($title) && $title ? "$title - " : "") }}InterCraft</title>
 
@@ -20,5 +21,13 @@
     @unless(isMobile())
         <script>initParticles();</script>
     @endunless
+    <script>
+        $(document).ready(function() {
+            if ($('#image-gallery'))
+                $('#image-gallery').lightGallery({
+                    galleryId: 0    
+                });
+        });
+    </script>
 </body>
 </html>

@@ -9,7 +9,9 @@ class AboutController extends Controller
     public function index()
     {
     	return view("about", [
-    		"title" => "About"
+    		"headerImage" => Null,
+    		"title" => "About",
+    		"mods" => config("modpack")
     	]);
     }
 }

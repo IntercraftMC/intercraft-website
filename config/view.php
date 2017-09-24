@@ -30,4 +30,11 @@ return [
 
     'compiled' => realpath(storage_path('framework/views')),
 
+    'header_images' => [
+        'background_1',
+        'background_2',
+        'background_3',
+        'background_4'
+    ]
+
 ];

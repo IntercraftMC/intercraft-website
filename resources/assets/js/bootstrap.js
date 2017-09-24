@@ -12,6 +12,14 @@ try {
 
     window.Tether = require('tether');
     window.Bootstrap = require('bootstrap');
+    window.LightGallery = require("lightgallery");
+    window.LightGalleryAp = require("lg-autoplay");
+    window.LightGalleryFs = require("lg-fullscreen");
+    window.LightGalleryHash = require("lg-hash");
+    window.LightGalleryPager = require("lg-pager");
+    window.LightGalleryShare = require("lg-share");
+    window.LightGalleryThumbnail = require("lg-thumbnail");
+    window.LightGalleryZoom = require("lg-zoom");
     window.Particles = require('particles.js');
     window.Vide = require('vide');
 } catch (e) {

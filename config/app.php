@@ -176,6 +176,8 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\CaptchaServiceProvider::class,
+        App\Providers\MojangServiceProvider::class,
 
         /*
          * Manually installed packages...

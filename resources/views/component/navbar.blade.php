@@ -3,7 +3,7 @@
 		<span class="navbar-toggler-icon"></span>
 	</button>
 	<a class="navbar-brand" href="">
-		<img src="images/navbar_brand_{{ isset($home) ? "40" : "30" }}.png" class="d-inline-block align-top">
+		<img src="/images/navbar_brand_{{ isset($home) ? "40" : "30" }}.png" class="d-inline-block align-top">
 		InterCraft
 	</a>
 	<?php $name = Route::currentRouteName(); ?>
