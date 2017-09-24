@@ -1,0 +1,144 @@
+@import 'values';
+
+#blog {
+
+}
+
+#blog .jumbotron p {
+	color: darken(white, 15%);
+}
+
+#blog .jumbotron hr {
+	margin: 20px;
+}
+
+#blog .blog-heading {
+	margin: 20px 0;
+	margin-bottom: 20px;
+}
+
+#blog .info .separated::before {
+	content: "";
+	margin-left: $blog-info-spacing-small;
+}
+
+#blog hr {
+	margin-top: 10px;
+	margin-bottom: $blog-card-hr-margin;
+}
+
+#blog .sidebar-offcanvas hr {
+	margin: 10px 0;
+}
+
+#blog .sidebar-offcanvas a {
+	display: inline-block;
+	width: 100%;
+}
+
+#blog .sidebar-offcanvas .card {
+	margin-bottom: 30px;
+	border: none;
+}
+
+#blog .sidebar-offcanvas .card-header {
+	background: none;
+	border: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+#blog .sidebar-offcanvas .card-block {
+	padding-top: 0.75rem;
+}
+
+#blog .sidebar-offcanvas .blog-title {
+	margin-bottom: 10px;
+	padding-top: 0;
+}
+
+#blog .sidebar-offcanvas .blog-info {
+	font-size: 0.9em;
+}
+
+#blog .sidebar-offcanvas .separated::before {
+	content: "";
+	padding-left: $blog-sidebar-recent-info-spacing;
+}
+
+#blog .blog-card {
+	border: none;
+	padding-bottom: 0;
+	text-align: left;
+}
+
+#blog .blog-card .card-img-top {
+	border-radius: calc(.25rem - 1px);
+	height: auto;
+	width: 100%
+}
+
+#blog .blog-card .card-block {
+	margin-bottom: 0;
+	padding: 0;
+}
+
+#blog .info .text-muted {
+	font-size: $blog-info-text-size;
+}
+
+#blog .info .info-left {
+
+}
+
+#blog .info .info-right {
+	display: inline-block;
+	float: right;
+}
+
+#blog .sidebar-divider {
+	margin-top: 60px;
+}
+
+@media all and (min-width: 992px) {
+	#blog .info .separated::before {
+		content: "";
+		margin-left: $blog-info-spacing;
+	}
+
+	#blog .info {
+		
+	}
+
+	#blog .info .info-left {
+		text-align: none;
+	}
+
+	#blog .info .info-right {
+		text-align: right;
+	}
+}
+
+@media all and (min-width: 768px) {
+	.sidebar-divider {
+		width: 0;
+		margin: 0 !important;
+	}
+}
+
+@media all and (max-width: 479px) {
+	#blog .info .info-right {
+		display: none;
+	}
+
+	#blog .info .info-left span:nth-of-type(2){
+		display: inline;
+		float: right;
+		text-align: right;
+		width: 50%;
+	}
+
+	#blog .sidebar-offcanvas .card:first-of-type {
+		margin-top: 60px;
+	}
+}
