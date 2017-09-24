@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="description" content="Lightly Modded Minecraft Survival Server">
+    <meta name="description" content="InterCraft is a lightly modded Minecraft survival server created and maintained by software developers.">
     <meta name="keywords" content="Minecraft,Modded,Vanilla,Whitelisted,OpenComputers">
     <meta name="author" content="David Ludwig">
     <meta name="theme-color" content="#333">
