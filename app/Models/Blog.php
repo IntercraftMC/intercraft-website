@@ -84,7 +84,7 @@ class Blog extends Model
 
     /**
      * Fetch all of the archives, with the number of posts in each archive
-     * @return Array[string, int]
+     * @return Array<string, int>
      */
     public static function archives()
     {
