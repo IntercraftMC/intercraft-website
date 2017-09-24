@@ -1,6 +1,5 @@
 @extends("template.master")
 @section("body")
-    <div class="page">
-    	@include("component.navbar")
-    </div>
+	@include("component.navbar")
+	<iframe src="dynmap/index.html" frameborder="0" class="page"></iframe>
 @endsection
