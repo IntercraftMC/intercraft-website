@@ -25,7 +25,7 @@ class StoreApplicationRequest extends FormRequest
     {
         return [
             'email'    => 'required|email|unique:applications',
-            'username' => 'required|max:16|unique:applications|mcusername',
+            'username' => 'required|max:16|mcusername',
             'age'      => 'required',
             'g-recaptcha-response' => 'captcha'
         ];

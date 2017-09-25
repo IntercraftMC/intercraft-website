@@ -14,6 +14,14 @@
     <link rel="stylesheet" href="/css/app.css">
     <script src='https://www.google.com/recaptcha/api.js'></script>
     <script src="/js/app.js"></script>
+    <!-- Global Site Tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ env('GOOGLE_ANALYTICS_TRACKING_ID') }}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments)};
+        gtag('js', new Date());
+        gtag('config', '{{ env('GOOGLE_ANALYTICS_TRACKING_ID') }}');
+    </script>
 
     <title>{{ (isset($title) && $title ? "$title - " : "") }}InterCraft</title>
 
@@ -28,7 +36,7 @@
         $(document).ready(function() {
             if ($('#image-gallery'))
                 $('#image-gallery').lightGallery({
-                    galleryId: 0    
+                    galleryId: 0
                 });
         });
     </script>
