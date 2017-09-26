@@ -6,9 +6,29 @@ use Illuminate\Database\Eloquent\Model;
 
 class User extends Model
 {
+    protected $hidden = ["password"];
+    protected $guarded = ["password"];
+
+    public function generateAccessToken()
+    {
+        $this->token = randomHexString(32);
+        return $this;
+    }
+
     public function profile()
     {
         return $this->hasOne("App\Models\Profile");
+    }
+
+    public function checkPassword(string $password)
+    {
+        return password_verify($password, $this->password);
+    }
+
+    public function setPassword(string $password)
+    {
+        $this->password = password_hash($password, PASSWORD_BCRYPT);
+        return $this;
     }
 
     public function scopeActive($query)

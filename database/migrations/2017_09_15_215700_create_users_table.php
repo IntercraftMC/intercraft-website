@@ -22,7 +22,7 @@ class CreateUsersTable extends Migration
             $table->string('password', 60)->nullable();
             $table->string('uuid', 32)->unique();
             $table->json('alt_uuids');
-            $table->string('token', 32);
+            $table->string('token', 32)->nullable();
             $table->timestamps();
         });
     }
