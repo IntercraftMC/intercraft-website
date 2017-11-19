@@ -9,16 +9,39 @@ import os
 import pgmagick as PythonMagick
 import requests
 import io
+import shutil
 import sys
 
 API_RESOLVE_NAME = 'https://api.mojang.com/users/profiles/minecraft/{}'
 API_SKIN = 'https://sessionserver.mojang.com/session/minecraft/profile/{}'
+
+URL_SKIN_TEMPLATE = 'http://assets.mojang.com/SkinTemplates/{}.png'
 
 SCRIPT_LOCATION = os.path.dirname(os.path.realpath(__file__))
 FOLDER_SKINS = SCRIPT_LOCATION + '/../public/uploads/skins/'
 FILE_SKIN = FOLDER_SKINS + '{}.png'
 FILE_FACE = FOLDER_SKINS + '{}_face.png'
 FILE_CONFIG = SCRIPT_LOCATION + '/../.env'
+
+
+def get_default_skins():
+    for i in ('steve', 'alex'):
+        save_skin(URL_SKIN_TEMPLATE.format(i), i)
+        scale_face(i)
+
+
+def uuid_hash_code(uuid):
+    raw_uuid = bytes.fromhex(uuid)
+    parts = [int.from_bytes(raw_uuid[i:i+4], 'big', signed=True) for i in range(0, 16, 4)]
+    return parts[0] ^ parts[1] ^ parts[2] ^ parts[3]
+
+
+def steve_or_alex(uuid):
+    hashcode = uuid_hash_code(uuid)
+    if hashcode & 1 == 0:
+        return 'steve'
+    else:
+        return 'alex'
 
 
 def resolve_name(name):
@@ -40,7 +63,11 @@ def get_skin_url(uuid):
         print(json.dumps(resp.json(), sort_keys=True, indent=4))
         return
 
-    return json.loads(base64.b64decode(resp.json()['properties'][0]['value']).decode())['textures']['SKIN']['url']
+    textures = json.loads(base64.b64decode(resp.json()['properties'][0]['value']).decode())
+    if 'SKIN' not in textures['textures']:
+        return
+
+    return textures['textures']['SKIN']['url']
 
 
 def save_skin(url, uuid):
@@ -74,7 +101,11 @@ def process_uuid(uuid):
     url = get_skin_url(uuid)
     if url != None:
         save_skin(url, uuid)
-    scale_face(uuid)
+        scale_face(uuid)
+    else:
+        skinname = steve_or_alex(uuid)
+        shutil.copyfile(FILE_SKIN.format(skinname), FILE_SKIN.format(uuid))
+        shutil.copyfile(FILE_FACE.format(skinname), FILE_FACE.format(uuid))
 
 
 def get_all_uuids():
@@ -108,6 +139,11 @@ def main():
     parse_group_user.add_argument('--name', '-n',
                                   help='Username of user to update.')
     args = parser.parse_args()
+
+    for i in 'steve', 'alex':
+        if not(os.path.exists(FILE_SKIN.format(i)) and os.path.exists(FILE_FACE.format(i))):
+            get_default_skins()
+            break
 
     if args.name != None:
         uuid = resolve_name(args.name)
