@@ -10,11 +10,11 @@ class BlogController extends Controller
     public function index()
     {
     	return view("blog", [
-    		"title" => "Blog",
-            "posts" => Blog::orderBy("id", "desc")->get(),
-            "recent" => Blog::recent(),
+    		"title"      => "Blog",
+            "posts"      => Blog::orderBy("id", "desc")->get(),
+            "recent"     => Blog::recent(),
             "categories" => Blog::categories(),
-            "archives" => Blog::archives()
+            "archives"   => Blog::archives()
     	]);
     }
 
@@ -24,11 +24,11 @@ class BlogController extends Controller
             return redirect()->route("blog");
 
         return view("blog_entry", [
-            "title" => $slug,
-            "post" => Blog::slug($slug),
-            "recent" => Blog::recent(),
+            "title"      => $slug,
+            "post"       => Blog::slug($slug),
+            "recent"     => Blog::recent(),
             "categories" => Blog::categories(),
-            "archives" => Blog::archives()
+            "archives"   => Blog::archives()
         ]);
     }
 }

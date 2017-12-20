@@ -9,10 +9,6 @@ nav.navbar-color {
 	background: $nav-bg;
 }
 
-nav.navbar-home {
-	background: transparent;
-}
-
 nav .navbar-brand img {
 	height: $nav-icon;
 }
@@ -40,6 +36,10 @@ nav.navbar-absolute {
 @media all and (min-width: $viewport-width-large) {
 	nav {
 		background: $nav-bg-large;
+	}
+
+	nav.navbar-home {
+		background: transparent;
 	}
 
 	nav.navbar-home .navbar-brand {
