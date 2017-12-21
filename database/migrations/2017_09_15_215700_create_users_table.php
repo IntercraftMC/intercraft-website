@@ -18,11 +18,10 @@ class CreateUsersTable extends Migration
             $table->unsignedTinyInteger('privilege');
             $table->boolean('active');
             $table->string('email', 255)->unique()->nullable();
-            $table->string('username', 16);
+            $table->string('username', 16)->unique()->nullable();
             $table->string('password', 60)->nullable();
-            $table->string('uuid', 32)->unique();
-            $table->json('alt_uuids');
-            $table->string('token', 32)->nullable();
+            $table->json('uuids');
+            $table->string('token', 32);
             $table->timestamps();
         });
     }

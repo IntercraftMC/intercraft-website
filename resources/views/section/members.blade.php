@@ -1,5 +1,5 @@
 <section id="members">
-	<div class="container">	
+	<div class="container">
 		<div class="row">
 			<div class="col-12">
 				<h4>Administrators</h4>
@@ -9,8 +9,8 @@
 		<div class="row">
 			@foreach($admins as $user)
 				@component('component.member')
-					@slot('uuid') {{ $user->uuid }} @endslot
-					{{ $user->username }}
+					@slot('uuid') {{ $user->profile->primaryUuid() }} @endslot
+					{{ $user->profile->mc_username }}
 				@endcomponent
 			@endforeach
 		</div>
@@ -23,8 +23,8 @@
 		<div class="row">
 			@foreach($vips as $user)
 				@component('component.member')
-					@slot('uuid') {{ $user->uuid }} @endslot
-					{{ $user->username }}
+					@slot('uuid') {{ $user->profile->primaryUuid() }} @endslot
+					{{ $user->profile->mc_username }}
 				@endcomponent
 			@endforeach
 		</div>
@@ -37,8 +37,8 @@
 		<div class="row">
 			@foreach($citizens as $user)
 				@component('component.member')
-					@slot('uuid') {{ $user->uuid }} @endslot
-					{{ $user->username }}
+					@slot('uuid') {{ $user->profile->primaryUuid() }} @endslot
+					{{ $user->profile->mc_username }}
 				@endcomponent
 			@endforeach
 		</div>

@@ -20,6 +20,12 @@ class User extends Model
         return $this->hasOne("App\Models\Profile");
     }
 
+
+    public function uuids()
+    {
+        return json_decode($this->uuids);
+    }
+
     public function checkPassword(string $password)
     {
         return password_verify($password, $this->password);

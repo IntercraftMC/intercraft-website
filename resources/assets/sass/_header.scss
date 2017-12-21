@@ -34,13 +34,13 @@ header {
 }
 
 .video-header .video-overlay .header-brand {
-	font-size: 4rem;
+	font-size: 2.5rem;
 }
 
 .video-header .video-overlay .header-motto {
 	font-weight: 100;
 	letter-spacing: 3px;
-	font-size: 1.3rem;
+	font-size: 1.2rem;
 }
 
 .sub-header {
@@ -75,12 +75,29 @@ header {
 	color: darken(white, 15%);
 }
 
-@media all and (min-width: $viewport-width-large) {
+@media all and (min-width: $viewport-width-tiny) {
+	.video-header .video-overlay .header-brand {
+		font-size: 3rem;
+	}
+	.video-header .video-overlay .header-motto {
+		font-size: 1.3rem;
+	}
+}
 
+@media all and (min-width: $viewport-width-xs) {
+	.video-header .video-overlay .header-brand {
+		font-size: 4rem;
+	}
+
+	.video-header .video-overlay .header-motto {
+		font-size: 1.4rem;
+	}
+}
+
+@media all and (min-width: $viewport-width-large) {
 	.video-header .video-overlay .header-brand {
 		font-size: 6rem;
 	}
-
 	.video-header .video-overlay .header-motto {
 		font-size: 1.6rem;
 	}

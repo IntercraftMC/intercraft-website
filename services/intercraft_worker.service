@@ -4,8 +4,8 @@ Description="InterCraft website worker"
 [Service]
 ExecStart=/usr/bin/php /path/to/artisan queue:work database --sleep=3 --tries=3
 Type=simple
-User=user
-Group=group
+User=root
+Group=root
 Restart=always
 RestartSec=3
 
