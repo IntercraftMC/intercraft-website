@@ -31,7 +31,7 @@ class RegistrationRequest extends FormRequest
     {
         return [
             'email'      => 'required|email|unique:users',
-            'username'   => 'required|min:3|max:16|lowercase|alpha_dash|unique:users',
+            'username'   => 'required|min:3|max:16|lowercase|alpha_dash|unique:users|linux_user',
             'password'   => 'required|min:8',
             'repassword' => 'required|same:password',
         ];

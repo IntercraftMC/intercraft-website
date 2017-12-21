@@ -13,6 +13,6 @@ class Profile extends Model
 
     public function primaryUuid()
     {
-        return $this->user->uuids()[$this->primary_uuid];
+        return $this->primary_uuid;
     }
 }

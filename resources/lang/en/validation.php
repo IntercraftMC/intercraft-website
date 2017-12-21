@@ -51,6 +51,7 @@ return [
     'ipv4'                 => 'The :attribute must be a valid IPv4 address.',
     'ipv6'                 => 'The :attribute must be a valid IPv6 address.',
     'json'                 => 'The :attribute must be a valid JSON string.',
+    'linux_user'           => 'The :attribute has already been taken',
     'lowercase'            => 'The :attribute must not contain any uppercase letters.',
     'max'                  => [
         'numeric' => 'The :attribute may not be greater than :max.',
