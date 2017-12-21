@@ -9,10 +9,17 @@ use App\Models\User;
 
 class AuthController extends Controller
 {
+	public function authenticate(Request $request)
+	{
+		return User::where("token", $request->token)
+		           ->first()
+		           ->toJson();
+	}
+
 	public function login(LoginRequest $request)
 	{
 		$user = User::where("email", $request->email)->first();
-		if ($user->checkPassword($request->password)) {
+		if ($user && $user->checkPassword($request->password)) {
 			$user->generateAccessToken()->save();
 			return $user->toJson();
 		}

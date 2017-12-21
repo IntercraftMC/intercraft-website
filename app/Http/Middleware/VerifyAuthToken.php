@@ -16,8 +16,11 @@ class VerifyAuthToken
      */
     public function handle($request, Closure $next)
     {
-    	if (isset($request->input()['token']) && User::where("token", $request->token)->first())
-            return $next($request);
-        return jsonResponse("{}", 401);
+    	if ($request->has("token") && $user = User::where("token", $request->token)->first()) {
+            if ($user->active)
+                return $next($request);
+            return jsonResponse('{"error": "account_not_active"}', 401);
+        }
+        return jsonResponse('{"error": "invalid_auth_token"}', 401);
     }
 }
