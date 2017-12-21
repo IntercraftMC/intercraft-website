@@ -4,15 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Profile extends Model
+class RegisterRequest extends Model
 {
     public function user()
     {
         return $this->belongsTo('App\Models\User');
-    }
-
-    public function primaryUuid()
-    {
-        return $this->user->uuids()[$this->primary_uuid];
     }
 }

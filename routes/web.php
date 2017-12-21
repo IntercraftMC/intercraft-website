@@ -21,4 +21,9 @@ Route::get('/members/{username}', 'MemberController@member')->name('members_memb
 Route::get('/map',                'MapController@index')->name('map');
 Route::get('/join',               'JoinController@index')->name('join');
 
-Route::post('/join', 'JoinController@store');
+Route::post('/join',     'JoinController@store');
+
+Route::middleware(['App\Http\Middleware\Registration'])->group(function() {
+	Route::get('/register', 'RegistrationController@index')->name('register');
+	Route::post('/register', 'RegistrationController@post');
+});

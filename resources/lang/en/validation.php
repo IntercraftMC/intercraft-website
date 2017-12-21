@@ -51,6 +51,7 @@ return [
     'ipv4'                 => 'The :attribute must be a valid IPv4 address.',
     'ipv6'                 => 'The :attribute must be a valid IPv6 address.',
     'json'                 => 'The :attribute must be a valid JSON string.',
+    'lowercase'            => 'The :attribute must not contain any uppercase letters.',
     'max'                  => [
         'numeric' => 'The :attribute may not be greater than :max.',
         'file'    => 'The :attribute may not be greater than :max kilobytes.',
@@ -105,6 +106,9 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+        'repassword' => [
+            'same' => 'Passwords must match'
+        ]
     ],
 
     /*

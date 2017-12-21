@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Profile;
 use App\Models\User;
 
 class MemberController extends Controller
@@ -19,12 +20,13 @@ class MemberController extends Controller
 
     public function member(Request $request, $username)
     {
-        if (User::active()->where("username", $username)->count() == 0)
+        $profile = Profile::where("mc_username", $username)->first();
+        if (!$profile || !$profile->user->active)
             return redirect()->route("members");
 
     	return view("member", [
-            "title" => $username,
-            "user" => User::where("username", $username)->first()
+            "title" => $profile->mc_username,
+            "profile" => $profile
         ]);
     }
 }

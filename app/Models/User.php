@@ -11,6 +11,11 @@ class User extends Model
         return $this->hasOne("App\Models\Profile");
     }
 
+    public function uuids()
+    {
+        return json_decode($this->uuids);
+    }
+
     public function scopeActive($query)
     {
     	return $query->where('active', 1);

@@ -2,13 +2,13 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-12">
-				<h2 class="member-heading">{{ $user->username }}</h2>
+				<h2 class="member-heading">{{ $profile->mc_username }}</h2>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-2">
 				<div>
-					<img src="/uploads/skins/{{ $user->uuid }}_face.png" alt="" class="rounded" style="width: 100%;">
+					<img src="/uploads/skins/{{ $profile->primaryUuid() }}_face.png" alt="" class="rounded" style="width: 100%;">
 				</div>
 			</div>
 			<div class="col-sm-10">
@@ -27,12 +27,12 @@
 				<div class="row tab-content">
 					<div class="tab-pane fade show active" id="member-about">
 						<div class="col-12">
-							<p>{{ $user->profile->description }}</p>
+							<p>{{ $profile->description }}</p>
 						</div>
 					</div>
 					<div class="tab-pane fade" id="member-gallery">
 						<div class="col-12">
-							<p>{{ $user->username }} has not posted any images.</p>
+							<p>{{ $profile->mc_username }} has not posted any images.</p>
 						</div>
 					</div>
 					<div class="tab-pane fade" id="member-stats">
