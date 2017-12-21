@@ -20,24 +20,27 @@ class JoinController extends Controller
 
     public function store(StoreApplicationRequest $request)
     {
+        // Lookup the Mojang account
+        $account = Mojang::lookup(trim($request->username));
+
         // Submit the application
-        $this->submitApplication($request->input());
+        $this->submitApplication($account, $request->input());
 
         // Send an email notification
         Mail::to($request->email)
             ->cc(config('mail.from.address'))
-            ->queue(new ApplicationReceived($request->username));
+            ->queue(new ApplicationReceived($account['username']));
 
         // Finished
         return redirect()->route("join")->with("signup", True);
     }
 
-    protected function submitApplication(array $input)
+    protected function submitApplication(array $account, array $input)
     {
         $application = new Application();
         $application->email = trim($input['email']);
-        $application->username = trim($input['username']);
-        $application->uuid = trim(Mojang::lookup($input['username'])['uuid']);
+        $application->username = trim($account['username']);
+        $application->uuid = trim($account['uuid']);
         for ($i = 0; $i < count(config('questionnaire')); $i++)
             $questions[config('questionnaire')[$i][0]] = $input["question-$i"];
         $application->questionnaire = json_encode($questions);
