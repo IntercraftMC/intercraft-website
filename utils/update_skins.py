@@ -92,8 +92,14 @@ def get_all_uuids():
                          passwd=config['root']['DB_PASSWORD'],
                          db=config['root']['DB_DATABASE'])
     cur = db.cursor()
-    cur.execute('SELECT `uuid` FROM `users` WHERE `active`=1')
-    return [i[0] for i in cur.fetchall()]
+    cur.execute('SELECT `id` FROM `users` WHERE `active`=1')
+    ids = [i[0] for i in cur.fetchall()]
+    uuids = []
+    for _id in ids:
+        cur.execute('SELECT `primary_uuid` FROM `profiles` WHERE `user_id`=%s', (_id,))
+        uuids.append(cur.fetchone()[0])
+
+    return uuids
 
 
 def main():
