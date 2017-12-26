@@ -27,3 +27,10 @@ Route::middleware(['App\Http\Middleware\Registration'])->group(function() {
 	Route::get('/register', 'RegistrationController@index')->name('register');
 	Route::post('/register', 'RegistrationController@post');
 });
+
+Route::get('/test', function() {
+	return view('mail.register', [
+		'username' => "TestUsername",
+		"token" => "thisisatoken12345"
+	]);
+});

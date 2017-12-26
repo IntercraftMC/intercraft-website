@@ -269,18 +269,18 @@
 					<td>
 
 						<h3>Hello, {{ $username }}</h3>
-						<p class="lead">Thank you for your interest in applying to the InterCraft server, you're almost done!</p>
+						<p class="lead">Now that you are an official member of InterCraft, it is time to setup your InterCraft account!</p>
 
 						<!-- A Real Hero (and a real human being) -->
-						<p><img src="{{ secure_asset('images/join.png') }}" /></p><!-- /hero -->
+						<p><img src="{{ secure_asset('images/register.png') }}" /></p><!-- /hero -->
 						<br />
-						<h3>Next Steps</h3>
-						<p>Now that we've received your application, you will need to join our Discord server and speak with an administrator at your own convenience. Be sure to join the Discord server with the account that you plan on using since we'll be applying your membership to that account. When you join, we'd like to ask you a few questions, then we will complete your application and you will be an official member of InterCraft.</p>
+						<h3>Final Steps</h3>
+						<p>Clicking the link below you take you to the InterCraft website for you to finish setting up your account, and whitelist you to the InterCraft server. By setting up your account, you will gain access to our custom launcher, which will allow you to customize your profile displayed on the website, as well as upload to the gallery. You will also receive an SFTP account to get direct read/write access to any OpenComputers filesystems that are registered to your account.</p>
 						<!-- Callout Panel -->
 						<p class="callout">
-							Admins are generally on the Discord server later in the evening CST.
+							The link below does not expire.
 						</p><!-- /Callout Panel -->
-						<a class="btn" href="{{ config('social.discord') }}">Join Discord Server</a>
+						<a class="btn" href="{{ route('register', ['token' => $token]) }}">Setup Account</a>
 
 						<br/>
 						<br/>

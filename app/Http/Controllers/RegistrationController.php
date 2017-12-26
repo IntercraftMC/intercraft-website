@@ -11,7 +11,7 @@ class RegistrationController extends Controller
     public function index()
     {
         return view("register", [
-            "title" => "Complete your Registration"
+            "title" => "Complete Your Registration"
         ]);
     }
 

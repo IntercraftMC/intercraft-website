@@ -4,16 +4,18 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests\AuthenticateRequest;
 use App\Http\Requests\LoginRequest;
 use App\Models\User;
 
 class AuthController extends Controller
 {
-	public function authenticate(Request $request)
+	public function authenticate(AuthenticateRequest $request)
 	{
-		return User::where("token", $request->token)
-		           ->first()
-		           ->toJson();
+		$user = User::where("username", $request->username)->first();
+		if ($user && $user->checkPassword($request->password))
+			return jsonResponse("{}", 200);
+		return jsonResponse("{}", 401);
 	}
 
 	public function login(LoginRequest $request)
@@ -23,15 +25,17 @@ class AuthController extends Controller
 			$user->generateAccessToken()->save();
 			return $user->toJson();
 		}
-		return jsonResponse("{{$request->password}}", 401);
+		return jsonResponse("{}", 401);
 	}
 
 	public function logout(Request $request)
 	{
 		$user = User::where("token", $request->token)->first();
-		$user->token = Null;
-		$user->save();
-		return "{}";
+		if ($user) {
+			$user->token = Null;
+			$user->save();
+		}
+		return jsonResponse("{}");
 	}
 
 	public function sendResetPassword(Request $request)
@@ -50,8 +54,8 @@ class AuthController extends Controller
 			$user = User::where("token", $request->token)->first();
 			$user->setPassword($request->new_password)
 			     ->save();
-			return jsonResponse("Success");
+			return jsonResponse("{}", 200);
 		}
-		return jsonResponse("Failure", 400);
+		return jsonResponse("{}", 400);
 	}
 }
