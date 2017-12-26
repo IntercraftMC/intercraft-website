@@ -1,7 +1,7 @@
 #!/bin/sh
 
-if [ $# -eq 0 ]; then
-	echo "Usage: create_user <username>"
+if [ $# -lt 2 ]; then
+	echo "Usage: create_user <username> <password>"
 	exit
 fi
 
