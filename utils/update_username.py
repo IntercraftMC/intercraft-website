@@ -7,6 +7,7 @@ import json
 import MySQLdb
 import os
 import requests
+import sys
 
 API_PROFILE = 'https://sessionserver.mojang.com/session/minecraft/profile/{}'
 

@@ -51,3 +51,27 @@ are stored in `config/config.json`.
 
 `send_stats.py` uses `MySQLdb`
 to provide database functionality.
+
+## mount_filesystems.py
+
+This script will mount all registered filsystems
+in the database to the appropriate users on boot
+and each time a new filesystem is regestered
+
+### Dependencies
+
+`mount_filesystems.py` uses the following packages
+to provide functionality:
+
+* `MySQLdb` for database access.
+
+### Scheduling
+
+Add the following line to your `rc.local` to mount
+these filesystems on boot:
+
+    /path/to/utils/mount_filesystems.py
+
+This will execute once each time your system boots
+up and will automatically mount the filesystems
+in the appropriate user directories.

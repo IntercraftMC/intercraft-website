@@ -41,6 +41,10 @@ class Kernel extends HttpKernel
             'throttle:60,1',
             'bindings',
         ],
+
+        'auth_user' => [
+            'auth.user'
+        ]
     ];
 
     /**
@@ -53,6 +57,7 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'auth.user' => \App\Http\Middleware\AuthenticateUser::class,
         'auth.token' => \App\Http\Middleware\VerifyAuthToken::class,
         'auth.password' => \App\Http\Middleware\VerifyAuthPassword::class,
         'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
