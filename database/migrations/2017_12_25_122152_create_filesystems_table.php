@@ -16,7 +16,8 @@ class CreateFilesystemsTable extends Migration
         Schema::create('filesystems', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('user_id');
-            $table->string("uuid", 36);
+            $table->boolean('is_creative');
+            $table->string('uuid', 36);
             $table->timestamps();
         });
     }

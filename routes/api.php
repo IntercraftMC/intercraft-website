@@ -34,4 +34,3 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::middleware('api')->post('/authenticate', "\App\Http\Controllers\Api\AuthController@authenticate");
 Route::middleware(['api', 'auth_user'])->post('/register_fs', "\App\Http\Controllers\Api\FsRegister@post");
-// Route::get('/register_fs', "\App\Http\Controllers\Api\FsRegister@post");

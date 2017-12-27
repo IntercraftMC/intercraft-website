@@ -21,9 +21,10 @@ sudo usermod --password $2 $1
 sudo chown root:$1 /home/intercraftusers/$1
 sudo chmod 755 /home/intercraftusers/$1
 
-sudo mkdir /home/intercraftusers/$1/OpenComputers
-sudo mkdir /home/intercraftusers/$1/Schematics
-sudo chown $1:$1 /home/intercraftusers/$1/*
-sudo chmod 755 /home/intercraftusers/$1/*
+sudo mkdir -p /home/intercraftusers/$1/Creative/OpenComputers
+sudo mkdir -p /home/intercraftusers/$1/Survival/OpenComputers
+
+sudo chown root:$1 -R /home/intercraftusers/$1/*
+sudo chmod 755 -R /home/intercraftusers/$1/*
 
 echo 1

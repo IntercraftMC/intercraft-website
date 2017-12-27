@@ -10,7 +10,7 @@ import sys
 
 SCRIPT_LOCATION = os.path.dirname(os.path.realpath(__file__))
 FILE_CONFIG = SCRIPT_LOCATION + '/../.env'
-USER_FS_PATH = '/home/intercraftusers/%s/OpenComputers/%s'
+USER_FS_PATH = '/home/intercraftusers/%s/%s/OpenComputers/%s' # username, survival/creative, uuid
 
 def load_config():
     config = configparser.ConfigParser()
@@ -42,10 +42,10 @@ def fetch_active_users(db):
 
 def fetch_filesystems(db, user_id):
     cur = db.cursor()
-    query_string = 'SELECT `uuid` FROM `filesystems` WHERE `user_id`=%s'
+    query_string = 'SELECT `is_creative`, `uuid` FROM `filesystems` WHERE `user_id`=%s'
     params = (user_id,)
     cur.execute(query_string, params)
-    return [i[0] for i in cur.fetchall()]
+    return cur.fetchall()
 
 
 def retrieve_mount_info():
@@ -55,24 +55,33 @@ def retrieve_mount_info():
 
 def mount_filesystems(config, username, filesystems):
     mount_info = retrieve_mount_info()
-    mc_path = config['root']['MINECRAFT_SURVIVAL_ROOT']
-    world_path = os.path.join(mc_path, config['root']['MINECRAFT_SURVIVAL_WORLD'])
+    survival_path = os.path.join(
+        config['root']['MINECRAFT_SURVIVAL_ROOT'],
+        config['root']['MINECRAFT_SURVIVAL_WORLD']
+    )
+    creative_path = os.path.join(
+        config['root']['MINECRAFT_CREATIVE_ROOT'],
+        config['root']['MINECRAFT_CREATIVE_WORLD']
+    )
 
-    for uuid in filesystems:
-        path = USER_FS_PATH % (username, uuid)
-        fs_path = world_path + ('/opencomputers/%s' % uuid)
+    for fs in filesystems:
+        path = USER_FS_PATH % (username, "Creative" if fs[0] else "Survival", fs[1])
+        if fs[0]:
+            fs_path = creative_path + ('/opencomputers/%s' % fs[1])
+        else:
+            fs_path = survival_path + ('/opencomputers/%s' % fs[1])
         if path in mount_info:
-            print(uuid, 'is already mounted')
+            print(fs[1], 'is already mounted')
             continue
         if not os.path.exists(path):
             os.mkdir(path)
             shutil.chown(path, username, username)
         try:
-            print('Mounting', uuid)
+            print('Mounting', fs[1])
             params = ('mount', '--bind', fs_path, path)
             subprocess.run(params, timeout=5)
         except subprocess.TimeoutExpired:
-            print("Failed to mount fs %s for user: %s" % (uuid, username))
+            print("Failed to mount fs %s for user: %s" % (fs[1], username))
 
 
 def main():

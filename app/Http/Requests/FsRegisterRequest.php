@@ -24,7 +24,9 @@ class FsRegisterRequest extends FormRequest
     public function rules()
     {
         return [
-            "uuids" => "required|json"
+            "uuids"    => "required|json",
+            "creative" => "required"
         ];
+        // return [];
     }
 }

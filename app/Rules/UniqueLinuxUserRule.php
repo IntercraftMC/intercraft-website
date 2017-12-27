@@ -16,7 +16,13 @@ class UniqueLinuxUserRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        return !is_dir("/home/$value") && !is_dir("/home/intercraftusers/$value") && trim($value) != "root";
+        $output = [];
+        $userAvailable;
+        $groupAvailable;
+        unset($output);
+        exec("id -u " . escapeshellarg($value), $output, $userAvailable);
+        exec("grep -q " . escapeshellarg($value) . " /etc/group", $output, $groupAvailable);
+        return $userAvailable && $groupAvailable;
     }
 
     /**

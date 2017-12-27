@@ -6,6 +6,7 @@
 /public/dynmap
 /public/repository
 /storage/*.key
+/utils/*.ini
 /vendor
 /.idea
 /.vagrant

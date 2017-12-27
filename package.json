@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "font-awesome": "^4.7.0",
+    "fs-jetpack": "^1.2.0",
     "lg-autoplay": "^1.0.4",
     "lg-fullscreen": "^1.0.1",
     "lg-hash": "^1.0.2",

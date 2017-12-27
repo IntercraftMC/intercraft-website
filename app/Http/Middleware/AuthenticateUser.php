@@ -18,9 +18,8 @@ class AuthenticateUser
     {
         if ($request->filled(['username', 'password'])) {
             $user = User::where('username', $request->username)->first();
-            if (!$user || !$user->checkPassword($request->password))
-                return jsonResponse("{}", 401);
-            return $next($request);
+            if ($user && $user->checkPassword($request->password))
+                return $next($request);
         }
         return jsonResponse("{}", 401);
     }

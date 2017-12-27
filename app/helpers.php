@@ -104,6 +104,22 @@ function randomString(int $length)
 }
 
 /**
+ * Check if the given value is a valid filesystem UUID
+ * @param $uuid
+ * @return String
+*/
+function isFilesystemUuid(string $uuid)
+{
+	$matches = [];
+	preg_match(
+		"/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/",
+		$uuid,
+		$matches
+	);
+	return count($matches) == 1 && $matches[0] == $uuid;
+}
+
+/**
  * Create a Json response
  * @return Response
  */
