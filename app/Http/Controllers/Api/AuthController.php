@@ -58,4 +58,15 @@ class AuthController extends Controller
 		}
 		return jsonResponse("{}", 400);
 	}
+
+	public function verifyToken(Request $request)
+	{
+		if ($request->filled("token")) {
+			$user = User::where("token", $request->token)->first();
+			if ($user) {
+				return jsonResponse("{}", 200);
+			}
+		}
+		return jsonResponse("{}", 401);
+	}
 }

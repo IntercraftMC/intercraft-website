@@ -13,13 +13,12 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/hash/{passwd}', function($passwd) { return password_hash($passwd, PASSWORD_BCRYPT); });
-
 Route::get('/status', function(Request $request) {
 	return '{"online": true}';
 });
 
-Route::get('/authenticate', "\App\Http\Controllers\Api\AuthController@authenticate")->middleware("auth.token");
+Route::post('/authenticate', "\App\Http\Controllers\Api\AuthController@authenticate")->middleware("auth.token");
+Route::post('/token_verify', "\App\Http\Controllers\Api\AuthController@verifyToken");
 
 Route::patch('/login', "\App\Http\Controllers\Api\AuthController@login");
 Route::patch('/logout', "\App\Http\Controllers\Api\AuthController@logout")->middleware("auth.token");

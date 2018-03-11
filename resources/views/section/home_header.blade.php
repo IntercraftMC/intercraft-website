@@ -5,7 +5,7 @@
 		<div class="row h-100">
 			<div class="col-md-12 my-auto text-center">
 				<h1 class="display-1 align-middle header-brand">INTERCRAFT</h1>
-				<p class="header-motto">Minecraft Survival Server</p>
+				<p class="header-motto">Minecraft 1.12.2 Survival Server</p>
 				<a href="{{ route('join') }}" class="pointer"><button class="btn btn-primary btn-lg">Join InterCraft</button></a>
 			</div>
 		</div>

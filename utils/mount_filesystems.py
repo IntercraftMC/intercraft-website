@@ -54,6 +54,7 @@ def retrieve_mount_info():
 
 
 def mount_filesystems(config, username, filesystems):
+    print(username + ":")
     mount_info = retrieve_mount_info()
     survival_path = os.path.join(
         config['root']['MINECRAFT_SURVIVAL_ROOT'],
@@ -65,6 +66,7 @@ def mount_filesystems(config, username, filesystems):
     )
 
     for fs in filesystems:
+        print(end="\t- ")
         path = USER_FS_PATH % (username, "Creative" if fs[0] else "Survival", fs[1])
         if fs[0]:
             fs_path = creative_path + ('/opencomputers/%s' % fs[1])
@@ -72,7 +74,6 @@ def mount_filesystems(config, username, filesystems):
             fs_path = survival_path + ('/opencomputers/%s' % fs[1])
         if path in mount_info:
             print(fs[1], 'is already mounted')
-            continue
         if not os.path.exists(path):
             os.mkdir(path)
             shutil.chown(path, username, username)
@@ -84,15 +85,51 @@ def mount_filesystems(config, username, filesystems):
             print("Failed to mount fs %s for user: %s" % (fs[1], username))
 
 
-def main():
+def unmount_filesystems(config, username, filesystems):
+    print(username + ":")
+    mount_info = retrieve_mount_info()
+    survival_path = os.path.join(
+        config['root']['MINECRAFT_SURVIVAL_ROOT'],
+        config['root']['MINECRAFT_SURVIVAL_WORLD']
+    )
+    creative_path = os.path.join(
+        config['root']['MINECRAFT_CREATIVE_ROOT'],
+        config['root']['MINECRAFT_CREATIVE_WORLD']
+    )
+
+    for fs in filesystems:
+        print(end="\t- ")
+        path = USER_FS_PATH % (username, "Creative" if fs[0] else "Survival", fs[1])
+        if fs[0]:
+            fs_path = creative_path + ('/opencomputers/%s' % fs[1])
+        else:
+            fs_path = survival_path + ('/opencomputers/%s' % fs[1])
+        if path not in mount_info:
+            print(fs[1], 'is already unmounted')
+        try:
+            print('Unmounting', fs[1])
+            params = ('umount', path)
+            subprocess.run(params, timeout=5)
+        except subprocess.TimeoutExpired:
+            print("Failed to unmount fs %s for user: %s" % (fs[1], username))
+
+
+def main(argv):
     config = load_config()
     db = db_login(config)
     users = fetch_active_users(db)
-    for user in users:
-        filesystems = fetch_filesystems(db, user[0])
-        mount_filesystems(config, user[1], filesystems)
+    if len(argv) > 1 and argv[1] == "--unmount":
+        print("Unmounting filesystems...")
+        for user in users:
+            filesystems = fetch_filesystems(db, user[0])
+            unmount_filesystems(config, user[1], filesystems)
+    else:
+        print("Mounting filesystems...")
+        for user in users:
+            filesystems = fetch_filesystems(db, user[0])
+            mount_filesystems(config, user[1], filesystems)
     print("Successfully mounted filesystems!")
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv)

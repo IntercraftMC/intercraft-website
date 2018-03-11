@@ -9,7 +9,7 @@ use App\Models\User;
 class VerifyAuthPassword
 {
     /**
-     * Handle an incoming request.
+     * Verify that the user is logged in, and provided his/her password for extra security
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next
