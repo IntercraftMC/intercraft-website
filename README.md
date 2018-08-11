@@ -4,7 +4,7 @@ This is the official website for the InterCraft Minecraft server.
 
 ## Development
 
-This is a quick guide to get you started developing the website on your local machine.
+This is a quick guide to get you started developing the website on your local machine. The website is powered by the Laravel Framework which you can checkout here: https://laravel.com/docs/5.6
 
 ### Dependencies
 
