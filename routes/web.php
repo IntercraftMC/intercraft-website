@@ -11,26 +11,27 @@
 |
 */
 
-Route::get('/',                   'HomeController@index')->name('home');
-Route::get('/about',              'AboutController@index')->name('about');
-Route::get('/blog',               'BlogController@index')->name('blog');
-Route::get('/blog/{slug}',        'BlogController@entry')->name('blog_entry');
-Route::get('/gallery',            'GalleryController@index')->name('gallery');
-Route::get('/members',            'MemberController@index')->name('members');
-Route::get('/members/{username}', 'MemberController@member')->name('members_member');
-Route::get('/map',                'MapController@index')->name('map');
-Route::get('/join',               'JoinController@index')->name('join');
+Route::get('/', function () {
+    return view('test', ["title" => "title.home"]);
+})->name("home");
 
-Route::post('/join',     'JoinController@store');
+Route::get('/about', function () {
+    return view('test', ["title" => "title.about"]);
+})->name("about");
 
-Route::middleware(['App\Http\Middleware\Registration'])->group(function() {
-	Route::get('/register', 'RegistrationController@index')->name('register');
-	Route::post('/register', 'RegistrationController@post');
-});
+Route::get('/blog', function () {
+    return view('test', ["title" => "title.blog"]);
+})->name("blog");
 
-Route::get('/test', function() {
-	return view('mail.register', [
-		'username' => "TestUsername",
-		"token" => "thisisatoken12345"
-	]);
-});
+Route::get('/gallery', function () {
+    return view('test', ["title" => "title.gallery"]);
+})->name("gallery");
+
+Route::get('/members', function () {
+    return view('test', ["title" => "title.members"]);
+})->name("members");
+
+Route::get('/map', function () {
+    return view('test', ["title" => "title.map"]);
+})->name("map");
+

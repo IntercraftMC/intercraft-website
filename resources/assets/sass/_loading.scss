@@ -1,0 +1,105 @@
+$width: 512px;
+$height: 512px;
+
+$duration: 0.6s;
+
+$len-rect: 215px / 512px * 100%;
+$len-rect-long: 430px / 512px * 100%;
+
+@mixin circle-origin ($index) {
+    transform-origin:
+        (256 + 215*cos(-30deg + ($index - 1)*60deg)) / 512 * 100%
+        (256 + 215*sin(30deg - ($index - 1)*60deg)) / 512 * 100%;
+}
+
+@keyframes loading-circles {
+    #{50%, 100%} {
+        transform: scaleX(-1) rotate(-60deg);
+    }
+}
+
+@keyframes loading-edges {
+    #{50%, 100%} {
+        transform: scaleX(-1) rotate(-60deg);
+    }
+}
+
+@for $i from 1 through 3 {
+    @keyframes loading-edge-long-#{$i} {
+        #{0%, $i / 10 * 100% + 10%} {
+            height: 0;
+        }
+        #{$i / 10 * 100% + 30%, 100%} {
+            height: $len-rect-long;
+        }
+    }
+    .loading-logo {
+        .logo-edge-long-#{$i} {
+            animation: loading-edge-long-#{$i} $duration linear 0s infinite alternate-reverse none paused;
+        }
+    }
+}
+
+@for $i from 1 through 6 {
+    @keyframes loading-edge-#{$i} {
+        #{0%, $i / 10 * 100% + 10%} {
+            height: 0;
+        }
+        #{$i / 10 * 100% + 20%, 100%} {
+            height: $len-rect;
+        }
+    }
+    @keyframes loading-circle-#{$i} {
+        #{0%, $i / 10 * 100%} {
+            transform: scale(0);
+        }
+        #{$i / 10 * 100% + 20%, 100%} {
+            transform: scale(1);
+        }
+    }
+    .loading-logo {
+        .logo-edge-#{$i} {
+            animation: loading-edge-#{$i} $duration linear 0s infinite alternate-reverse none paused;
+        }
+        .logo-circle-#{$i} {
+            @include circle-origin($i);
+            animation: loading-circle-#{$i} $duration linear $duration / 40 infinite alternate-reverse none paused;
+        }
+    }
+}
+
+.loading-logo {
+    width: 64px;
+    height: auto;
+
+    rect {
+        height: 0;
+    }
+
+    &.active {
+        rect, circle {
+            animation-play-state: running !important;
+        }
+        .logo-edges {
+            animation: loading-edges $duration * 2 infinite reverse;
+            animation-timing-function: step-end;
+            transform-origin: center center;
+            animation-play-state: running !important;
+        }
+
+        .logo-circles {
+            animation: loading-circles $duration * 2 infinite reverse;
+            animation-timing-function: step-end;
+            transform-origin: center center;
+            animation-play-state: running !important;
+        }
+    }
+
+    &.loading-logo-lg {
+        width: 128px;
+    }
+
+    &.loading-logo-nav {
+        width: 40px;
+    }
+}

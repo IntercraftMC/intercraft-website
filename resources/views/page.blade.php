@@ -1,0 +1,1 @@
+<examplecomponent></examplecomponent>

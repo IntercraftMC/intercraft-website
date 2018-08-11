@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Validator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,8 +13,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Validator::extend('linux_user', 'App\Rules\UniqueLinuxUserRule');
-        Validator::extend('lowercase', 'App\Rules\LowercaseRule');
+        \Blade::directive('svg', function ($arguments) {
+            return "<?php echo \App\Support\SvgLoader::load($arguments); ?>";
+        });
+
     }
 
     /**

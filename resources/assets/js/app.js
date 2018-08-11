@@ -7,24 +7,29 @@
 
 require('./bootstrap');
 
-var particlesEnabled = false;
+window.Vue = require('vue');
 
-window.resizeParticles = function() {
-	if (!resizeParticles)
-		return;
+/**
+ * Next, we will create a fresh Vue application instance and attach it to
+ * the page. Then, you may begin adding components to this application
+ * or customize the JavaScript scaffolding to fit your unique needs.
+ */
 
-	var particles = $('#particles-features');
-	particles.height($('#section-features').outerHeight());
+ require('./loading');
 
-};
+Vue.component('examplecomponent', require('./components/ExampleComponent.vue'));
 
-$(window).resize(function(event) {
-	resizeParticles();
+const app = new Vue({
+    el: '#app'
 });
 
-window.initParticles = function() {
-	particlesEnabled = true;
-	resizeParticles();
-	particlesJS.load('particles-header', '/config/particles_header.json');
-	particlesJS.load('particles-features', '/config/particles.json');
-};
+Pace.on("start", function () {
+    console.log("Started");
+    loading.activate(".loading-logo");
+});
+Pace.on("done", function () {
+    console.log("Done");
+    loading.deactivate(".loading-logo");
+});
+
+Pace.start();

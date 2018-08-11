@@ -1,7 +1,5 @@
 <?php
 
-error_reporting(E_ALL | E_STRICT);
-
 /**
  * Laravel - A PHP Framework For Web Artisans
  *

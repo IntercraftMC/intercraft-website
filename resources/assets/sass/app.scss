@@ -1,75 +1,24 @@
 
-// Variables
-@import "variables";
-
 // Fonts
-@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
-@import "~font-awesome/scss/font-awesome";
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+// Variables
+@import 'variables';
 
 // Bootstrap
-@import "~bootstrap/scss/bootstrap";
+@import '~bootstrap/scss/bootstrap';
 
-// // lightgallery.js
-@import "~lightgallery/src/sass/lightgallery";
+// Pace
+@import 'pace';
 
-// InterCraft app styles
-@import "values";
-@import "blog";
-@import "features";
-@import "footer";
-@import "gallery";
-@import "header";
-@import "join";
-@import "member";
-@import "members";
-@import "navbar";
+// Math
+@import 'math';
 
-html, body {
-	height: 100%;
-	margin: 0;
-	padding: 0;
-	width: 100%;
-	overflow-x: hidden; // Prevent x scroll on narrow devices
-}
+// Other
+@import 'navbar';
+@import 'loading';
 
-body {
-	display: flex;
-	flex-direction: column;
-}
-
-.page {
-	flex: 1 0 auto;
-}
-
-section {
-	position: relative;
-	padding: $section-padding;
-	margin-top: $section-spacing;
-	height: auto;
-	z-index: 999;
-
-	&:last-of-type {
-		margin-bottom: $section-spacing;
-	}
-}
-
-section .container {
-	position: relative;
-}
-
-section .heading {
-	margin-bottom: $section-heading-margin;
-	font-weight: $section-heading-weight;
-}
-
-section .header {
-	margin-bottom: $section-heading-margin;
-}
-
-.pointer {
-	cursor: pointer !important;
-}
-
-.pointer * {
-	cursor: pointer !important;
+.navbar-laravel {
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }

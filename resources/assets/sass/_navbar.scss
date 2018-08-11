@@ -1,5 +1,3 @@
-@import 'values';
-
 nav {
 	background: $nav-bg;
 	transition: $nav-transition;
@@ -21,7 +19,7 @@ nav .nav-item .nav-link {
 
 }
 
-nav .active {
+nav .nav-item.active {
 	border-bottom: $nav-link-active-border;
 }
 
@@ -44,10 +42,6 @@ nav.navbar-absolute {
 
 	nav.navbar-home .navbar-brand {
 		font-size: $nav-brand-text-size;
-	}
-
-	nav.navbar-home .navbar-brand img {
-		height: $nav-icon-large;
 	}
 
 	nav.navbar-home .nav-item {

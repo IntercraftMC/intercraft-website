@@ -1,5 +1,6 @@
 
 window._ = require('lodash');
+window.Popper = require('popper.js').default;
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -8,23 +9,10 @@ window._ = require('lodash');
  */
 
 try {
-    $ = window.$ = window.jQuery = require('jquery');
+    window.$ = window.jQuery = require('jquery');
 
-    window.Tether = require('tether');
-    window.Bootstrap = require('bootstrap');
-    window.LightGallery = require("lightgallery");
-    window.LightGalleryAp = require("lg-autoplay");
-    window.LightGalleryFs = require("lg-fullscreen");
-    window.LightGalleryHash = require("lg-hash");
-    window.LightGalleryPager = require("lg-pager");
-    window.LightGalleryShare = require("lg-share");
-    window.LightGalleryThumbnail = require("lg-thumbnail");
-    window.LightGalleryZoom = require("lg-zoom");
-    window.Particles = require('particles.js');
-    window.Vide = require('vide');
-} catch (e) {
-	console.error("Error", e);
-}
+    require('bootstrap');
+} catch (e) {}
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
@@ -50,6 +38,8 @@ if (token) {
     console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
+require('pace-js');
+
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
@@ -62,5 +52,7 @@ if (token) {
 
 // window.Echo = new Echo({
 //     broadcaster: 'pusher',
-//     key: 'your-pusher-key'
+//     key: process.env.MIX_PUSHER_APP_KEY,
+//     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+//     encrypted: true
 // });
