@@ -18841,21 +18841,21 @@ var nav = new Vue({
     el: 'nav'
 });
 
-Pace.on("start", function () {
-    console.log("Started");
-    loading.activate(".loading-logo");
-});
-Pace.on("done", function () {
-    console.log("Done");
-    loading.deactivate(".loading-logo");
-});
-Pace.start();
+var onBeforeLoad = function onBeforeLoad() {
+    loading.activate($("#loading-logo"));
+};
+
+var onLoad = function onLoad() {
+    loading.deactivate($("#loading-logo"));
+};
 
 /**
  * Render the web page on load
  */
 $(document).ready(function () {
     navigate.init();
+    navigate.event.on("beforeload", onBeforeLoad);
+    navigate.event.on("load", onLoad);
     page.render();
 });
 
@@ -54285,20 +54285,15 @@ var finished = function finished(e) {
     }
 };
 
-/**
- * Reset the loading animation
- */
-var reset = function reset() {};
-
 window.loading = {
 
     /**
      * Activate a loading animation
      */
-    activate: function activate(selector) {
-        if ($(selector).hasClass("active")) return false;
-        $(selector).addClass("active").find(".logo-circles").on("animationiteration", finished);
-        tracker[$(selector)[0]] = true;
+    activate: function activate(elem) {
+        if (tracker[elem[0]]) return false;
+        elem.addClass("active").find(".logo-circles").on("animationiteration", finished);
+        tracker[elem[0]] = true;
         return true;
     },
 
@@ -54306,16 +54301,17 @@ window.loading = {
     /**
      * Deactivate a loading animation
      */
-    deactivate: function deactivate(selector) {
-        tracker[$(selector)[0]] = false;
+    deactivate: function deactivate(elem) {
+        console.log("Deactivating...");
+        tracker[elem[0]] = false;
     },
 
 
     /**
      * Play a single iteration of a loading animation
      */
-    once: function once(selector) {
-        if (this.activate(selector)) this.deactivate(selector);
+    once: function once(elem) {
+        if (this.activate(elem)) this.deactivate(elem);
     }
 };
 
@@ -54451,7 +54447,9 @@ module.exports = function normalizeComponent (
 
 /***/ }),
 /* 82 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+var EventEmitter = __webpack_require__(10);
 
 /**
  * HTTP status codes
@@ -54527,9 +54525,14 @@ var HTTP_STATUS = {
 var EXP = new RegExp(location.host);
 
 /**
+ * The event emitter
+ */
+var eventEmitter = new EventEmitter();
+
+/**
  * Ajax information
  */
-var cancel = axios;
+var cancel = null;
 var isLoading = false;
 
 /**
@@ -54576,13 +54579,14 @@ var requestPage = function requestPage(url) {
     if (isLoading) {
         return;
     }
-    console.log("Requesting page...");
     isLoading = true;
     pageInfo.url = url;
+    eventEmitter.emit("beforeload");
     axios.get(url, AXIOS_CONFIG).then(function (response) {
         onAjaxLoad(response, url, pushState);
     }).catch(onAjaxError).then(function () {
         isLoading = false;
+        eventEmitter.emit("load");
     });
 };
 
@@ -54629,6 +54633,11 @@ var onPopState = function onPopState(event) {
 window.navigate = {
 
     /**
+     * Store the event emitter
+     */
+    event: eventEmitter,
+
+    /**
      * Initialize the navigation system
      */
     init: function init() {
@@ -54642,7 +54651,7 @@ window.navigate = {
      * Cancel the current navigation attempt
      */
     abort: function abort() {
-        cancel();
+        if (cancel) cancel();
     },
 
 
@@ -54673,6 +54682,11 @@ var createVue = function createVue() {
 window.page = {
 
     /**
+     * The amount of delay for transitions in miliseconds
+     */
+    TRANSITION_DELAY: 100,
+
+    /**
      * The Vue app instance
      */
     app: null,
@@ -54691,7 +54705,7 @@ window.page = {
      */
     set: function set(title, content) {
         document.title = title;
-        $("#body").fadeOut(100, function () {
+        $("#body").fadeOut(page.TRANSITION_DELAY, function () {
             $(this).html(content).show();
             page.render();
         });
@@ -54708,7 +54722,7 @@ window.page = {
 
             setTimeout(function () {
                 $(_this).addClass("visible");
-            }, i * 100);
+            }, i * page.TRANSITION_DELAY);
         });
     }
 };

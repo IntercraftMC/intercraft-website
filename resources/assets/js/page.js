@@ -13,6 +13,11 @@ var createVue = function () {
 window.page = {
 
     /**
+     * The amount of delay for transitions in miliseconds
+     */
+    TRANSITION_DELAY: 100,
+
+    /**
      * The Vue app instance
      */
     app: null,
@@ -30,7 +35,7 @@ window.page = {
      */
     set (title, content) {
         document.title = title;
-        $("#body").fadeOut(100, function () {
+        $("#body").fadeOut(page.TRANSITION_DELAY, function () {
             $(this).html(content).show();
             page.render();
         });
@@ -44,7 +49,7 @@ window.page = {
         $("#body").find("header:not(.visible),section:not(.visible)").each(function (i) {
             setTimeout(() => {
                 $(this).addClass("visible");
-            }, i * 100);
+            }, i * page.TRANSITION_DELAY);
         });
     }
 };

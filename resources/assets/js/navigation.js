@@ -1,3 +1,5 @@
+const EventEmitter = require("events");
+
 /**
  * HTTP status codes
  */
@@ -72,9 +74,14 @@ const HTTP_STATUS = {
 const EXP = new RegExp(location.host);
 
 /**
+ * The event emitter
+ */
+var eventEmitter = new EventEmitter();
+
+/**
  * Ajax information
  */
-var cancel    = axios;
+var cancel    = null;
 var isLoading = false;
 
 /**
@@ -119,13 +126,16 @@ var requestPage = function (url, pushState = false) {
     if (isLoading) {
         return;
     }
-    console.log("Requesting page...");
-    isLoading = true;
+    isLoading    = true;
     pageInfo.url = url;
+    eventEmitter.emit("beforeload");
     axios.get(url, AXIOS_CONFIG)
         .then((response) => { onAjaxLoad(response, url, pushState); })
         .catch(onAjaxError)
-        .then(() => { isLoading = false; });
+        .then(() => {
+            isLoading = false;
+            eventEmitter.emit("load");
+        });
 };
 
 /**
@@ -133,7 +143,7 @@ var requestPage = function (url, pushState = false) {
  */
 var onAjaxError = function (err) {
     console.error("The error is", err, {
-        request: err.request,
+        request : err.request,
         response: err.response
     });
 };
@@ -171,6 +181,11 @@ var onPopState = function (event) {
 window.navigate = {
 
     /**
+     * Store the event emitter
+     */
+    event: eventEmitter,
+
+    /**
      * Initialize the navigation system
      */
     init () {
@@ -183,7 +198,8 @@ window.navigate = {
      * Cancel the current navigation attempt
      */
     abort () {
-        cancel();
+        if (cancel)
+            cancel();
     },
 
     /**

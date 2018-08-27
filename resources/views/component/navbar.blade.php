@@ -2,10 +2,9 @@
     <div class="container-fluid">
         <div class="navbar-brand">
             <a href="#">
-                <loading-logo class="loading-logo-nav"></loading-logo>
+                <loading-logo class="loading-logo-nav" id="loading-logo"></loading-logo>
                 <span>INTERCRAFT</span>
-            </a><!--
-        --><div class="navbar-brand-angle"></div>
+            </a>
         </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_content" aria-controls="navbar_content" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>

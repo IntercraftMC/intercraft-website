@@ -25,20 +25,20 @@ const nav = new Vue({
     el: 'nav'
 });
 
-Pace.on("start", function () {
-    console.log("Started");
-    loading.activate(".loading-logo");
-});
-Pace.on("done", function () {
-    console.log("Done");
-    loading.deactivate(".loading-logo");
-});
-Pace.start();
+var onBeforeLoad = function () {
+    loading.activate($("#loading-logo"));
+};
+
+var onLoad = function () {
+    loading.deactivate($("#loading-logo"));
+};
 
 /**
  * Render the web page on load
  */
 $(document).ready(function () {
     navigate.init();
+    navigate.event.on("beforeload", onBeforeLoad);
+    navigate.event.on("load", onLoad);
     page.render();
 });
