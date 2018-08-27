@@ -15,12 +15,14 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+ require('./components');
  require('./loading');
+ require('./navbar');
+ require('./navigation');
+ require('./page');
 
-Vue.component('examplecomponent', require('./components/ExampleComponent.vue'));
-
-const app = new Vue({
-    el: '#app'
+const nav = new Vue({
+    el: 'nav'
 });
 
 Pace.on("start", function () {
@@ -31,5 +33,12 @@ Pace.on("done", function () {
     console.log("Done");
     loading.deactivate(".loading-logo");
 });
-
 Pace.start();
+
+/**
+ * Render the web page on load
+ */
+$(document).ready(function () {
+    navigate.init();
+    page.render();
+});

@@ -11,27 +11,10 @@
 |
 */
 
-Route::get('/', function () {
-    return view('test', ["title" => "title.home"]);
-})->name("home");
-
-Route::get('/about', function () {
-    return view('test', ["title" => "title.about"]);
-})->name("about");
-
-Route::get('/blog', function () {
-    return view('test', ["title" => "title.blog"]);
-})->name("blog");
-
-Route::get('/gallery', function () {
-    return view('test', ["title" => "title.gallery"]);
-})->name("gallery");
-
-Route::get('/members', function () {
-    return view('test', ["title" => "title.members"]);
-})->name("members");
-
-Route::get('/map', function () {
-    return view('test', ["title" => "title.map"]);
-})->name("map");
-
+Route::get('/',        "HomeController@index")->name("home");
+Route::get('/index',   "HomeController@index");
+Route::get('/about',   "AboutController@index")->name("about");
+Route::get('/blog',    "BlogController@index")->name("blog");
+Route::get('/gallery', "GalleryController@index")->name("gallery");
+Route::get('/members', "MembersController@index")->name("members");
+Route::get('/map',     "MapController@index")->name("map");

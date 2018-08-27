@@ -1,13 +1,9 @@
-// Viewport
-$viewport-width-large: 992px;
-$viewport-width-xs: 576px;
-$viewport-width-tiny: 328px;
-
 // Body
 $body-bg: #f8fafc;
 
 // Typography
-$font-family-sans-serif: "Helvetica Nueue", sans-serif;
+// $font-family-sans-serif: "Helvetica Nueue", sans-serif;
+$font-family-sans-serif: "Nunito", sans-serif;
 $font-size-base: 0.9rem;
 $line-height-base: 1.6;
 
@@ -24,13 +20,17 @@ $teal: #4dc0b5;
 $cyan: #6cb2eb;
 
 // Navbar
-$nav-bg: #111;
+$nav-bg: #fff;
 $nav-bg-large: transparent;
-$nav-brand-text-size: 25px;
-$nav-icon: 30px;
-$nav-icon-large: 40px;
-$nav-link-text-size: 1.1em;
-$nav-link-margin: 0 10px;
-$nav-link-margin-normal: 0 5px;
+$nav-brand-font-size: 25px;
+$nav-icon: 40px;
+$nav-icon-lg: 50px;
+$nav-link-font-size: 1.1em;
+$nav-link-font-weight: 500;
+$nav-link-margin: 0 15px;
+$nav-link-margin-normal: 0 8px;
 $nav-link-active-border: 2px solid white;
 $nav-transition: background 0.3s ease-in-out;
+
+// Animation
+$section-fade-duration: 0.1s;

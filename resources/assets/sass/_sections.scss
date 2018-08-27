@@ -1,0 +1,14 @@
+header, section {
+    margin-top: 50px;
+    transition: margin-top $section-fade-duration ease-out,
+                opacity $section-fade-duration ease-out;
+    // transition-property: margin-top, opacity;
+    // transition-duration: 0.1s;
+    // transition-timing-function
+    opacity: 0;
+}
+
+.visible {
+    margin-top: 0 !important;
+    opacity: 100;
+}

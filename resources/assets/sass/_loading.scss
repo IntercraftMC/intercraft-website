@@ -74,6 +74,10 @@ $len-rect-long: 430px / 512px * 100%;
 
     rect {
         height: 0;
+        fill: #fff;
+    }
+    circle {
+        fill: #fff;
     }
 
     &.active {

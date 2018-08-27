@@ -13,15 +13,10 @@
     </head>
     <body>
         {{-- Main content --}}
-        <header>
-            @yield("header")
-        </header>
-        <div class="container-fluid">
+        @stack("prebody")
+        <div id="body">
             @yield("body")
         </div>
-        <footer>
-            @yield("footer")
-        </footer>
 
         {{-- Scripts --}}
         <script src="/js/app.js"></script>

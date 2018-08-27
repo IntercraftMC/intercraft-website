@@ -1,51 +1,80 @@
-nav {
-	background: $nav-bg;
-	transition: $nav-transition;
-}
+nav.navbar {
+    transition: $nav-transition;
+    padding: 0;
+    &.navbar-color {
+        background: $nav-bg;
+    }
+    &.navbar-absolute {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 999;
+    }
+    .container-fluid {
+        padding-left: 0;
+    }
+    .navbar-brand {
+        background: #1d88f4;
+        color: white;
+        box-sizing: border-box;
+        margin-right: 0;
+        padding: 0;
+        position: relative;
+        a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.3rem;
+            padding-top: -20px;
+            vertical-align: top;
+            svg {
+                vertical-align: top;
+            }
+            span {
+                display: inline-block;
+                padding-top: 10px;
+                vertical-align: top;
+            }
+        }
+        .loading-logo {
+            height: $nav-icon;
+            margin-right: 5px;
+        }
+        .navbar-brand-angle {
+            display: inline-block;
+            border-top: 50px solid #1d88f4;
+            border-right: 10px solid transparent;
+            vertical-align: bottom;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: -10px;
+        }
+    }
+    .nav-item {
+        margin: $nav-link-margin-normal;
+    }
+    .nav-item .nav-link {
+        font-size: $nav-link-font-size;
+        font-weight: $nav-link-font-weight;
+    }
+    .nav-item.active {
+        border-bottom: $nav-link-active-border;
+    }
 
-nav.navbar-color {
-	background: $nav-bg;
-}
+    @include media-breakpoint-up (lg) {
+        & .navbar-brand {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+    }
 
-nav .navbar-brand img {
-	height: $nav-icon;
-}
-
-nav .nav-item {
-	margin: $nav-link-margin-normal;
-}
-
-nav .nav-item .nav-link {
-
-}
-
-nav .nav-item.active {
-	border-bottom: $nav-link-active-border;
-}
-
-nav.navbar-absolute {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	z-index: 999;
-}
-
-@media all and (min-width: $viewport-width-large) {
-	nav {
-		background: $nav-bg-large;
-	}
-
-	nav.navbar-home {
-		background: transparent;
-	}
-
-	nav.navbar-home .navbar-brand {
-		font-size: $nav-brand-text-size;
-	}
-
-	nav.navbar-home .nav-item {
-		font-size: $nav-link-text-size !important;
-		margin: $nav-link-margin !important;
-	}
+    &.navbar-lg {
+        .navbar-brand .loading-logo {
+            height: $nav-icon-lg;
+        }
+        // .navbar-brand-angle {
+        //     border-top-width: 60px;
+        // }
+    }
 }

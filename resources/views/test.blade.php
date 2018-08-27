@@ -1,9 +1,9 @@
 @extends("base.master")
 
+@include("component.navbar")
 @section("header")
-    @include("component.navbar")
 @endsection
 
 @section("body")
-
+    Testing
 @endsection
