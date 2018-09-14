@@ -109,8 +109,6 @@ var initLinkListeners = function () {
         if (EXP.test($(this).attr("href"))) {
             onLinkClick(this);
             event.preventDefault();
-        } else {
-            alert("It's external");
         }
     });
 };

@@ -16,7 +16,9 @@ class AppServiceProvider extends ServiceProvider
         \Blade::directive('svg', function ($arguments) {
             return "<?php echo \App\Support\SvgLoader::load($arguments); ?>";
         });
-
+        \Blade::directive('heading', function ($arguments) {
+            return '<div class="row section-heading"><div class="col-12 text-center"><h2>Join Our Discord</h2></div></div>';
+        });
     }
 
     /**

@@ -8,6 +8,27 @@ header, section {
     opacity: 0;
 }
 
+section {
+    padding-top: 60px;
+    .section-heading {
+        margin-bottom: 40px;
+        color: rgb(51, 51, 51);
+        text-transform: uppercase;
+    }
+
+    @include media-breakpoint-down (md) {
+        div.col-md-6 {
+            margin-bottom: 40px !important;
+        }
+    }
+}
+
+.section-dark {
+    background: #36393f;
+    padding-bottom: 60px;
+    color: white !important;
+}
+
 .visible {
     margin-top: 0 !important;
     opacity: 100;

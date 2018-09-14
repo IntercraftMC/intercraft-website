@@ -1,0 +1,20 @@
+.btn {
+    border-radius: 0 !important;
+}
+
+.btn-round {
+    &.btn-lg {
+        @include rounding(45px);
+    }
+    &.btn-billboard {
+        @include rounding(51.38px);
+    }
+}
+
+.btn-discord {
+    background: $discord;
+    color: white !important;
+    &:hover {
+        background: darken($discord, 5%);
+    }
+}

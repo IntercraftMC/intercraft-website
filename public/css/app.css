@@ -10471,6 +10471,34 @@ a.text-dark:focus {
   }
 }
 
+.btn {
+  border-radius: 0 !important;
+}
+
+.btn-round.btn-lg,
+.btn-group-lg > .btn-round.btn {
+  border-top-left-radius: 22.5px !important;
+  border-bottom-left-radius: 22.5px !important;
+  border-top-right-radius: 22.5px !important;
+  border-bottom-right-radius: 22.5px !important;
+}
+
+.btn-round.btn-billboard {
+  border-top-left-radius: 25.69px !important;
+  border-bottom-left-radius: 25.69px !important;
+  border-top-right-radius: 25.69px !important;
+  border-bottom-right-radius: 25.69px !important;
+}
+
+.btn-discord {
+  background: #7289da;
+  color: white !important;
+}
+
+.btn-discord:hover {
+  background: #5e78d5;
+}
+
 header {
   color: white;
   position: relative;
@@ -10505,6 +10533,32 @@ header.video-header .video-overlay h1 {
 header.video-header .video-overlay p.header-motto {
   text-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
   font-size: 1.6rem;
+}
+
+.billboard {
+  height: auto;
+  width: 100%;
+  -webkit-box-shadow: 0 20px 70px rgba(0, 0, 0, 0.5);
+          box-shadow: 0 20px 70px rgba(0, 0, 0, 0.5);
+  -webkit-transition: -webkit-transform 0.2s ease-out, -webkit-box-shadow 0.2s ease-out;
+  transition: -webkit-transform 0.2s ease-out, -webkit-box-shadow 0.2s ease-out;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, -webkit-transform 0.2s ease-out, -webkit-box-shadow 0.2s ease-out;
+  -webkit-transform-origin: center center;
+          transform-origin: center center;
+}
+
+.billboard:hover {
+  -webkit-transform: scale(1.02);
+          transform: scale(1.02);
+  -webkit-box-shadow: 0 20px 70px rgba(0, 0, 0, 0.4);
+          box-shadow: 0 20px 70px rgba(0, 0, 0, 0.4);
+}
+
+.btn-billboard {
+  -webkit-box-shadow: 0 10px 40px rgba(20, 20, 20, 0.2);
+          box-shadow: 0 10px 40px rgba(20, 20, 20, 0.2);
+  padding: 0.7rem 1.2rem;
 }
 
 nav.navbar {
@@ -11051,6 +11105,12 @@ nav.navbar.navbar-lg .navbar-brand .loading-logo {
   width: 40px;
 }
 
+@media (max-width: 991.98px) {
+  .text-center-md {
+    text-align: center;
+  }
+}
+
 header,
 section {
   margin-top: 50px;
@@ -11059,14 +11119,34 @@ section {
   opacity: 0;
 }
 
+section {
+  padding-top: 60px;
+}
+
+section .section-heading {
+  margin-bottom: 40px;
+  color: #333333;
+  text-transform: uppercase;
+}
+
+@media (max-width: 991.98px) {
+  section div.col-md-6 {
+    margin-bottom: 40px !important;
+  }
+}
+
+.section-dark {
+  background: #36393f;
+  padding-bottom: 60px;
+  color: white !important;
+}
+
 .visible {
   margin-top: 0 !important;
   opacity: 100;
 }
 
-.navbar-laravel {
-  background-color: #fff;
-  -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+section:last-of-type {
+  margin-bottom: 100px;
 }
 

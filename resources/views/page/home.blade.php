@@ -1,4 +1,2 @@
 <header-video></header-video>
-<section>
-    Section
-</section>
+@include("section.discord")

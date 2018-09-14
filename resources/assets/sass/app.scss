@@ -7,19 +7,24 @@
 // Variables
 @import 'variables';
 
-// Bootstrap
-@import '~bootstrap/scss/bootstrap';
-
 // Math
 @import 'math';
 
+// Mixins
+@import 'mixins/mixins.scss';
+
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+@import 'buttons';
+
 // Other
 @import 'header';
+@import 'billboard.scss';
 @import 'navbar';
 @import 'loading';
+@import 'typography';
 @import 'sections';
 
-.navbar-laravel {
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+section:last-of-type {
+    margin-bottom: 100px;
 }
