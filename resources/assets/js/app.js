@@ -7,20 +7,12 @@
 
 require("./bootstrap");
 
-window.Vue = require("vue");
-
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
-
- require("./components");
- require("./loading");
- require("./navbar");
- require("./navigation");
- require("./page");
- require("./particles");
+require("./components");
+require("./loading");
+require("./navbar");
+require("./navigation");
+require("./page");
+require("./particles");
 
 const nav = new Vue({
     el: "nav"

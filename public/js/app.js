@@ -14004,14 +14004,6 @@ module.exports = __webpack_require__(53);
 
 __webpack_require__(14);
 
-window.Vue = __webpack_require__(39);
-
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
-
 __webpack_require__(42);
 __webpack_require__(48);
 __webpack_require__(49);
@@ -14060,6 +14052,13 @@ try {
 
   __webpack_require__(17);
 } catch (e) {}
+
+/**
+ * Next, we will create a fresh Vue application instance and attach it to
+ * the page. Then, you may begin adding components to this application
+ * or customize the JavaScript scaffolding to fit your unique needs.
+ */
+window.Vue = __webpack_require__(39);
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
