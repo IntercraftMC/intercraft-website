@@ -1,0 +1,33 @@
+header {
+    color: white;
+    position: relative;
+    z-index: 50;
+
+    &.video-header {
+        height: $header-video-height;
+        width: 100%;
+
+        #particles-header {
+            background: $header-video-overlay-color;
+            position: absolute;
+            width: 100%;
+            height: $header-video-height;
+            z-index: 300;
+        }
+        .video-overlay {
+            position: absolute;
+            width: 100%;
+            height: $header-video-height;
+            z-index: 300;
+
+            h1 {
+                text-shadow: $header-video-shadow-brand;
+                margin-bottom: 0;
+            }
+            p.header-motto {
+                text-shadow: $header-video-shadow-motto;
+                font-size: 1.6rem;
+            }
+        }
+    }
+}

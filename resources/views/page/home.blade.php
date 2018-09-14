@@ -1,8 +1,4 @@
-<header>
-    Here's the logo
-    <loading-logo></loading-logo>
-    {{ $test }}
-</header>
+<header-video></header-video>
 <section>
     Section
 </section>

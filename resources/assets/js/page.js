@@ -46,6 +46,7 @@ window.page = {
      */
     render () {
         createVue();
+        particles.render();
         $("#body").find("header:not(.visible),section:not(.visible)").each(function (i) {
             setTimeout(() => {
                 $(this).addClass("visible");

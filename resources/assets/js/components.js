@@ -1,9 +1,13 @@
-const COMPONENTS = [
-    "example_component",
-    "loading_logo"
-];
+Vue.component('loading-logo', require('./vue/LoadingLogo.vue'));
+Vue.component('header-video', require('./vue/HeaderVideo.vue'));
 
-// Load the components
-COMPONENTS.forEach((component) => {
-    require(`./components/${component}`);
-});
+// const COMPONENTS = [
+//     "example_component",
+//     "loading_logo",
+//     "video_header"
+// ];
+
+// // Load the components
+// COMPONENTS.forEach((component) => {
+//     require(`./components/${component}`);
+// });

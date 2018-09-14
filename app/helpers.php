@@ -7,12 +7,12 @@ function ajaxView (string $page, $title, $args = [])
 {
     if (Request::ajax()) {
         return response()->json([
-            "title" => $title,
+            "title" => __($title),
             "view"  => (string) view("page.$page", $args)
         ])->header("Vary", "X-Requested-With");
     }
     return view("main", [
-        "title" => $title,
+        "title" => __($title),
         "page"  => "page.$page",
         "vars"  => $args
     ]);

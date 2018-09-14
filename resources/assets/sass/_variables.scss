@@ -3,7 +3,8 @@ $body-bg: #f8fafc;
 
 // Typography
 // $font-family-sans-serif: "Helvetica Nueue", sans-serif;
-$font-family-sans-serif: "Nunito", sans-serif;
+// $font-family-sans-serif: "Nunito", sans-serif;
+$font-family-sans-serif: "IBM Plex Sans", sans-serif;
 $font-size-base: 0.9rem;
 $line-height-base: 1.6;
 
@@ -35,3 +36,9 @@ $nav-transition: background 0.3s ease-in-out;
 // Animation
 $section-fade-duration: 0.1s;
 $loading-duration: 0.4s;
+
+// Video Header
+$header-video-height: 70vh;
+$header-video-overlay-color: rgba(0, 0, 0, 0.4);
+$header-video-shadow-brand: 0 0 30px rgba(0, 0, 0, 0.8);
+$header-video-shadow-motto: 0 0 15px rgba(0, 0, 0, 0.8);
