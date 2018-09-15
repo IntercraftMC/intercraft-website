@@ -35,5 +35,6 @@ $(document).ready(function () {
     navigate.init();
     navigate.event.on("beforeload", onBeforeLoad);
     navigate.event.on("load", onLoad);
-    page.renderInitial();
+    navigate.event.on("scroll", page.render);
+    page.init();
 });
