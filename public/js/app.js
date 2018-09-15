@@ -14004,6 +14004,7 @@ module.exports = __webpack_require__(53);
 
 __webpack_require__(14);
 
+__webpack_require__(64);
 __webpack_require__(50);
 
 __webpack_require__(42);
@@ -14012,8 +14013,8 @@ __webpack_require__(49);
 __webpack_require__(52);
 __webpack_require__(58);
 
-var nav = new Vue({
-    el: "nav"
+var prebody = new Vue({
+    el: "#prebody"
 });
 
 var onBeforeLoad = function onBeforeLoad() {
@@ -14031,7 +14032,7 @@ $(document).ready(function () {
     navigate.init();
     navigate.event.on("beforeload", onBeforeLoad);
     navigate.event.on("load", onLoad);
-    page.render();
+    page.renderInitial();
 });
 
 /***/ }),
@@ -49717,16 +49718,86 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            queue: new EventQueue()
+        };
+    },
+
+    methods: {
+        /**
+         * Cancel the current transition
+         */
+        __cancel: function __cancel() {
+            this.queue.clear();
+            $(this.$el).find("h1, p").stop().clearQueue();
+            $(this.$el).find("video").parent().stop().clearQueue();
+        },
+        __setText: function __setText(title, lead) {
+            var _this = this;
+
+            var elems = $(this.$el).find("h1, p");
+            elems.addClass("text-invisible");
+            this.queue.do(function (queue) {
+                _this.title = title;
+                _this.lead = lead;
+                elems.each(function (index) {
+                    var _this2 = this;
+
+                    queue.do(function () {
+                        $(_this2).removeClass("text-invisible");
+                    }, index * 300);
+                });
+            }, 1000);
+        },
+        __setVideo: function __setVideo(video) {
+            var _this3 = this;
+
+            $(this.$el).find("video").parent().fadeOut(500);
+            this.queue.do(function (queue) {
+                $(_this3.$el).vide(video, {
+                    loop: true,
+                    muted: true,
+                    position: "50% 50%",
+                    posterType: "png",
+                    resizing: true
+                }).find("video").parent().hide();
+                queue.do(function () {
+                    $(_this3.$el).find("video").parent().fadeIn(500);
+                }, 800);
+            }, 300);
+        },
+        setHeader: function setHeader(video, title, lead) {
+            this.__cancel();
+            this.__setVideo(video);
+            this.__setText(title, lead);
+        }
+    },
     mounted: function mounted() {
-        $(this.$el).vide("/video/header", {
-            loop: true,
-            muted: true,
-            position: "50% 50%",
-            posterType: "png",
-            resizing: true
-        });
+        this.__cancel();
+        $(this.$el).find("#particles_header").fadeIn(3000);
+        this.setHeader(this.video, this.title, this.lead);
+    },
+
+    props: {
+        "title": {
+            "type": String,
+            "default": "Intercraft"
+        },
+        "lead": {
+            "type": String,
+            "default": "Minecraft 1.12 Survival Server"
+        },
+        "video": {
+            "type": String,
+            "default": "/video/header"
+        }
     }
 });
 
@@ -49738,34 +49809,49 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("header", { staticClass: "video-header" }, [
-      _c("div", { attrs: { id: "particles-header" } }),
+  return _c(
+    "header",
+    { staticClass: "video-header", attrs: { id: "video_header" } },
+    [
+      _c("div", {
+        staticStyle: { display: "none" },
+        attrs: { id: "particles_header" }
+      }),
       _vm._v(" "),
       _c("div", { staticClass: "video-overlay container-fluid" }, [
         _c("div", { staticClass: "row h-100" }, [
           _c("div", { staticClass: "col-md-12 my-auto text-center" }, [
-            _c("h1", { staticClass: "display-1 align-middle header-brand" }, [
-              _vm._v("INTERCRAFT")
-            ]),
+            _c(
+              "h1",
+              {
+                staticClass:
+                  "display-1 align-middle header-brand text-invisible"
+              },
+              [
+                _vm._v(
+                  "\n                    " +
+                    _vm._s(_vm.title) +
+                    "\n                "
+                )
+              ]
+            ),
             _vm._v(" "),
-            _c("p", { staticClass: "header-motto" }, [
-              _vm._v("Minecraft 1.12.2 Survival Server")
+            _c("p", { staticClass: "header-motto text-invisible" }, [
+              _vm._v(
+                "\n                    " +
+                  _vm._s(_vm.lead) +
+                  "\n                "
+              )
             ]),
             _vm._v(" "),
             _c("a", { staticClass: "pointer", attrs: { href: "" } })
           ])
         ])
       ])
-    ])
-  }
-]
+    ]
+  )
+}
+var staticRenderFns = []
 render._withStripped = true
 module.exports = { render: render, staticRenderFns: staticRenderFns }
 if (false) {
@@ -49841,13 +49927,13 @@ var TOP_MARGIN = 100;
 /**
  * Keep track if we're at the top of the page
  */
-var top = false;
+var top = true;
 
 navigate.event.on("scroll", function (pos) {
   var isTop = pos < TOP_MARGIN;
   if (top != isTop) {
     top = isTop;
-    $("nav.navbar").toggleClass("nav-top", top).toggleClass("navbar-dark", top).toggleClass("navbar-light", !top);
+    $("nav.navbar").toggleClass("navbar-top", top).toggleClass("navbar-dark", top).toggleClass("navbar-light", !top).toggleClass("navbar-color", !top);
     console.log("Navbar changed state");
   }
 });
@@ -50439,14 +50525,22 @@ window.page = {
      */
     render: function render() {
         createVue();
-        particles.render();
-        $("#body").find("header:not(.visible),section:not(.visible)").each(function (i) {
+        $("#body").find("section:not(.visible)").each(function (i) {
             var _this = this;
 
             setTimeout(function () {
                 $(_this).addClass("visible");
             }, i * page.TRANSITION_DELAY);
         });
+    },
+
+
+    /**
+     * Initial rendering of the page
+     */
+    renderInitial: function renderInitial() {
+        particles.render();
+        $(".navbar").fadeIn(1000);
     }
 };
 
@@ -50471,9 +50565,11 @@ window.particles = {
      * Render the particles
      */
     render: function render() {
-        for (cls in CONFIG) {
-            if ($("#" + cls).length) {
-                particlesJS(cls, CONFIG[cls]);
+        console.log("Creating particles...");
+        for (id in CONFIG) {
+            if ($("#" + id).length) {
+                console.log("Activating particles...");
+                particlesJS(id, CONFIG[id]);
             }
         }
     }
@@ -50489,7 +50585,7 @@ window.particles = {
  * Format: <id>: require("config")
  */
 module.exports = {
-  "particles-header": __webpack_require__(60)
+  "particles_header": __webpack_require__(60)
 };
 
 /***/ }),
@@ -51036,6 +51132,82 @@ if (false) {
     require("vue-hot-reload-api")      .rerender("data-v-85c58062", module.exports)
   }
 }
+
+/***/ }),
+/* 63 */,
+/* 64 */
+/***/ (function(module, exports) {
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * This class controls events in a queue
+ */
+var EventQueue = function () {
+    function EventQueue() {
+        _classCallCheck(this, EventQueue);
+
+        this.__queue = new Set();
+    }
+
+    /**
+     * Perform an action after an amount of delay
+     */
+
+
+    _createClass(EventQueue, [{
+        key: "do",
+        value: function _do(action, delay) {
+            for (var _len = arguments.length, params = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+                params[_key - 2] = arguments[_key];
+            }
+
+            var _this = this;
+
+            var tid = 0;
+            var queue = this.__queue;
+            var done = function done() {
+                queue.delete(tid);
+            };
+            tid = setTimeout(function () {
+                action.apply(undefined, [_this].concat(params));
+                done();
+            }, delay);
+            this.__queue.add(tid);
+        }
+
+        /**
+         * Clear the current queue
+         */
+
+    }, {
+        key: "clear",
+        value: function clear() {
+            this.__queue.forEach(function (key) {
+                clearTimeout(key);
+            });
+            this.__queue.clear();
+        }
+
+        /**
+         * Number of items in the queue
+         */
+
+    }, {
+        key: "length",
+        value: function length() {
+            return this.__queue.size;
+        }
+    }]);
+
+    return EventQueue;
+}();
+
+;
+
+window.EventQueue = EventQueue;
 
 /***/ })
 /******/ ]);

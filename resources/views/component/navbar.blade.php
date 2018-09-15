@@ -1,4 +1,4 @@
-<nav class="navbar navbar-top navbar-expand-md navbar-light navbar-color">
+<nav class="navbar navbar-top navbar-expand-md navbar-dark" style="display: none;">
     <div class="container-fluid">
         <div class="navbar-brand">
             <a href="#">

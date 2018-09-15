@@ -46,11 +46,18 @@ window.page = {
      */
     render () {
         createVue();
-        particles.render();
-        $("#body").find("header:not(.visible),section:not(.visible)").each(function (i) {
+        $("#body").find("section:not(.visible)").each(function (i) {
             setTimeout(() => {
                 $(this).addClass("visible");
             }, i * page.TRANSITION_DELAY);
         });
+    },
+
+    /**
+     * Initial rendering of the page
+     */
+    renderInitial () {
+        particles.render();
+        $(".navbar").fadeIn(1000);
     }
 };

@@ -13,7 +13,9 @@
     </head>
     <body>
         {{-- Main content --}}
-        @stack("prebody")
+        <div id="prebody">
+            @stack("prebody")
+        </div>
         <div id="body">
             @yield("body")
         </div>

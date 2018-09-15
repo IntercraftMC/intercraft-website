@@ -8,6 +8,6 @@ class HomeController extends Controller
 {
     public function index ()
     {
-        return ajaxView("home", "title.home", ["test" => "thing"]);
+        return ajaxView("home", "title.home");
     }
 }

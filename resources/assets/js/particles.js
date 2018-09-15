@@ -5,9 +5,11 @@ window.particles = {
      * Render the particles
      */
     render () {
-        for (cls in CONFIG) {
-            if ($(`#${cls}`).length) {
-                particlesJS(cls, CONFIG[cls]);
+        console.log("Creating particles...");
+        for (id in CONFIG) {
+            if ($(`#${id}`).length) {
+                console.log("Activating particles...");
+                particlesJS(id, CONFIG[id]);
             }
         }
     }

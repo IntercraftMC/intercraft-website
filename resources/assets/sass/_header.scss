@@ -1,27 +1,37 @@
+#prebody {
+    background: black;
+    margin-top: 0;
+    box-sizing: border-box;
+    min-height: $header-video-height;
+}
 header {
     color: white;
     position: relative;
     z-index: 50;
 
     &.video-header {
-        height: $header-video-height;
+        min-height: $header-video-height;
         width: 100%;
 
-        #particles-header {
-            background: $header-video-overlay-color;
+        #particles_header {
             position: absolute;
             width: 100%;
             height: $header-video-height;
             z-index: 300;
         }
         .video-overlay {
+            background: $header-video-overlay-color;
             position: absolute;
             width: 100%;
             height: $header-video-height;
             z-index: 300;
 
+            h1, p {
+                transition: opacity 0.5s ease-in-out;
+            }
             h1 {
                 text-shadow: $header-video-shadow-brand;
+                text-transform: uppercase;
                 margin-bottom: 0;
             }
             p.header-motto {
@@ -29,5 +39,9 @@ header {
                 font-size: 1.6rem;
             }
         }
+    }
+
+    .text-invisible {
+        opacity: 0 !important;
     }
 }

@@ -7,6 +7,7 @@
 
 require("./bootstrap");
 
+require("./event_queue");
 require("./navigation");
 
 require("./components");
@@ -15,8 +16,8 @@ require("./navbar");
 require("./page");
 require("./particles");
 
-const nav = new Vue({
-    el: "nav"
+const prebody = new Vue({
+    el: "#prebody"
 });
 
 var onBeforeLoad = function () {
@@ -34,5 +35,5 @@ $(document).ready(function () {
     navigate.init();
     navigate.event.on("beforeload", onBeforeLoad);
     navigate.event.on("load", onLoad);
-    page.render();
+    page.renderInitial();
 });

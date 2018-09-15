@@ -4,5 +4,5 @@
  * Format: <id>: require("config")
  */
 module.exports = {
-    "particles-header": require("./particles_header.json")
+    "particles_header": require("./particles_header.json")
 };
