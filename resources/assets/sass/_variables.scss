@@ -1,5 +1,5 @@
 // Body
-$body-bg: #f8fafc;
+$body-background: #f7f7f7;
 
 // Typography
 // $font-family-sans-serif: "Helvetica Nueue", sans-serif;
@@ -25,14 +25,14 @@ $discord: #7289da;
 $nav-bg: #fff;
 $nav-bg-large: transparent;
 $nav-brand-font-size: 25px;
-$nav-icon: 40px;
-$nav-icon-lg: 50px;
+$nav-icon: 50px;
+$nav-icon-lg: 60px;
 $nav-link-font-size: 1.1em;
-$nav-link-font-weight: 500;
+$nav-link-font-weight: 400;
 $nav-link-margin: 0 15px;
 $nav-link-margin-normal: 0 8px;
 $nav-link-active-border: 2px solid white;
-$nav-transition: background 0.3s ease-in-out;
+$nav-transition-duration: 0.3s ease-in-out;
 
 // Animation
 $section-fade-duration: 0.1s;

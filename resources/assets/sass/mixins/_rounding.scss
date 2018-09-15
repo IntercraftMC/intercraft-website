@@ -1,4 +1,4 @@
-@mixin rounding($value) {
+@mixin rounding ($value) {
     border-top-left-radius: ($value / 2) !important;
     border-bottom-left-radius: ($value / 2) !important;
     border-top-right-radius: ($value / 2) !important;

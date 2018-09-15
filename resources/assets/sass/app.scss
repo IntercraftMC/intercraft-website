@@ -25,6 +25,10 @@
 @import 'typography';
 @import 'sections';
 
+body {
+    background: $body-background;
+}
+
 section:last-of-type {
-    margin-bottom: 100px;
+    margin-bottom: 60px;
 }

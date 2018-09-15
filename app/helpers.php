@@ -18,11 +18,6 @@ function ajaxView (string $page, $title, $args = [])
     ]);
 }
 
-function is_nav_item_active ($route)
-{
-    return True;
-}
-
 function discord_invitation ()
 {
     return "https://discord.gg/" . config("discord")["invite_code"];

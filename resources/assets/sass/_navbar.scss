@@ -1,7 +1,12 @@
 nav.navbar {
-    transition: $nav-transition;
+    transition: background $nav-transition-duration;
     padding: 0;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: 999;
+
     &.navbar-color {
         background: $nav-bg;
     }
@@ -18,12 +23,16 @@ nav.navbar {
     .navbar-brand {
         box-sizing: border-box;
         position: relative;
+        transform-origin: left;
+        transition: transform $nav-transition-duration;
         a {
             color: black;
             text-decoration: none;
+            text-transform: uppercase;
             font-size: 1.3rem;
             padding-top: -20px;
             vertical-align: top;
+            transition: color $nav-transition-duration;
             svg {
                 vertical-align: top;
             }
@@ -36,12 +45,20 @@ nav.navbar {
         .loading-logo {
             height: $nav-icon;
             margin-right: 5px;
+            circle, rect {
+                transition: fill $nav-transition-duration;
+            }
         }
+    }
+    .navbar-nav {
+        transform-origin: right;
+        transition: transform $nav-transition-duration;
     }
     .nav-item {
         margin: $nav-link-margin-normal;
     }
     .nav-item .nav-link {
+        text-transform: uppercase;
         font-size: $nav-link-font-size;
         font-weight: $nav-link-font-weight;
     }
@@ -49,19 +66,30 @@ nav.navbar {
         border-bottom: $nav-link-active-border;
     }
 
+    &.nav-top {
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), transparent) !important;
+        box-shadow: none;
+
+        .navbar-brand {
+            transform: scale(1.1);
+            a {
+                color: white;
+            }
+            .loading-logo {
+                rect, circle {
+                    fill: white !important;
+                }
+            }
+        }
+        .navbar-nav {
+            transform: scale(1.1);
+        }
+    }
+
     @include media-breakpoint-up (lg) {
         & .navbar-brand {
             padding-left: 15px;
             padding-right: 15px;
         }
-    }
-
-    &.navbar-lg {
-        .navbar-brand .loading-logo {
-            height: $nav-icon-lg;
-        }
-        // .navbar-brand-angle {
-        //     border-top-width: 60px;
-        // }
     }
 }

@@ -7,10 +7,11 @@
 
 require("./bootstrap");
 
+require("./navigation");
+
 require("./components");
 require("./loading");
 require("./navbar");
-require("./navigation");
 require("./page");
 require("./particles");
 

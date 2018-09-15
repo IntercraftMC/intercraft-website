@@ -11,10 +11,10 @@
 |
 */
 
-Route::get('/',        "HomeController@index")->name("home");
-Route::get('/index',   "HomeController@index");
-Route::get('/about',   "AboutController@index")->name("about");
-Route::get('/blog',    "BlogController@index")->name("blog");
-Route::get('/gallery', "GalleryController@index")->name("gallery");
-Route::get('/members', "MembersController@index")->name("members");
-Route::get('/map',     "MapController@index")->name("map");
+Route::get('/',         "HomeController@index")->name("home");
+Route::get('/index',    "HomeController@index");
+Route::get('/about',    "AboutController@index")->name("about");
+Route::get('/blog',     "BlogController@index")->name("blog");
+Route::get('/showcase', "ShowcaseController@index")->name("showcase");
+Route::get('/members',  "MembersController@index")->name("members");
+Route::get('/map',      "MapController@index")->name("map");

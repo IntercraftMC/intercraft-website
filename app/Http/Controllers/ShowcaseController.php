@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class GalleryController extends Controller
+class ShowcaseController extends Controller
 {
     public function index ()
     {
-        return ajaxView("gallery", "title.gallery");
+        return ajaxView("showcase", "title.showcase");
     }
 }

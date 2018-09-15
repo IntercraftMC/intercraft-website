@@ -14004,10 +14004,11 @@ module.exports = __webpack_require__(53);
 
 __webpack_require__(14);
 
+__webpack_require__(50);
+
 __webpack_require__(42);
 __webpack_require__(48);
 __webpack_require__(49);
-__webpack_require__(50);
 __webpack_require__(52);
 __webpack_require__(58);
 
@@ -49831,6 +49832,26 @@ window.loading = {
 //     loading.once(".loading-logo-nav");
 // });
 
+/**
+ * How far from the top can we be before it is no longer
+ * considered the top
+ */
+var TOP_MARGIN = 100;
+
+/**
+ * Keep track if we're at the top of the page
+ */
+var top = false;
+
+navigate.event.on("scroll", function (pos) {
+  var isTop = pos < TOP_MARGIN;
+  if (top != isTop) {
+    top = isTop;
+    $("nav.navbar").toggleClass("nav-top", top).toggleClass("navbar-dark", top).toggleClass("navbar-light", !top);
+    console.log("Navbar changed state");
+  }
+});
+
 /***/ }),
 /* 50 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -49978,7 +49999,7 @@ var requestPage = function requestPage(url) {
  * Invoked when an error occurs
  */
 var onAjaxError = function onAjaxError(err) {
-    console.error("The error is", err, {
+    console.error("Navigation Error: ", err, {
         request: err.request,
         response: err.response
     });
@@ -50012,6 +50033,13 @@ var onPopState = function onPopState(event) {
 };
 
 /**
+ * Invoked when the user scrolls in the application
+ */
+var onScroll = function onScroll() {
+    eventEmitter.emit("scroll", $(window).scrollTop());
+};
+
+/**
  * Navigation module
  */
 window.navigate = {
@@ -50027,7 +50055,9 @@ window.navigate = {
     init: function init() {
         initLinkListeners();
         $(window).on("popstate", onPopState);
+        $(window).scroll(onScroll);
         history.replaceState(pageInfo, pageInfo.title, pageInfo.url);
+        onScroll();
     },
 
 

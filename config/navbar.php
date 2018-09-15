@@ -15,8 +15,8 @@ return [
             "route" => "blog"
         ],
         [
-            "label" => "navbar.gallery",
-            "route" => "gallery"
+            "label" => "navbar.showcase",
+            "route" => "showcase"
         ],
         [
             "label" => "navbar.members",

@@ -140,7 +140,7 @@ var requestPage = function (url, pushState = false) {
  * Invoked when an error occurs
  */
 var onAjaxError = function (err) {
-    console.error("The error is", err, {
+    console.error("Navigation Error: ", err, {
         request : err.request,
         response: err.response
     });
@@ -174,6 +174,13 @@ var onPopState = function (event) {
 };
 
 /**
+ * Invoked when the user scrolls in the application
+ */
+var onScroll = function () {
+    eventEmitter.emit("scroll", $(window).scrollTop());
+};
+
+/**
  * Navigation module
  */
 window.navigate = {
@@ -189,7 +196,9 @@ window.navigate = {
     init () {
         initLinkListeners();
         $(window).on("popstate", onPopState);
+        $(window).scroll(onScroll);
         history.replaceState(pageInfo, pageInfo.title, pageInfo.url);
+        onScroll();
     },
 
     /**

@@ -1,10 +1,10 @@
 <?php
 
 return [
-    "home"    => "Home",
-    "about"   => "About",
-    "blog"    => "Blog",
-    "gallery" => "Gallery",
-    "members" => "Members",
-    "map"     => "Live Map"
+    "home"     => "Home",
+    "about"    => "About",
+    "blog"     => "Blog",
+    "showcase" => "Showcase",
+    "members"  => "Members",
+    "map"      => "Live Map"
 ];
