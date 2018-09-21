@@ -1,6 +1,5 @@
 <template>
     <header class="video-header" id="video_header">
-        <div id="particles_header" style="display: none;"></div>
         <div class="video-overlay container-fluid">
             <div class="row h-100">
                 <div class="col-md-12 my-auto text-center">
@@ -14,6 +13,7 @@
                 </div>
             </div>
         </div>
+        <div id="particles_header" style="display: none;"></div>
     </header>
 </template>
 
@@ -73,18 +73,9 @@
             this.setHeader(this.video, this.title, this.lead);
         },
         props: {
-            "title": {
-                "type": String,
-                "default": "Intercraft"
-            },
-            "lead": {
-                "type": String,
-                "default": "Minecraft 1.12 Survival Server"
-            },
-            "video": {
-                "type": String,
-                "default": "/video/header"
-            }
+            "title": String,
+            "lead" : String,
+            "video": String
         }
     }
 </script>

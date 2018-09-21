@@ -15,6 +15,8 @@ class CreateShowcasesTable extends Migration
     {
         Schema::create('showcases', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('user_id');
+            $table->integer('gallery_id');
             $table->timestamps();
         });
     }

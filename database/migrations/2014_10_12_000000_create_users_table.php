@@ -16,6 +16,8 @@ class CreateUsersTable extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('discord_id', 18);
+            $table->integer('privilege');
+            $table->integer('status');
             $table->string('email')->unique();
             $table->string('username', 16);
             $table->string('password');

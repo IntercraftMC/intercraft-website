@@ -5,10 +5,10 @@ window.particles = {
      * Render the particles
      */
     render () {
-        console.log("Creating particles...");
+        if (utils.isMobile())
+            return;
         for (id in CONFIG) {
             if ($(`#${id}`).length) {
-                console.log("Activating particles...");
                 particlesJS(id, CONFIG[id]);
             }
         }

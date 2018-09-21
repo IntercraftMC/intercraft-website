@@ -1,0 +1,47 @@
+Applications
+Blog
+	ID
+	User ID
+	Image
+	Title
+	Markdown
+	Views
+	Timestamps
+
+Gallery
+	ID
+	User ID
+	Title
+	Description
+	Timestamps
+
+Showcase
+	ID
+	User ID
+	Gallery ID
+	Timestamps
+
+MinecraftAccounts
+	ID
+	User ID
+	Username
+	UUID
+	Timestamps
+
+Users
+	ID
+	Discord ID
+	Privilege
+	Active
+	Email
+	Password
+	Token
+	Timestamps
+Profiles
+	ID
+	User ID
+	Primary Minecraft Account
+	Name
+	Description
+	Country
+	Timestamps

@@ -45,6 +45,16 @@ if (token) {
     console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
+/**
+ * Include Photoswipe for the gallery/showcase
+ */
+window.PhotoSwipe   = require("photoswipe/dist/photoswipe.js");
+window.PhotoSwipeUI = require("photoswipe/dist/photoswipe-ui-default.js");
+
+/**
+ * Other features
+ */
+require("simplebar");
 require("particles.js");
 require("vide");
 

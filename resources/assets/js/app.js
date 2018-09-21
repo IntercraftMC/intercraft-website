@@ -9,6 +9,7 @@ require("./bootstrap");
 
 require("./event_queue");
 require("./navigation");
+require("./utils");
 
 require("./components");
 require("./loading");

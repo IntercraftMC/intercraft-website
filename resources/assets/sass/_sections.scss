@@ -1,6 +1,7 @@
 section {
-    transition: transform $section-fade-duration ease-out,
-                opacity $section-fade-duration ease-out;
+    transition: transform $section-fade-duration,
+                opacity $section-fade-duration;
+    transition-timing-function: cubic-bezier(0.0, 0.0, 0.2, 1);
     transform: translateY(70px);
     opacity: 0;
     padding-top: 60px;

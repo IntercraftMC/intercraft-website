@@ -17,6 +17,13 @@
 @import '~bootstrap/scss/bootstrap';
 @import 'buttons';
 
+// SimpleBar
+@import '~simplebar/dist/simplebar.css';
+
+// Photoswipe
+@import '~photoswipe/dist/photoswipe.css';
+@import '~photoswipe/dist/default-skin/default-skin.css';
+
 // Other
 @import 'header';
 @import 'billboard.scss';

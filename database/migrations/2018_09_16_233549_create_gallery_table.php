@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMinecraftAccountsTable extends Migration
+class CreateGalleryTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateMinecraftAccountsTable extends Migration
      */
     public function up()
     {
-        Schema::create('minecraft_accounts', function (Blueprint $table) {
+        Schema::create('gallery', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id');
-            $table->string('username', 16);
-            $table->string('UUID');
+            $table->string('title', 255);
+            $table->text('description');
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreateMinecraftAccountsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('minecraft_accounts');
+        Schema::dropIfExists('gallery');
     }
 }
