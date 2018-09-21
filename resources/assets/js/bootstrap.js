@@ -54,7 +54,6 @@ window.PhotoSwipeUI = require("photoswipe/dist/photoswipe-ui-default.js");
 /**
  * Other features
  */
-require("simplebar");
 require("particles.js");
 require("vide");
 
