@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="navbar-brand">
             <a href="#">
-                <loading-logo class="loading-logo-nav" id="loading-logo"></loading-logo>
+                <loading-logo class="loading-logo-nav" ref="nav_logo"></loading-logo>
                 <span>Intercraft</span>
             </a>
         </div>

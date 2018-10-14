@@ -1,8 +1,10 @@
-section {
+section, footer {
     transition: transform $section-fade-duration,
                 opacity $section-fade-duration;
     transition-timing-function: cubic-bezier(0.0, 0.0, 0.2, 1);
     transform: translateY(70px);
+}
+section {
     opacity: 0;
     padding-top: 60px;
     .section-heading {
@@ -15,6 +17,24 @@ section {
         div.col-md-6 {
             margin-bottom: 40px !important;
         }
+    }
+}
+
+footer {
+    color: #aaa;
+    .footer-top {
+        background: #313439;
+        padding: 20px 0;
+
+        .footer-link {
+            font-size: 1.8rem;
+            margin: 0 10px;
+            color: #aaa;
+        }
+    }
+    .footer-bottom {
+        background: #26282a;
+        padding: 20px 0;
     }
 }
 

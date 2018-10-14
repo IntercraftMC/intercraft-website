@@ -70,8 +70,8 @@
 "use strict";
 
 
-var bind = __webpack_require__(5);
-var isBuffer = __webpack_require__(20);
+var bind = __webpack_require__(7);
+var isBuffer = __webpack_require__(23);
 
 /*global toString:true*/
 
@@ -10779,7 +10779,7 @@ return jQuery;
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(0);
-var normalizeHeaderName = __webpack_require__(22);
+var normalizeHeaderName = __webpack_require__(25);
 
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -10795,10 +10795,10 @@ function getDefaultAdapter() {
   var adapter;
   if (typeof XMLHttpRequest !== 'undefined') {
     // For browsers use XHR adapter
-    adapter = __webpack_require__(7);
+    adapter = __webpack_require__(8);
   } else if (typeof process !== 'undefined') {
     // For node use HTTP adapter
-    adapter = __webpack_require__(7);
+    adapter = __webpack_require__(8);
   }
   return adapter;
 }
@@ -10877,6 +10877,115 @@ module.exports = defaults;
 
 /***/ }),
 /* 4 */
+/***/ (function(module, exports) {
+
+/* globals __VUE_SSR_CONTEXT__ */
+
+// IMPORTANT: Do NOT use ES2015 features in this file.
+// This module is a runtime utility for cleaner component module output and will
+// be included in the final webpack user bundle.
+
+module.exports = function normalizeComponent (
+  rawScriptExports,
+  compiledTemplate,
+  functionalTemplate,
+  injectStyles,
+  scopeId,
+  moduleIdentifier /* server only */
+) {
+  var esModule
+  var scriptExports = rawScriptExports = rawScriptExports || {}
+
+  // ES6 modules interop
+  var type = typeof rawScriptExports.default
+  if (type === 'object' || type === 'function') {
+    esModule = rawScriptExports
+    scriptExports = rawScriptExports.default
+  }
+
+  // Vue.extend constructor export interop
+  var options = typeof scriptExports === 'function'
+    ? scriptExports.options
+    : scriptExports
+
+  // render functions
+  if (compiledTemplate) {
+    options.render = compiledTemplate.render
+    options.staticRenderFns = compiledTemplate.staticRenderFns
+    options._compiled = true
+  }
+
+  // functional template
+  if (functionalTemplate) {
+    options.functional = true
+  }
+
+  // scopedId
+  if (scopeId) {
+    options._scopeId = scopeId
+  }
+
+  var hook
+  if (moduleIdentifier) { // server build
+    hook = function (context) {
+      // 2.3 injection
+      context =
+        context || // cached call
+        (this.$vnode && this.$vnode.ssrContext) || // stateful
+        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
+      // 2.2 with runInNewContext: true
+      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
+        context = __VUE_SSR_CONTEXT__
+      }
+      // inject component styles
+      if (injectStyles) {
+        injectStyles.call(this, context)
+      }
+      // register component module identifier for async chunk inferrence
+      if (context && context._registeredComponents) {
+        context._registeredComponents.add(moduleIdentifier)
+      }
+    }
+    // used by ssr in case component is cached and beforeCreate
+    // never gets called
+    options._ssrRegister = hook
+  } else if (injectStyles) {
+    hook = injectStyles
+  }
+
+  if (hook) {
+    var functional = options.functional
+    var existing = functional
+      ? options.render
+      : options.beforeCreate
+
+    if (!functional) {
+      // inject component registration as beforeCreate hook
+      options.beforeCreate = existing
+        ? [].concat(existing, hook)
+        : [hook]
+    } else {
+      // for template-only hot-reload because in that case the render fn doesn't
+      // go through the normalizer
+      options._injectStyles = hook
+      // register for functioal component in vue file
+      options.render = function renderWithStyleInjection (h, context) {
+        hook.call(context)
+        return existing(h, context)
+      }
+    }
+  }
+
+  return {
+    esModule: esModule,
+    exports: scriptExports,
+    options: options
+  }
+}
+
+
+/***/ }),
+/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -13417,24 +13526,6 @@ Popper.Defaults = Defaults;
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(1)))
 
 /***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = function bind(fn, thisArg) {
-  return function wrap() {
-    var args = new Array(arguments.length);
-    for (var i = 0; i < args.length; i++) {
-      args[i] = arguments[i];
-    }
-    return fn.apply(thisArg, args);
-  };
-};
-
-
-/***/ }),
 /* 6 */
 /***/ (function(module, exports) {
 
@@ -13631,13 +13722,31 @@ process.umask = function() { return 0; };
 "use strict";
 
 
+module.exports = function bind(fn, thisArg) {
+  return function wrap() {
+    var args = new Array(arguments.length);
+    for (var i = 0; i < args.length; i++) {
+      args[i] = arguments[i];
+    }
+    return fn.apply(thisArg, args);
+  };
+};
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 var utils = __webpack_require__(0);
-var settle = __webpack_require__(23);
-var buildURL = __webpack_require__(25);
-var parseHeaders = __webpack_require__(26);
-var isURLSameOrigin = __webpack_require__(27);
-var createError = __webpack_require__(8);
-var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(28);
+var settle = __webpack_require__(26);
+var buildURL = __webpack_require__(28);
+var parseHeaders = __webpack_require__(29);
+var isURLSameOrigin = __webpack_require__(30);
+var createError = __webpack_require__(9);
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(31);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -13734,7 +13843,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(29);
+      var cookies = __webpack_require__(32);
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -13812,13 +13921,13 @@ module.exports = function xhrAdapter(config) {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var enhanceError = __webpack_require__(24);
+var enhanceError = __webpack_require__(27);
 
 /**
  * Create an Error with the specified message, config, error code, request and response.
@@ -13837,7 +13946,7 @@ module.exports = function createError(message, config, code, request, response) 
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13849,7 +13958,7 @@ module.exports = function isCancel(value) {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13875,120 +13984,11 @@ module.exports = Cancel;
 
 
 /***/ }),
-/* 11 */
-/***/ (function(module, exports) {
-
-/* globals __VUE_SSR_CONTEXT__ */
-
-// IMPORTANT: Do NOT use ES2015 features in this file.
-// This module is a runtime utility for cleaner component module output and will
-// be included in the final webpack user bundle.
-
-module.exports = function normalizeComponent (
-  rawScriptExports,
-  compiledTemplate,
-  functionalTemplate,
-  injectStyles,
-  scopeId,
-  moduleIdentifier /* server only */
-) {
-  var esModule
-  var scriptExports = rawScriptExports = rawScriptExports || {}
-
-  // ES6 modules interop
-  var type = typeof rawScriptExports.default
-  if (type === 'object' || type === 'function') {
-    esModule = rawScriptExports
-    scriptExports = rawScriptExports.default
-  }
-
-  // Vue.extend constructor export interop
-  var options = typeof scriptExports === 'function'
-    ? scriptExports.options
-    : scriptExports
-
-  // render functions
-  if (compiledTemplate) {
-    options.render = compiledTemplate.render
-    options.staticRenderFns = compiledTemplate.staticRenderFns
-    options._compiled = true
-  }
-
-  // functional template
-  if (functionalTemplate) {
-    options.functional = true
-  }
-
-  // scopedId
-  if (scopeId) {
-    options._scopeId = scopeId
-  }
-
-  var hook
-  if (moduleIdentifier) { // server build
-    hook = function (context) {
-      // 2.3 injection
-      context =
-        context || // cached call
-        (this.$vnode && this.$vnode.ssrContext) || // stateful
-        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
-      // 2.2 with runInNewContext: true
-      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
-        context = __VUE_SSR_CONTEXT__
-      }
-      // inject component styles
-      if (injectStyles) {
-        injectStyles.call(this, context)
-      }
-      // register component module identifier for async chunk inferrence
-      if (context && context._registeredComponents) {
-        context._registeredComponents.add(moduleIdentifier)
-      }
-    }
-    // used by ssr in case component is cached and beforeCreate
-    // never gets called
-    options._ssrRegister = hook
-  } else if (injectStyles) {
-    hook = injectStyles
-  }
-
-  if (hook) {
-    var functional = options.functional
-    var existing = functional
-      ? options.render
-      : options.beforeCreate
-
-    if (!functional) {
-      // inject component registration as beforeCreate hook
-      options.beforeCreate = existing
-        ? [].concat(existing, hook)
-        : [hook]
-    } else {
-      // for template-only hot-reload because in that case the render fn doesn't
-      // go through the normalizer
-      options._injectStyles = hook
-      // register for functioal component in vue file
-      options.render = function renderWithStyleInjection (h, context) {
-        hook.call(context)
-        return existing(h, context)
-      }
-    }
-  }
-
-  return {
-    esModule: esModule,
-    exports: scriptExports,
-    options: options
-  }
-}
-
-
-/***/ }),
 /* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(13);
-module.exports = __webpack_require__(53);
+module.exports = __webpack_require__(63);
 
 
 /***/ }),
@@ -14004,26 +14004,26 @@ module.exports = __webpack_require__(53);
 
 __webpack_require__(14);
 
-__webpack_require__(64);
-__webpack_require__(50);
-__webpack_require__(67);
-
-__webpack_require__(42);
+__webpack_require__(44);
+__webpack_require__(45);
+__webpack_require__(46);
 __webpack_require__(48);
+
 __webpack_require__(49);
-__webpack_require__(52);
 __webpack_require__(58);
+__webpack_require__(59);
+__webpack_require__(60);
 
 var prebody = new Vue({
     el: "#prebody"
 });
 
 var onBeforeLoad = function onBeforeLoad() {
-    loading.activate($("#loading-logo"));
+    prebody.$refs.nav_logo.start();
 };
 
 var onLoad = function onLoad() {
-    loading.deactivate($("#loading-logo"));
+    prebody.$refs.nav_logo.stop();
 };
 
 /**
@@ -14043,7 +14043,7 @@ $(document).ready(function () {
 
 
 window._ = __webpack_require__(15);
-window.Popper = __webpack_require__(4).default;
+window.Popper = __webpack_require__(5).default;
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -14062,7 +14062,7 @@ try {
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
-window.Vue = __webpack_require__(39);
+window.Vue = __webpack_require__(18);
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
@@ -14070,7 +14070,7 @@ window.Vue = __webpack_require__(39);
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-window.axios = __webpack_require__(18);
+window.axios = __webpack_require__(21);
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
@@ -14091,14 +14091,14 @@ if (token) {
 /**
  * Include Photoswipe for the gallery/showcase
  */
-window.PhotoSwipe = __webpack_require__(65);
-window.PhotoSwipeUI = __webpack_require__(66);
+window.PhotoSwipe = __webpack_require__(40);
+window.PhotoSwipeUI = __webpack_require__(41);
 
 /**
  * Other features
  */
-__webpack_require__(37);
-__webpack_require__(38);
+__webpack_require__(42);
+__webpack_require__(43);
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
@@ -31268,7 +31268,7 @@ module.exports = function(module) {
   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
   */
 (function (global, factory) {
-   true ? factory(exports, __webpack_require__(2), __webpack_require__(4)) :
+   true ? factory(exports, __webpack_require__(2), __webpack_require__(5)) :
   typeof define === 'function' && define.amd ? define(['exports', 'jquery', 'popper.js'], factory) :
   (factory((global.bootstrap = {}),global.jQuery,global.Popper));
 }(this, (function (exports,$,Popper) { 'use strict';
@@ -35210,2950 +35210,6 @@ module.exports = function(module) {
 
 /***/ }),
 /* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(19);
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var utils = __webpack_require__(0);
-var bind = __webpack_require__(5);
-var Axios = __webpack_require__(21);
-var defaults = __webpack_require__(3);
-
-/**
- * Create an instance of Axios
- *
- * @param {Object} defaultConfig The default config for the instance
- * @return {Axios} A new instance of Axios
- */
-function createInstance(defaultConfig) {
-  var context = new Axios(defaultConfig);
-  var instance = bind(Axios.prototype.request, context);
-
-  // Copy axios.prototype to instance
-  utils.extend(instance, Axios.prototype, context);
-
-  // Copy context to instance
-  utils.extend(instance, context);
-
-  return instance;
-}
-
-// Create the default instance to be exported
-var axios = createInstance(defaults);
-
-// Expose Axios class to allow class inheritance
-axios.Axios = Axios;
-
-// Factory for creating new instances
-axios.create = function create(instanceConfig) {
-  return createInstance(utils.merge(defaults, instanceConfig));
-};
-
-// Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(10);
-axios.CancelToken = __webpack_require__(35);
-axios.isCancel = __webpack_require__(9);
-
-// Expose all/spread
-axios.all = function all(promises) {
-  return Promise.all(promises);
-};
-axios.spread = __webpack_require__(36);
-
-module.exports = axios;
-
-// Allow use of default import syntax in TypeScript
-module.exports.default = axios;
-
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports) {
-
-/*!
- * Determine if an object is a Buffer
- *
- * @author   Feross Aboukhadijeh <https://feross.org>
- * @license  MIT
- */
-
-// The _isBuffer check is for Safari 5-7 support, because it's missing
-// Object.prototype.constructor. Remove this eventually
-module.exports = function (obj) {
-  return obj != null && (isBuffer(obj) || isSlowBuffer(obj) || !!obj._isBuffer)
-}
-
-function isBuffer (obj) {
-  return !!obj.constructor && typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
-}
-
-// For Node v0.10 support. Remove this eventually.
-function isSlowBuffer (obj) {
-  return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
-}
-
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var defaults = __webpack_require__(3);
-var utils = __webpack_require__(0);
-var InterceptorManager = __webpack_require__(30);
-var dispatchRequest = __webpack_require__(31);
-
-/**
- * Create a new instance of Axios
- *
- * @param {Object} instanceConfig The default config for the instance
- */
-function Axios(instanceConfig) {
-  this.defaults = instanceConfig;
-  this.interceptors = {
-    request: new InterceptorManager(),
-    response: new InterceptorManager()
-  };
-}
-
-/**
- * Dispatch a request
- *
- * @param {Object} config The config specific for this request (merged with this.defaults)
- */
-Axios.prototype.request = function request(config) {
-  /*eslint no-param-reassign:0*/
-  // Allow for axios('example/url'[, config]) a la fetch API
-  if (typeof config === 'string') {
-    config = utils.merge({
-      url: arguments[0]
-    }, arguments[1]);
-  }
-
-  config = utils.merge(defaults, {method: 'get'}, this.defaults, config);
-  config.method = config.method.toLowerCase();
-
-  // Hook up interceptors middleware
-  var chain = [dispatchRequest, undefined];
-  var promise = Promise.resolve(config);
-
-  this.interceptors.request.forEach(function unshiftRequestInterceptors(interceptor) {
-    chain.unshift(interceptor.fulfilled, interceptor.rejected);
-  });
-
-  this.interceptors.response.forEach(function pushResponseInterceptors(interceptor) {
-    chain.push(interceptor.fulfilled, interceptor.rejected);
-  });
-
-  while (chain.length) {
-    promise = promise.then(chain.shift(), chain.shift());
-  }
-
-  return promise;
-};
-
-// Provide aliases for supported request methods
-utils.forEach(['delete', 'get', 'head', 'options'], function forEachMethodNoData(method) {
-  /*eslint func-names:0*/
-  Axios.prototype[method] = function(url, config) {
-    return this.request(utils.merge(config || {}, {
-      method: method,
-      url: url
-    }));
-  };
-});
-
-utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
-  /*eslint func-names:0*/
-  Axios.prototype[method] = function(url, data, config) {
-    return this.request(utils.merge(config || {}, {
-      method: method,
-      url: url,
-      data: data
-    }));
-  };
-});
-
-module.exports = Axios;
-
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var utils = __webpack_require__(0);
-
-module.exports = function normalizeHeaderName(headers, normalizedName) {
-  utils.forEach(headers, function processHeader(value, name) {
-    if (name !== normalizedName && name.toUpperCase() === normalizedName.toUpperCase()) {
-      headers[normalizedName] = value;
-      delete headers[name];
-    }
-  });
-};
-
-
-/***/ }),
-/* 23 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var createError = __webpack_require__(8);
-
-/**
- * Resolve or reject a Promise based on response status.
- *
- * @param {Function} resolve A function that resolves the promise.
- * @param {Function} reject A function that rejects the promise.
- * @param {object} response The response.
- */
-module.exports = function settle(resolve, reject, response) {
-  var validateStatus = response.config.validateStatus;
-  // Note: status is not exposed by XDomainRequest
-  if (!response.status || !validateStatus || validateStatus(response.status)) {
-    resolve(response);
-  } else {
-    reject(createError(
-      'Request failed with status code ' + response.status,
-      response.config,
-      null,
-      response.request,
-      response
-    ));
-  }
-};
-
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Update an Error with the specified config, error code, and response.
- *
- * @param {Error} error The error to update.
- * @param {Object} config The config.
- * @param {string} [code] The error code (for example, 'ECONNABORTED').
- * @param {Object} [request] The request.
- * @param {Object} [response] The response.
- * @returns {Error} The error.
- */
-module.exports = function enhanceError(error, config, code, request, response) {
-  error.config = config;
-  if (code) {
-    error.code = code;
-  }
-  error.request = request;
-  error.response = response;
-  return error;
-};
-
-
-/***/ }),
-/* 25 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var utils = __webpack_require__(0);
-
-function encode(val) {
-  return encodeURIComponent(val).
-    replace(/%40/gi, '@').
-    replace(/%3A/gi, ':').
-    replace(/%24/g, '$').
-    replace(/%2C/gi, ',').
-    replace(/%20/g, '+').
-    replace(/%5B/gi, '[').
-    replace(/%5D/gi, ']');
-}
-
-/**
- * Build a URL by appending params to the end
- *
- * @param {string} url The base of the url (e.g., http://www.google.com)
- * @param {object} [params] The params to be appended
- * @returns {string} The formatted url
- */
-module.exports = function buildURL(url, params, paramsSerializer) {
-  /*eslint no-param-reassign:0*/
-  if (!params) {
-    return url;
-  }
-
-  var serializedParams;
-  if (paramsSerializer) {
-    serializedParams = paramsSerializer(params);
-  } else if (utils.isURLSearchParams(params)) {
-    serializedParams = params.toString();
-  } else {
-    var parts = [];
-
-    utils.forEach(params, function serialize(val, key) {
-      if (val === null || typeof val === 'undefined') {
-        return;
-      }
-
-      if (utils.isArray(val)) {
-        key = key + '[]';
-      } else {
-        val = [val];
-      }
-
-      utils.forEach(val, function parseValue(v) {
-        if (utils.isDate(v)) {
-          v = v.toISOString();
-        } else if (utils.isObject(v)) {
-          v = JSON.stringify(v);
-        }
-        parts.push(encode(key) + '=' + encode(v));
-      });
-    });
-
-    serializedParams = parts.join('&');
-  }
-
-  if (serializedParams) {
-    url += (url.indexOf('?') === -1 ? '?' : '&') + serializedParams;
-  }
-
-  return url;
-};
-
-
-/***/ }),
-/* 26 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var utils = __webpack_require__(0);
-
-// Headers whose duplicates are ignored by node
-// c.f. https://nodejs.org/api/http.html#http_message_headers
-var ignoreDuplicateOf = [
-  'age', 'authorization', 'content-length', 'content-type', 'etag',
-  'expires', 'from', 'host', 'if-modified-since', 'if-unmodified-since',
-  'last-modified', 'location', 'max-forwards', 'proxy-authorization',
-  'referer', 'retry-after', 'user-agent'
-];
-
-/**
- * Parse headers into an object
- *
- * ```
- * Date: Wed, 27 Aug 2014 08:58:49 GMT
- * Content-Type: application/json
- * Connection: keep-alive
- * Transfer-Encoding: chunked
- * ```
- *
- * @param {String} headers Headers needing to be parsed
- * @returns {Object} Headers parsed into an object
- */
-module.exports = function parseHeaders(headers) {
-  var parsed = {};
-  var key;
-  var val;
-  var i;
-
-  if (!headers) { return parsed; }
-
-  utils.forEach(headers.split('\n'), function parser(line) {
-    i = line.indexOf(':');
-    key = utils.trim(line.substr(0, i)).toLowerCase();
-    val = utils.trim(line.substr(i + 1));
-
-    if (key) {
-      if (parsed[key] && ignoreDuplicateOf.indexOf(key) >= 0) {
-        return;
-      }
-      if (key === 'set-cookie') {
-        parsed[key] = (parsed[key] ? parsed[key] : []).concat([val]);
-      } else {
-        parsed[key] = parsed[key] ? parsed[key] + ', ' + val : val;
-      }
-    }
-  });
-
-  return parsed;
-};
-
-
-/***/ }),
-/* 27 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var utils = __webpack_require__(0);
-
-module.exports = (
-  utils.isStandardBrowserEnv() ?
-
-  // Standard browser envs have full support of the APIs needed to test
-  // whether the request URL is of the same origin as current location.
-  (function standardBrowserEnv() {
-    var msie = /(msie|trident)/i.test(navigator.userAgent);
-    var urlParsingNode = document.createElement('a');
-    var originURL;
-
-    /**
-    * Parse a URL to discover it's components
-    *
-    * @param {String} url The URL to be parsed
-    * @returns {Object}
-    */
-    function resolveURL(url) {
-      var href = url;
-
-      if (msie) {
-        // IE needs attribute set twice to normalize properties
-        urlParsingNode.setAttribute('href', href);
-        href = urlParsingNode.href;
-      }
-
-      urlParsingNode.setAttribute('href', href);
-
-      // urlParsingNode provides the UrlUtils interface - http://url.spec.whatwg.org/#urlutils
-      return {
-        href: urlParsingNode.href,
-        protocol: urlParsingNode.protocol ? urlParsingNode.protocol.replace(/:$/, '') : '',
-        host: urlParsingNode.host,
-        search: urlParsingNode.search ? urlParsingNode.search.replace(/^\?/, '') : '',
-        hash: urlParsingNode.hash ? urlParsingNode.hash.replace(/^#/, '') : '',
-        hostname: urlParsingNode.hostname,
-        port: urlParsingNode.port,
-        pathname: (urlParsingNode.pathname.charAt(0) === '/') ?
-                  urlParsingNode.pathname :
-                  '/' + urlParsingNode.pathname
-      };
-    }
-
-    originURL = resolveURL(window.location.href);
-
-    /**
-    * Determine if a URL shares the same origin as the current location
-    *
-    * @param {String} requestURL The URL to test
-    * @returns {boolean} True if URL shares the same origin, otherwise false
-    */
-    return function isURLSameOrigin(requestURL) {
-      var parsed = (utils.isString(requestURL)) ? resolveURL(requestURL) : requestURL;
-      return (parsed.protocol === originURL.protocol &&
-            parsed.host === originURL.host);
-    };
-  })() :
-
-  // Non standard browser envs (web workers, react-native) lack needed support.
-  (function nonStandardBrowserEnv() {
-    return function isURLSameOrigin() {
-      return true;
-    };
-  })()
-);
-
-
-/***/ }),
-/* 28 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-// btoa polyfill for IE<10 courtesy https://github.com/davidchambers/Base64.js
-
-var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-
-function E() {
-  this.message = 'String contains an invalid character';
-}
-E.prototype = new Error;
-E.prototype.code = 5;
-E.prototype.name = 'InvalidCharacterError';
-
-function btoa(input) {
-  var str = String(input);
-  var output = '';
-  for (
-    // initialize result and counter
-    var block, charCode, idx = 0, map = chars;
-    // if the next str index does not exist:
-    //   change the mapping table to "="
-    //   check if d has no fractional digits
-    str.charAt(idx | 0) || (map = '=', idx % 1);
-    // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
-    output += map.charAt(63 & block >> 8 - idx % 1 * 8)
-  ) {
-    charCode = str.charCodeAt(idx += 3 / 4);
-    if (charCode > 0xFF) {
-      throw new E();
-    }
-    block = block << 8 | charCode;
-  }
-  return output;
-}
-
-module.exports = btoa;
-
-
-/***/ }),
-/* 29 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var utils = __webpack_require__(0);
-
-module.exports = (
-  utils.isStandardBrowserEnv() ?
-
-  // Standard browser envs support document.cookie
-  (function standardBrowserEnv() {
-    return {
-      write: function write(name, value, expires, path, domain, secure) {
-        var cookie = [];
-        cookie.push(name + '=' + encodeURIComponent(value));
-
-        if (utils.isNumber(expires)) {
-          cookie.push('expires=' + new Date(expires).toGMTString());
-        }
-
-        if (utils.isString(path)) {
-          cookie.push('path=' + path);
-        }
-
-        if (utils.isString(domain)) {
-          cookie.push('domain=' + domain);
-        }
-
-        if (secure === true) {
-          cookie.push('secure');
-        }
-
-        document.cookie = cookie.join('; ');
-      },
-
-      read: function read(name) {
-        var match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
-        return (match ? decodeURIComponent(match[3]) : null);
-      },
-
-      remove: function remove(name) {
-        this.write(name, '', Date.now() - 86400000);
-      }
-    };
-  })() :
-
-  // Non standard browser env (web workers, react-native) lack needed support.
-  (function nonStandardBrowserEnv() {
-    return {
-      write: function write() {},
-      read: function read() { return null; },
-      remove: function remove() {}
-    };
-  })()
-);
-
-
-/***/ }),
-/* 30 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var utils = __webpack_require__(0);
-
-function InterceptorManager() {
-  this.handlers = [];
-}
-
-/**
- * Add a new interceptor to the stack
- *
- * @param {Function} fulfilled The function to handle `then` for a `Promise`
- * @param {Function} rejected The function to handle `reject` for a `Promise`
- *
- * @return {Number} An ID used to remove interceptor later
- */
-InterceptorManager.prototype.use = function use(fulfilled, rejected) {
-  this.handlers.push({
-    fulfilled: fulfilled,
-    rejected: rejected
-  });
-  return this.handlers.length - 1;
-};
-
-/**
- * Remove an interceptor from the stack
- *
- * @param {Number} id The ID that was returned by `use`
- */
-InterceptorManager.prototype.eject = function eject(id) {
-  if (this.handlers[id]) {
-    this.handlers[id] = null;
-  }
-};
-
-/**
- * Iterate over all the registered interceptors
- *
- * This method is particularly useful for skipping over any
- * interceptors that may have become `null` calling `eject`.
- *
- * @param {Function} fn The function to call for each interceptor
- */
-InterceptorManager.prototype.forEach = function forEach(fn) {
-  utils.forEach(this.handlers, function forEachHandler(h) {
-    if (h !== null) {
-      fn(h);
-    }
-  });
-};
-
-module.exports = InterceptorManager;
-
-
-/***/ }),
-/* 31 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var utils = __webpack_require__(0);
-var transformData = __webpack_require__(32);
-var isCancel = __webpack_require__(9);
-var defaults = __webpack_require__(3);
-var isAbsoluteURL = __webpack_require__(33);
-var combineURLs = __webpack_require__(34);
-
-/**
- * Throws a `Cancel` if cancellation has been requested.
- */
-function throwIfCancellationRequested(config) {
-  if (config.cancelToken) {
-    config.cancelToken.throwIfRequested();
-  }
-}
-
-/**
- * Dispatch a request to the server using the configured adapter.
- *
- * @param {object} config The config that is to be used for the request
- * @returns {Promise} The Promise to be fulfilled
- */
-module.exports = function dispatchRequest(config) {
-  throwIfCancellationRequested(config);
-
-  // Support baseURL config
-  if (config.baseURL && !isAbsoluteURL(config.url)) {
-    config.url = combineURLs(config.baseURL, config.url);
-  }
-
-  // Ensure headers exist
-  config.headers = config.headers || {};
-
-  // Transform request data
-  config.data = transformData(
-    config.data,
-    config.headers,
-    config.transformRequest
-  );
-
-  // Flatten headers
-  config.headers = utils.merge(
-    config.headers.common || {},
-    config.headers[config.method] || {},
-    config.headers || {}
-  );
-
-  utils.forEach(
-    ['delete', 'get', 'head', 'post', 'put', 'patch', 'common'],
-    function cleanHeaderConfig(method) {
-      delete config.headers[method];
-    }
-  );
-
-  var adapter = config.adapter || defaults.adapter;
-
-  return adapter(config).then(function onAdapterResolution(response) {
-    throwIfCancellationRequested(config);
-
-    // Transform response data
-    response.data = transformData(
-      response.data,
-      response.headers,
-      config.transformResponse
-    );
-
-    return response;
-  }, function onAdapterRejection(reason) {
-    if (!isCancel(reason)) {
-      throwIfCancellationRequested(config);
-
-      // Transform response data
-      if (reason && reason.response) {
-        reason.response.data = transformData(
-          reason.response.data,
-          reason.response.headers,
-          config.transformResponse
-        );
-      }
-    }
-
-    return Promise.reject(reason);
-  });
-};
-
-
-/***/ }),
-/* 32 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var utils = __webpack_require__(0);
-
-/**
- * Transform the data for a request or a response
- *
- * @param {Object|String} data The data to be transformed
- * @param {Array} headers The headers for the request or response
- * @param {Array|Function} fns A single function or Array of functions
- * @returns {*} The resulting transformed data
- */
-module.exports = function transformData(data, headers, fns) {
-  /*eslint no-param-reassign:0*/
-  utils.forEach(fns, function transform(fn) {
-    data = fn(data, headers);
-  });
-
-  return data;
-};
-
-
-/***/ }),
-/* 33 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Determines whether the specified URL is absolute
- *
- * @param {string} url The URL to test
- * @returns {boolean} True if the specified URL is absolute, otherwise false
- */
-module.exports = function isAbsoluteURL(url) {
-  // A URL is considered absolute if it begins with "<scheme>://" or "//" (protocol-relative URL).
-  // RFC 3986 defines scheme name as a sequence of characters beginning with a letter and followed
-  // by any combination of letters, digits, plus, period, or hyphen.
-  return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
-};
-
-
-/***/ }),
-/* 34 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Creates a new URL by combining the specified URLs
- *
- * @param {string} baseURL The base URL
- * @param {string} relativeURL The relative URL
- * @returns {string} The combined URL
- */
-module.exports = function combineURLs(baseURL, relativeURL) {
-  return relativeURL
-    ? baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '')
-    : baseURL;
-};
-
-
-/***/ }),
-/* 35 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Cancel = __webpack_require__(10);
-
-/**
- * A `CancelToken` is an object that can be used to request cancellation of an operation.
- *
- * @class
- * @param {Function} executor The executor function.
- */
-function CancelToken(executor) {
-  if (typeof executor !== 'function') {
-    throw new TypeError('executor must be a function.');
-  }
-
-  var resolvePromise;
-  this.promise = new Promise(function promiseExecutor(resolve) {
-    resolvePromise = resolve;
-  });
-
-  var token = this;
-  executor(function cancel(message) {
-    if (token.reason) {
-      // Cancellation has already been requested
-      return;
-    }
-
-    token.reason = new Cancel(message);
-    resolvePromise(token.reason);
-  });
-}
-
-/**
- * Throws a `Cancel` if cancellation has been requested.
- */
-CancelToken.prototype.throwIfRequested = function throwIfRequested() {
-  if (this.reason) {
-    throw this.reason;
-  }
-};
-
-/**
- * Returns an object that contains a new `CancelToken` and a function that, when called,
- * cancels the `CancelToken`.
- */
-CancelToken.source = function source() {
-  var cancel;
-  var token = new CancelToken(function executor(c) {
-    cancel = c;
-  });
-  return {
-    token: token,
-    cancel: cancel
-  };
-};
-
-module.exports = CancelToken;
-
-
-/***/ }),
-/* 36 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Syntactic sugar for invoking a function and expanding an array for arguments.
- *
- * Common use case would be to use `Function.prototype.apply`.
- *
- *  ```js
- *  function f(x, y, z) {}
- *  var args = [1, 2, 3];
- *  f.apply(null, args);
- *  ```
- *
- * With `spread` this example can be re-written.
- *
- *  ```js
- *  spread(function(x, y, z) {})([1, 2, 3]);
- *  ```
- *
- * @param {Function} callback
- * @returns {Function}
- */
-module.exports = function spread(callback) {
-  return function wrap(arr) {
-    return callback.apply(null, arr);
-  };
-};
-
-
-/***/ }),
-/* 37 */
-/***/ (function(module, exports) {
-
-/* -----------------------------------------------
-/* Author : Vincent Garreau  - vincentgarreau.com
-/* MIT license: http://opensource.org/licenses/MIT
-/* Demo / Generator : vincentgarreau.com/particles.js
-/* GitHub : github.com/VincentGarreau/particles.js
-/* How to use? : Check the GitHub README
-/* v2.0.0
-/* ----------------------------------------------- */
-
-var pJS = function(tag_id, params){
-
-  var canvas_el = document.querySelector('#'+tag_id+' > .particles-js-canvas-el');
-
-  /* particles.js variables with default values */
-  this.pJS = {
-    canvas: {
-      el: canvas_el,
-      w: canvas_el.offsetWidth,
-      h: canvas_el.offsetHeight
-    },
-    particles: {
-      number: {
-        value: 400,
-        density: {
-          enable: true,
-          value_area: 800
-        }
-      },
-      color: {
-        value: '#fff'
-      },
-      shape: {
-        type: 'circle',
-        stroke: {
-          width: 0,
-          color: '#ff0000'
-        },
-        polygon: {
-          nb_sides: 5
-        },
-        image: {
-          src: '',
-          width: 100,
-          height: 100
-        }
-      },
-      opacity: {
-        value: 1,
-        random: false,
-        anim: {
-          enable: false,
-          speed: 2,
-          opacity_min: 0,
-          sync: false
-        }
-      },
-      size: {
-        value: 20,
-        random: false,
-        anim: {
-          enable: false,
-          speed: 20,
-          size_min: 0,
-          sync: false
-        }
-      },
-      line_linked: {
-        enable: true,
-        distance: 100,
-        color: '#fff',
-        opacity: 1,
-        width: 1
-      },
-      move: {
-        enable: true,
-        speed: 2,
-        direction: 'none',
-        random: false,
-        straight: false,
-        out_mode: 'out',
-        bounce: false,
-        attract: {
-          enable: false,
-          rotateX: 3000,
-          rotateY: 3000
-        }
-      },
-      array: []
-    },
-    interactivity: {
-      detect_on: 'canvas',
-      events: {
-        onhover: {
-          enable: true,
-          mode: 'grab'
-        },
-        onclick: {
-          enable: true,
-          mode: 'push'
-        },
-        resize: true
-      },
-      modes: {
-        grab:{
-          distance: 100,
-          line_linked:{
-            opacity: 1
-          }
-        },
-        bubble:{
-          distance: 200,
-          size: 80,
-          duration: 0.4
-        },
-        repulse:{
-          distance: 200,
-          duration: 0.4
-        },
-        push:{
-          particles_nb: 4
-        },
-        remove:{
-          particles_nb: 2
-        }
-      },
-      mouse:{}
-    },
-    retina_detect: false,
-    fn: {
-      interact: {},
-      modes: {},
-      vendors:{}
-    },
-    tmp: {}
-  };
-
-  var pJS = this.pJS;
-
-  /* params settings */
-  if(params){
-    Object.deepExtend(pJS, params);
-  }
-
-  pJS.tmp.obj = {
-    size_value: pJS.particles.size.value,
-    size_anim_speed: pJS.particles.size.anim.speed,
-    move_speed: pJS.particles.move.speed,
-    line_linked_distance: pJS.particles.line_linked.distance,
-    line_linked_width: pJS.particles.line_linked.width,
-    mode_grab_distance: pJS.interactivity.modes.grab.distance,
-    mode_bubble_distance: pJS.interactivity.modes.bubble.distance,
-    mode_bubble_size: pJS.interactivity.modes.bubble.size,
-    mode_repulse_distance: pJS.interactivity.modes.repulse.distance
-  };
-
-
-  pJS.fn.retinaInit = function(){
-
-    if(pJS.retina_detect && window.devicePixelRatio > 1){
-      pJS.canvas.pxratio = window.devicePixelRatio; 
-      pJS.tmp.retina = true;
-    } 
-    else{
-      pJS.canvas.pxratio = 1;
-      pJS.tmp.retina = false;
-    }
-
-    pJS.canvas.w = pJS.canvas.el.offsetWidth * pJS.canvas.pxratio;
-    pJS.canvas.h = pJS.canvas.el.offsetHeight * pJS.canvas.pxratio;
-
-    pJS.particles.size.value = pJS.tmp.obj.size_value * pJS.canvas.pxratio;
-    pJS.particles.size.anim.speed = pJS.tmp.obj.size_anim_speed * pJS.canvas.pxratio;
-    pJS.particles.move.speed = pJS.tmp.obj.move_speed * pJS.canvas.pxratio;
-    pJS.particles.line_linked.distance = pJS.tmp.obj.line_linked_distance * pJS.canvas.pxratio;
-    pJS.interactivity.modes.grab.distance = pJS.tmp.obj.mode_grab_distance * pJS.canvas.pxratio;
-    pJS.interactivity.modes.bubble.distance = pJS.tmp.obj.mode_bubble_distance * pJS.canvas.pxratio;
-    pJS.particles.line_linked.width = pJS.tmp.obj.line_linked_width * pJS.canvas.pxratio;
-    pJS.interactivity.modes.bubble.size = pJS.tmp.obj.mode_bubble_size * pJS.canvas.pxratio;
-    pJS.interactivity.modes.repulse.distance = pJS.tmp.obj.mode_repulse_distance * pJS.canvas.pxratio;
-
-  };
-
-
-
-  /* ---------- pJS functions - canvas ------------ */
-
-  pJS.fn.canvasInit = function(){
-    pJS.canvas.ctx = pJS.canvas.el.getContext('2d');
-  };
-
-  pJS.fn.canvasSize = function(){
-
-    pJS.canvas.el.width = pJS.canvas.w;
-    pJS.canvas.el.height = pJS.canvas.h;
-
-    if(pJS && pJS.interactivity.events.resize){
-
-      window.addEventListener('resize', function(){
-
-          pJS.canvas.w = pJS.canvas.el.offsetWidth;
-          pJS.canvas.h = pJS.canvas.el.offsetHeight;
-
-          /* resize canvas */
-          if(pJS.tmp.retina){
-            pJS.canvas.w *= pJS.canvas.pxratio;
-            pJS.canvas.h *= pJS.canvas.pxratio;
-          }
-
-          pJS.canvas.el.width = pJS.canvas.w;
-          pJS.canvas.el.height = pJS.canvas.h;
-
-          /* repaint canvas on anim disabled */
-          if(!pJS.particles.move.enable){
-            pJS.fn.particlesEmpty();
-            pJS.fn.particlesCreate();
-            pJS.fn.particlesDraw();
-            pJS.fn.vendors.densityAutoParticles();
-          }
-
-        /* density particles enabled */
-        pJS.fn.vendors.densityAutoParticles();
-
-      });
-
-    }
-
-  };
-
-
-  pJS.fn.canvasPaint = function(){
-    pJS.canvas.ctx.fillRect(0, 0, pJS.canvas.w, pJS.canvas.h);
-  };
-
-  pJS.fn.canvasClear = function(){
-    pJS.canvas.ctx.clearRect(0, 0, pJS.canvas.w, pJS.canvas.h);
-  };
-
-
-  /* --------- pJS functions - particles ----------- */
-
-  pJS.fn.particle = function(color, opacity, position){
-
-    /* size */
-    this.radius = (pJS.particles.size.random ? Math.random() : 1) * pJS.particles.size.value;
-    if(pJS.particles.size.anim.enable){
-      this.size_status = false;
-      this.vs = pJS.particles.size.anim.speed / 100;
-      if(!pJS.particles.size.anim.sync){
-        this.vs = this.vs * Math.random();
-      }
-    }
-
-    /* position */
-    this.x = position ? position.x : Math.random() * pJS.canvas.w;
-    this.y = position ? position.y : Math.random() * pJS.canvas.h;
-
-    /* check position  - into the canvas */
-    if(this.x > pJS.canvas.w - this.radius*2) this.x = this.x - this.radius;
-    else if(this.x < this.radius*2) this.x = this.x + this.radius;
-    if(this.y > pJS.canvas.h - this.radius*2) this.y = this.y - this.radius;
-    else if(this.y < this.radius*2) this.y = this.y + this.radius;
-
-    /* check position - avoid overlap */
-    if(pJS.particles.move.bounce){
-      pJS.fn.vendors.checkOverlap(this, position);
-    }
-
-    /* color */
-    this.color = {};
-    if(typeof(color.value) == 'object'){
-
-      if(color.value instanceof Array){
-        var color_selected = color.value[Math.floor(Math.random() * pJS.particles.color.value.length)];
-        this.color.rgb = hexToRgb(color_selected);
-      }else{
-        if(color.value.r != undefined && color.value.g != undefined && color.value.b != undefined){
-          this.color.rgb = {
-            r: color.value.r,
-            g: color.value.g,
-            b: color.value.b
-          }
-        }
-        if(color.value.h != undefined && color.value.s != undefined && color.value.l != undefined){
-          this.color.hsl = {
-            h: color.value.h,
-            s: color.value.s,
-            l: color.value.l
-          }
-        }
-      }
-
-    }
-    else if(color.value == 'random'){
-      this.color.rgb = {
-        r: (Math.floor(Math.random() * (255 - 0 + 1)) + 0),
-        g: (Math.floor(Math.random() * (255 - 0 + 1)) + 0),
-        b: (Math.floor(Math.random() * (255 - 0 + 1)) + 0)
-      }
-    }
-    else if(typeof(color.value) == 'string'){
-      this.color = color;
-      this.color.rgb = hexToRgb(this.color.value);
-    }
-
-    /* opacity */
-    this.opacity = (pJS.particles.opacity.random ? Math.random() : 1) * pJS.particles.opacity.value;
-    if(pJS.particles.opacity.anim.enable){
-      this.opacity_status = false;
-      this.vo = pJS.particles.opacity.anim.speed / 100;
-      if(!pJS.particles.opacity.anim.sync){
-        this.vo = this.vo * Math.random();
-      }
-    }
-
-    /* animation - velocity for speed */
-    var velbase = {}
-    switch(pJS.particles.move.direction){
-      case 'top':
-        velbase = { x:0, y:-1 };
-      break;
-      case 'top-right':
-        velbase = { x:0.5, y:-0.5 };
-      break;
-      case 'right':
-        velbase = { x:1, y:-0 };
-      break;
-      case 'bottom-right':
-        velbase = { x:0.5, y:0.5 };
-      break;
-      case 'bottom':
-        velbase = { x:0, y:1 };
-      break;
-      case 'bottom-left':
-        velbase = { x:-0.5, y:1 };
-      break;
-      case 'left':
-        velbase = { x:-1, y:0 };
-      break;
-      case 'top-left':
-        velbase = { x:-0.5, y:-0.5 };
-      break;
-      default:
-        velbase = { x:0, y:0 };
-      break;
-    }
-
-    if(pJS.particles.move.straight){
-      this.vx = velbase.x;
-      this.vy = velbase.y;
-      if(pJS.particles.move.random){
-        this.vx = this.vx * (Math.random());
-        this.vy = this.vy * (Math.random());
-      }
-    }else{
-      this.vx = velbase.x + Math.random()-0.5;
-      this.vy = velbase.y + Math.random()-0.5;
-    }
-
-    // var theta = 2.0 * Math.PI * Math.random();
-    // this.vx = Math.cos(theta);
-    // this.vy = Math.sin(theta);
-
-    this.vx_i = this.vx;
-    this.vy_i = this.vy;
-
-    
-
-    /* if shape is image */
-
-    var shape_type = pJS.particles.shape.type;
-    if(typeof(shape_type) == 'object'){
-      if(shape_type instanceof Array){
-        var shape_selected = shape_type[Math.floor(Math.random() * shape_type.length)];
-        this.shape = shape_selected;
-      }
-    }else{
-      this.shape = shape_type;
-    }
-
-    if(this.shape == 'image'){
-      var sh = pJS.particles.shape;
-      this.img = {
-        src: sh.image.src,
-        ratio: sh.image.width / sh.image.height
-      }
-      if(!this.img.ratio) this.img.ratio = 1;
-      if(pJS.tmp.img_type == 'svg' && pJS.tmp.source_svg != undefined){
-        pJS.fn.vendors.createSvgImg(this);
-        if(pJS.tmp.pushing){
-          this.img.loaded = false;
-        }
-      }
-    }
-
-    
-
-  };
-
-
-  pJS.fn.particle.prototype.draw = function() {
-
-    var p = this;
-
-    if(p.radius_bubble != undefined){
-      var radius = p.radius_bubble; 
-    }else{
-      var radius = p.radius;
-    }
-
-    if(p.opacity_bubble != undefined){
-      var opacity = p.opacity_bubble;
-    }else{
-      var opacity = p.opacity;
-    }
-
-    if(p.color.rgb){
-      var color_value = 'rgba('+p.color.rgb.r+','+p.color.rgb.g+','+p.color.rgb.b+','+opacity+')';
-    }else{
-      var color_value = 'hsla('+p.color.hsl.h+','+p.color.hsl.s+'%,'+p.color.hsl.l+'%,'+opacity+')';
-    }
-
-    pJS.canvas.ctx.fillStyle = color_value;
-    pJS.canvas.ctx.beginPath();
-
-    switch(p.shape){
-
-      case 'circle':
-        pJS.canvas.ctx.arc(p.x, p.y, radius, 0, Math.PI * 2, false);
-      break;
-
-      case 'edge':
-        pJS.canvas.ctx.rect(p.x-radius, p.y-radius, radius*2, radius*2);
-      break;
-
-      case 'triangle':
-        pJS.fn.vendors.drawShape(pJS.canvas.ctx, p.x-radius, p.y+radius / 1.66, radius*2, 3, 2);
-      break;
-
-      case 'polygon':
-        pJS.fn.vendors.drawShape(
-          pJS.canvas.ctx,
-          p.x - radius / (pJS.particles.shape.polygon.nb_sides/3.5), // startX
-          p.y - radius / (2.66/3.5), // startY
-          radius*2.66 / (pJS.particles.shape.polygon.nb_sides/3), // sideLength
-          pJS.particles.shape.polygon.nb_sides, // sideCountNumerator
-          1 // sideCountDenominator
-        );
-      break;
-
-      case 'star':
-        pJS.fn.vendors.drawShape(
-          pJS.canvas.ctx,
-          p.x - radius*2 / (pJS.particles.shape.polygon.nb_sides/4), // startX
-          p.y - radius / (2*2.66/3.5), // startY
-          radius*2*2.66 / (pJS.particles.shape.polygon.nb_sides/3), // sideLength
-          pJS.particles.shape.polygon.nb_sides, // sideCountNumerator
-          2 // sideCountDenominator
-        );
-      break;
-
-      case 'image':
-
-        function draw(){
-          pJS.canvas.ctx.drawImage(
-            img_obj,
-            p.x-radius,
-            p.y-radius,
-            radius*2,
-            radius*2 / p.img.ratio
-          );
-        }
-
-        if(pJS.tmp.img_type == 'svg'){
-          var img_obj = p.img.obj;
-        }else{
-          var img_obj = pJS.tmp.img_obj;
-        }
-
-        if(img_obj){
-          draw();
-        }
-
-      break;
-
-    }
-
-    pJS.canvas.ctx.closePath();
-
-    if(pJS.particles.shape.stroke.width > 0){
-      pJS.canvas.ctx.strokeStyle = pJS.particles.shape.stroke.color;
-      pJS.canvas.ctx.lineWidth = pJS.particles.shape.stroke.width;
-      pJS.canvas.ctx.stroke();
-    }
-    
-    pJS.canvas.ctx.fill();
-    
-  };
-
-
-  pJS.fn.particlesCreate = function(){
-    for(var i = 0; i < pJS.particles.number.value; i++) {
-      pJS.particles.array.push(new pJS.fn.particle(pJS.particles.color, pJS.particles.opacity.value));
-    }
-  };
-
-  pJS.fn.particlesUpdate = function(){
-
-    for(var i = 0; i < pJS.particles.array.length; i++){
-
-      /* the particle */
-      var p = pJS.particles.array[i];
-
-      // var d = ( dx = pJS.interactivity.mouse.click_pos_x - p.x ) * dx + ( dy = pJS.interactivity.mouse.click_pos_y - p.y ) * dy;
-      // var f = -BANG_SIZE / d;
-      // if ( d < BANG_SIZE ) {
-      //     var t = Math.atan2( dy, dx );
-      //     p.vx = f * Math.cos(t);
-      //     p.vy = f * Math.sin(t);
-      // }
-
-      /* move the particle */
-      if(pJS.particles.move.enable){
-        var ms = pJS.particles.move.speed/2;
-        p.x += p.vx * ms;
-        p.y += p.vy * ms;
-      }
-
-      /* change opacity status */
-      if(pJS.particles.opacity.anim.enable) {
-        if(p.opacity_status == true) {
-          if(p.opacity >= pJS.particles.opacity.value) p.opacity_status = false;
-          p.opacity += p.vo;
-        }else {
-          if(p.opacity <= pJS.particles.opacity.anim.opacity_min) p.opacity_status = true;
-          p.opacity -= p.vo;
-        }
-        if(p.opacity < 0) p.opacity = 0;
-      }
-
-      /* change size */
-      if(pJS.particles.size.anim.enable){
-        if(p.size_status == true){
-          if(p.radius >= pJS.particles.size.value) p.size_status = false;
-          p.radius += p.vs;
-        }else{
-          if(p.radius <= pJS.particles.size.anim.size_min) p.size_status = true;
-          p.radius -= p.vs;
-        }
-        if(p.radius < 0) p.radius = 0;
-      }
-
-      /* change particle position if it is out of canvas */
-      if(pJS.particles.move.out_mode == 'bounce'){
-        var new_pos = {
-          x_left: p.radius,
-          x_right:  pJS.canvas.w,
-          y_top: p.radius,
-          y_bottom: pJS.canvas.h
-        }
-      }else{
-        var new_pos = {
-          x_left: -p.radius,
-          x_right: pJS.canvas.w + p.radius,
-          y_top: -p.radius,
-          y_bottom: pJS.canvas.h + p.radius
-        }
-      }
-
-      if(p.x - p.radius > pJS.canvas.w){
-        p.x = new_pos.x_left;
-        p.y = Math.random() * pJS.canvas.h;
-      }
-      else if(p.x + p.radius < 0){
-        p.x = new_pos.x_right;
-        p.y = Math.random() * pJS.canvas.h;
-      }
-      if(p.y - p.radius > pJS.canvas.h){
-        p.y = new_pos.y_top;
-        p.x = Math.random() * pJS.canvas.w;
-      }
-      else if(p.y + p.radius < 0){
-        p.y = new_pos.y_bottom;
-        p.x = Math.random() * pJS.canvas.w;
-      }
-
-      /* out of canvas modes */
-      switch(pJS.particles.move.out_mode){
-        case 'bounce':
-          if (p.x + p.radius > pJS.canvas.w) p.vx = -p.vx;
-          else if (p.x - p.radius < 0) p.vx = -p.vx;
-          if (p.y + p.radius > pJS.canvas.h) p.vy = -p.vy;
-          else if (p.y - p.radius < 0) p.vy = -p.vy;
-        break;
-      }
-
-      /* events */
-      if(isInArray('grab', pJS.interactivity.events.onhover.mode)){
-        pJS.fn.modes.grabParticle(p);
-      }
-
-      if(isInArray('bubble', pJS.interactivity.events.onhover.mode) || isInArray('bubble', pJS.interactivity.events.onclick.mode)){
-        pJS.fn.modes.bubbleParticle(p);
-      }
-
-      if(isInArray('repulse', pJS.interactivity.events.onhover.mode) || isInArray('repulse', pJS.interactivity.events.onclick.mode)){
-        pJS.fn.modes.repulseParticle(p);
-      }
-
-      /* interaction auto between particles */
-      if(pJS.particles.line_linked.enable || pJS.particles.move.attract.enable){
-        for(var j = i + 1; j < pJS.particles.array.length; j++){
-          var p2 = pJS.particles.array[j];
-
-          /* link particles */
-          if(pJS.particles.line_linked.enable){
-            pJS.fn.interact.linkParticles(p,p2);
-          }
-
-          /* attract particles */
-          if(pJS.particles.move.attract.enable){
-            pJS.fn.interact.attractParticles(p,p2);
-          }
-
-          /* bounce particles */
-          if(pJS.particles.move.bounce){
-            pJS.fn.interact.bounceParticles(p,p2);
-          }
-
-        }
-      }
-
-
-    }
-
-  };
-
-  pJS.fn.particlesDraw = function(){
-
-    /* clear canvas */
-    pJS.canvas.ctx.clearRect(0, 0, pJS.canvas.w, pJS.canvas.h);
-
-    /* update each particles param */
-    pJS.fn.particlesUpdate();
-
-    /* draw each particle */
-    for(var i = 0; i < pJS.particles.array.length; i++){
-      var p = pJS.particles.array[i];
-      p.draw();
-    }
-
-  };
-
-  pJS.fn.particlesEmpty = function(){
-    pJS.particles.array = [];
-  };
-
-  pJS.fn.particlesRefresh = function(){
-
-    /* init all */
-    cancelRequestAnimFrame(pJS.fn.checkAnimFrame);
-    cancelRequestAnimFrame(pJS.fn.drawAnimFrame);
-    pJS.tmp.source_svg = undefined;
-    pJS.tmp.img_obj = undefined;
-    pJS.tmp.count_svg = 0;
-    pJS.fn.particlesEmpty();
-    pJS.fn.canvasClear();
-    
-    /* restart */
-    pJS.fn.vendors.start();
-
-  };
-
-
-  /* ---------- pJS functions - particles interaction ------------ */
-
-  pJS.fn.interact.linkParticles = function(p1, p2){
-
-    var dx = p1.x - p2.x,
-        dy = p1.y - p2.y,
-        dist = Math.sqrt(dx*dx + dy*dy);
-
-    /* draw a line between p1 and p2 if the distance between them is under the config distance */
-    if(dist <= pJS.particles.line_linked.distance){
-
-      var opacity_line = pJS.particles.line_linked.opacity - (dist / (1/pJS.particles.line_linked.opacity)) / pJS.particles.line_linked.distance;
-
-      if(opacity_line > 0){        
-        
-        /* style */
-        var color_line = pJS.particles.line_linked.color_rgb_line;
-        pJS.canvas.ctx.strokeStyle = 'rgba('+color_line.r+','+color_line.g+','+color_line.b+','+opacity_line+')';
-        pJS.canvas.ctx.lineWidth = pJS.particles.line_linked.width;
-        //pJS.canvas.ctx.lineCap = 'round'; /* performance issue */
-        
-        /* path */
-        pJS.canvas.ctx.beginPath();
-        pJS.canvas.ctx.moveTo(p1.x, p1.y);
-        pJS.canvas.ctx.lineTo(p2.x, p2.y);
-        pJS.canvas.ctx.stroke();
-        pJS.canvas.ctx.closePath();
-
-      }
-
-    }
-
-  };
-
-
-  pJS.fn.interact.attractParticles  = function(p1, p2){
-
-    /* condensed particles */
-    var dx = p1.x - p2.x,
-        dy = p1.y - p2.y,
-        dist = Math.sqrt(dx*dx + dy*dy);
-
-    if(dist <= pJS.particles.line_linked.distance){
-
-      var ax = dx/(pJS.particles.move.attract.rotateX*1000),
-          ay = dy/(pJS.particles.move.attract.rotateY*1000);
-
-      p1.vx -= ax;
-      p1.vy -= ay;
-
-      p2.vx += ax;
-      p2.vy += ay;
-
-    }
-    
-
-  }
-
-
-  pJS.fn.interact.bounceParticles = function(p1, p2){
-
-    var dx = p1.x - p2.x,
-        dy = p1.y - p2.y,
-        dist = Math.sqrt(dx*dx + dy*dy),
-        dist_p = p1.radius+p2.radius;
-
-    if(dist <= dist_p){
-      p1.vx = -p1.vx;
-      p1.vy = -p1.vy;
-
-      p2.vx = -p2.vx;
-      p2.vy = -p2.vy;
-    }
-
-  }
-
-
-  /* ---------- pJS functions - modes events ------------ */
-
-  pJS.fn.modes.pushParticles = function(nb, pos){
-
-    pJS.tmp.pushing = true;
-
-    for(var i = 0; i < nb; i++){
-      pJS.particles.array.push(
-        new pJS.fn.particle(
-          pJS.particles.color,
-          pJS.particles.opacity.value,
-          {
-            'x': pos ? pos.pos_x : Math.random() * pJS.canvas.w,
-            'y': pos ? pos.pos_y : Math.random() * pJS.canvas.h
-          }
-        )
-      )
-      if(i == nb-1){
-        if(!pJS.particles.move.enable){
-          pJS.fn.particlesDraw();
-        }
-        pJS.tmp.pushing = false;
-      }
-    }
-
-  };
-
-
-  pJS.fn.modes.removeParticles = function(nb){
-
-    pJS.particles.array.splice(0, nb);
-    if(!pJS.particles.move.enable){
-      pJS.fn.particlesDraw();
-    }
-
-  };
-
-
-  pJS.fn.modes.bubbleParticle = function(p){
-
-    /* on hover event */
-    if(pJS.interactivity.events.onhover.enable && isInArray('bubble', pJS.interactivity.events.onhover.mode)){
-
-      var dx_mouse = p.x - pJS.interactivity.mouse.pos_x,
-          dy_mouse = p.y - pJS.interactivity.mouse.pos_y,
-          dist_mouse = Math.sqrt(dx_mouse*dx_mouse + dy_mouse*dy_mouse),
-          ratio = 1 - dist_mouse / pJS.interactivity.modes.bubble.distance;
-
-      function init(){
-        p.opacity_bubble = p.opacity;
-        p.radius_bubble = p.radius;
-      }
-
-      /* mousemove - check ratio */
-      if(dist_mouse <= pJS.interactivity.modes.bubble.distance){
-
-        if(ratio >= 0 && pJS.interactivity.status == 'mousemove'){
-          
-          /* size */
-          if(pJS.interactivity.modes.bubble.size != pJS.particles.size.value){
-
-            if(pJS.interactivity.modes.bubble.size > pJS.particles.size.value){
-              var size = p.radius + (pJS.interactivity.modes.bubble.size*ratio);
-              if(size >= 0){
-                p.radius_bubble = size;
-              }
-            }else{
-              var dif = p.radius - pJS.interactivity.modes.bubble.size,
-                  size = p.radius - (dif*ratio);
-              if(size > 0){
-                p.radius_bubble = size;
-              }else{
-                p.radius_bubble = 0;
-              }
-            }
-
-          }
-
-          /* opacity */
-          if(pJS.interactivity.modes.bubble.opacity != pJS.particles.opacity.value){
-
-            if(pJS.interactivity.modes.bubble.opacity > pJS.particles.opacity.value){
-              var opacity = pJS.interactivity.modes.bubble.opacity*ratio;
-              if(opacity > p.opacity && opacity <= pJS.interactivity.modes.bubble.opacity){
-                p.opacity_bubble = opacity;
-              }
-            }else{
-              var opacity = p.opacity - (pJS.particles.opacity.value-pJS.interactivity.modes.bubble.opacity)*ratio;
-              if(opacity < p.opacity && opacity >= pJS.interactivity.modes.bubble.opacity){
-                p.opacity_bubble = opacity;
-              }
-            }
-
-          }
-
-        }
-
-      }else{
-        init();
-      }
-
-
-      /* mouseleave */
-      if(pJS.interactivity.status == 'mouseleave'){
-        init();
-      }
-    
-    }
-
-    /* on click event */
-    else if(pJS.interactivity.events.onclick.enable && isInArray('bubble', pJS.interactivity.events.onclick.mode)){
-
-
-      if(pJS.tmp.bubble_clicking){
-        var dx_mouse = p.x - pJS.interactivity.mouse.click_pos_x,
-            dy_mouse = p.y - pJS.interactivity.mouse.click_pos_y,
-            dist_mouse = Math.sqrt(dx_mouse*dx_mouse + dy_mouse*dy_mouse),
-            time_spent = (new Date().getTime() - pJS.interactivity.mouse.click_time)/1000;
-
-        if(time_spent > pJS.interactivity.modes.bubble.duration){
-          pJS.tmp.bubble_duration_end = true;
-        }
-
-        if(time_spent > pJS.interactivity.modes.bubble.duration*2){
-          pJS.tmp.bubble_clicking = false;
-          pJS.tmp.bubble_duration_end = false;
-        }
-      }
-
-
-      function process(bubble_param, particles_param, p_obj_bubble, p_obj, id){
-
-        if(bubble_param != particles_param){
-
-          if(!pJS.tmp.bubble_duration_end){
-            if(dist_mouse <= pJS.interactivity.modes.bubble.distance){
-              if(p_obj_bubble != undefined) var obj = p_obj_bubble;
-              else var obj = p_obj;
-              if(obj != bubble_param){
-                var value = p_obj - (time_spent * (p_obj - bubble_param) / pJS.interactivity.modes.bubble.duration);
-                if(id == 'size') p.radius_bubble = value;
-                if(id == 'opacity') p.opacity_bubble = value;
-              }
-            }else{
-              if(id == 'size') p.radius_bubble = undefined;
-              if(id == 'opacity') p.opacity_bubble = undefined;
-            }
-          }else{
-            if(p_obj_bubble != undefined){
-              var value_tmp = p_obj - (time_spent * (p_obj - bubble_param) / pJS.interactivity.modes.bubble.duration),
-                  dif = bubble_param - value_tmp;
-                  value = bubble_param + dif;
-              if(id == 'size') p.radius_bubble = value;
-              if(id == 'opacity') p.opacity_bubble = value;
-            }
-          }
-
-        }
-
-      }
-
-      if(pJS.tmp.bubble_clicking){
-        /* size */
-        process(pJS.interactivity.modes.bubble.size, pJS.particles.size.value, p.radius_bubble, p.radius, 'size');
-        /* opacity */
-        process(pJS.interactivity.modes.bubble.opacity, pJS.particles.opacity.value, p.opacity_bubble, p.opacity, 'opacity');
-      }
-
-    }
-
-  };
-
-
-  pJS.fn.modes.repulseParticle = function(p){
-
-    if(pJS.interactivity.events.onhover.enable && isInArray('repulse', pJS.interactivity.events.onhover.mode) && pJS.interactivity.status == 'mousemove') {
-
-      var dx_mouse = p.x - pJS.interactivity.mouse.pos_x,
-          dy_mouse = p.y - pJS.interactivity.mouse.pos_y,
-          dist_mouse = Math.sqrt(dx_mouse*dx_mouse + dy_mouse*dy_mouse);
-
-      var normVec = {x: dx_mouse/dist_mouse, y: dy_mouse/dist_mouse},
-          repulseRadius = pJS.interactivity.modes.repulse.distance,
-          velocity = 100,
-          repulseFactor = clamp((1/repulseRadius)*(-1*Math.pow(dist_mouse/repulseRadius,2)+1)*repulseRadius*velocity, 0, 50);
-      
-      var pos = {
-        x: p.x + normVec.x * repulseFactor,
-        y: p.y + normVec.y * repulseFactor
-      }
-
-      if(pJS.particles.move.out_mode == 'bounce'){
-        if(pos.x - p.radius > 0 && pos.x + p.radius < pJS.canvas.w) p.x = pos.x;
-        if(pos.y - p.radius > 0 && pos.y + p.radius < pJS.canvas.h) p.y = pos.y;
-      }else{
-        p.x = pos.x;
-        p.y = pos.y;
-      }
-    
-    }
-
-
-    else if(pJS.interactivity.events.onclick.enable && isInArray('repulse', pJS.interactivity.events.onclick.mode)) {
-
-      if(!pJS.tmp.repulse_finish){
-        pJS.tmp.repulse_count++;
-        if(pJS.tmp.repulse_count == pJS.particles.array.length){
-          pJS.tmp.repulse_finish = true;
-        }
-      }
-
-      if(pJS.tmp.repulse_clicking){
-
-        var repulseRadius = Math.pow(pJS.interactivity.modes.repulse.distance/6, 3);
-
-        var dx = pJS.interactivity.mouse.click_pos_x - p.x,
-            dy = pJS.interactivity.mouse.click_pos_y - p.y,
-            d = dx*dx + dy*dy;
-
-        var force = -repulseRadius / d * 1;
-
-        function process(){
-
-          var f = Math.atan2(dy,dx);
-          p.vx = force * Math.cos(f);
-          p.vy = force * Math.sin(f);
-
-          if(pJS.particles.move.out_mode == 'bounce'){
-            var pos = {
-              x: p.x + p.vx,
-              y: p.y + p.vy
-            }
-            if (pos.x + p.radius > pJS.canvas.w) p.vx = -p.vx;
-            else if (pos.x - p.radius < 0) p.vx = -p.vx;
-            if (pos.y + p.radius > pJS.canvas.h) p.vy = -p.vy;
-            else if (pos.y - p.radius < 0) p.vy = -p.vy;
-          }
-
-        }
-
-        // default
-        if(d <= repulseRadius){
-          process();
-        }
-
-        // bang - slow motion mode
-        // if(!pJS.tmp.repulse_finish){
-        //   if(d <= repulseRadius){
-        //     process();
-        //   }
-        // }else{
-        //   process();
-        // }
-        
-
-      }else{
-
-        if(pJS.tmp.repulse_clicking == false){
-
-          p.vx = p.vx_i;
-          p.vy = p.vy_i;
-        
-        }
-
-      }
-
-    }
-
-  }
-
-
-  pJS.fn.modes.grabParticle = function(p){
-
-    if(pJS.interactivity.events.onhover.enable && pJS.interactivity.status == 'mousemove'){
-
-      var dx_mouse = p.x - pJS.interactivity.mouse.pos_x,
-          dy_mouse = p.y - pJS.interactivity.mouse.pos_y,
-          dist_mouse = Math.sqrt(dx_mouse*dx_mouse + dy_mouse*dy_mouse);
-
-      /* draw a line between the cursor and the particle if the distance between them is under the config distance */
-      if(dist_mouse <= pJS.interactivity.modes.grab.distance){
-
-        var opacity_line = pJS.interactivity.modes.grab.line_linked.opacity - (dist_mouse / (1/pJS.interactivity.modes.grab.line_linked.opacity)) / pJS.interactivity.modes.grab.distance;
-
-        if(opacity_line > 0){
-
-          /* style */
-          var color_line = pJS.particles.line_linked.color_rgb_line;
-          pJS.canvas.ctx.strokeStyle = 'rgba('+color_line.r+','+color_line.g+','+color_line.b+','+opacity_line+')';
-          pJS.canvas.ctx.lineWidth = pJS.particles.line_linked.width;
-          //pJS.canvas.ctx.lineCap = 'round'; /* performance issue */
-          
-          /* path */
-          pJS.canvas.ctx.beginPath();
-          pJS.canvas.ctx.moveTo(p.x, p.y);
-          pJS.canvas.ctx.lineTo(pJS.interactivity.mouse.pos_x, pJS.interactivity.mouse.pos_y);
-          pJS.canvas.ctx.stroke();
-          pJS.canvas.ctx.closePath();
-
-        }
-
-      }
-
-    }
-
-  };
-
-
-
-  /* ---------- pJS functions - vendors ------------ */
-
-  pJS.fn.vendors.eventsListeners = function(){
-
-    /* events target element */
-    if(pJS.interactivity.detect_on == 'window'){
-      pJS.interactivity.el = window;
-    }else{
-      pJS.interactivity.el = pJS.canvas.el;
-    }
-
-
-    /* detect mouse pos - on hover / click event */
-    if(pJS.interactivity.events.onhover.enable || pJS.interactivity.events.onclick.enable){
-
-      /* el on mousemove */
-      pJS.interactivity.el.addEventListener('mousemove', function(e){
-
-        if(pJS.interactivity.el == window){
-          var pos_x = e.clientX,
-              pos_y = e.clientY;
-        }
-        else{
-          var pos_x = e.offsetX || e.clientX,
-              pos_y = e.offsetY || e.clientY;
-        }
-
-        pJS.interactivity.mouse.pos_x = pos_x;
-        pJS.interactivity.mouse.pos_y = pos_y;
-
-        if(pJS.tmp.retina){
-          pJS.interactivity.mouse.pos_x *= pJS.canvas.pxratio;
-          pJS.interactivity.mouse.pos_y *= pJS.canvas.pxratio;
-        }
-
-        pJS.interactivity.status = 'mousemove';
-
-      });
-
-      /* el on onmouseleave */
-      pJS.interactivity.el.addEventListener('mouseleave', function(e){
-
-        pJS.interactivity.mouse.pos_x = null;
-        pJS.interactivity.mouse.pos_y = null;
-        pJS.interactivity.status = 'mouseleave';
-
-      });
-
-    }
-
-    /* on click event */
-    if(pJS.interactivity.events.onclick.enable){
-
-      pJS.interactivity.el.addEventListener('click', function(){
-
-        pJS.interactivity.mouse.click_pos_x = pJS.interactivity.mouse.pos_x;
-        pJS.interactivity.mouse.click_pos_y = pJS.interactivity.mouse.pos_y;
-        pJS.interactivity.mouse.click_time = new Date().getTime();
-
-        if(pJS.interactivity.events.onclick.enable){
-
-          switch(pJS.interactivity.events.onclick.mode){
-
-            case 'push':
-              if(pJS.particles.move.enable){
-                pJS.fn.modes.pushParticles(pJS.interactivity.modes.push.particles_nb, pJS.interactivity.mouse);
-              }else{
-                if(pJS.interactivity.modes.push.particles_nb == 1){
-                  pJS.fn.modes.pushParticles(pJS.interactivity.modes.push.particles_nb, pJS.interactivity.mouse);
-                }
-                else if(pJS.interactivity.modes.push.particles_nb > 1){
-                  pJS.fn.modes.pushParticles(pJS.interactivity.modes.push.particles_nb);
-                }
-              }
-            break;
-
-            case 'remove':
-              pJS.fn.modes.removeParticles(pJS.interactivity.modes.remove.particles_nb);
-            break;
-
-            case 'bubble':
-              pJS.tmp.bubble_clicking = true;
-            break;
-
-            case 'repulse':
-              pJS.tmp.repulse_clicking = true;
-              pJS.tmp.repulse_count = 0;
-              pJS.tmp.repulse_finish = false;
-              setTimeout(function(){
-                pJS.tmp.repulse_clicking = false;
-              }, pJS.interactivity.modes.repulse.duration*1000)
-            break;
-
-          }
-
-        }
-
-      });
-        
-    }
-
-
-  };
-
-  pJS.fn.vendors.densityAutoParticles = function(){
-
-    if(pJS.particles.number.density.enable){
-
-      /* calc area */
-      var area = pJS.canvas.el.width * pJS.canvas.el.height / 1000;
-      if(pJS.tmp.retina){
-        area = area/(pJS.canvas.pxratio*2);
-      }
-
-      /* calc number of particles based on density area */
-      var nb_particles = area * pJS.particles.number.value / pJS.particles.number.density.value_area;
-
-      /* add or remove X particles */
-      var missing_particles = pJS.particles.array.length - nb_particles;
-      if(missing_particles < 0) pJS.fn.modes.pushParticles(Math.abs(missing_particles));
-      else pJS.fn.modes.removeParticles(missing_particles);
-
-    }
-
-  };
-
-
-  pJS.fn.vendors.checkOverlap = function(p1, position){
-    for(var i = 0; i < pJS.particles.array.length; i++){
-      var p2 = pJS.particles.array[i];
-
-      var dx = p1.x - p2.x,
-          dy = p1.y - p2.y,
-          dist = Math.sqrt(dx*dx + dy*dy);
-
-      if(dist <= p1.radius + p2.radius){
-        p1.x = position ? position.x : Math.random() * pJS.canvas.w;
-        p1.y = position ? position.y : Math.random() * pJS.canvas.h;
-        pJS.fn.vendors.checkOverlap(p1);
-      }
-    }
-  };
-
-
-  pJS.fn.vendors.createSvgImg = function(p){
-
-    /* set color to svg element */
-    var svgXml = pJS.tmp.source_svg,
-        rgbHex = /#([0-9A-F]{3,6})/gi,
-        coloredSvgXml = svgXml.replace(rgbHex, function (m, r, g, b) {
-          if(p.color.rgb){
-            var color_value = 'rgba('+p.color.rgb.r+','+p.color.rgb.g+','+p.color.rgb.b+','+p.opacity+')';
-          }else{
-            var color_value = 'hsla('+p.color.hsl.h+','+p.color.hsl.s+'%,'+p.color.hsl.l+'%,'+p.opacity+')';
-          }
-          return color_value;
-        });
-
-    /* prepare to create img with colored svg */
-    var svg = new Blob([coloredSvgXml], {type: 'image/svg+xml;charset=utf-8'}),
-        DOMURL = window.URL || window.webkitURL || window,
-        url = DOMURL.createObjectURL(svg);
-
-    /* create particle img obj */
-    var img = new Image();
-    img.addEventListener('load', function(){
-      p.img.obj = img;
-      p.img.loaded = true;
-      DOMURL.revokeObjectURL(url);
-      pJS.tmp.count_svg++;
-    });
-    img.src = url;
-
-  };
-
-
-  pJS.fn.vendors.destroypJS = function(){
-    cancelAnimationFrame(pJS.fn.drawAnimFrame);
-    canvas_el.remove();
-    pJSDom = null;
-  };
-
-
-  pJS.fn.vendors.drawShape = function(c, startX, startY, sideLength, sideCountNumerator, sideCountDenominator){
-
-    // By Programming Thomas - https://programmingthomas.wordpress.com/2013/04/03/n-sided-shapes/
-    var sideCount = sideCountNumerator * sideCountDenominator;
-    var decimalSides = sideCountNumerator / sideCountDenominator;
-    var interiorAngleDegrees = (180 * (decimalSides - 2)) / decimalSides;
-    var interiorAngle = Math.PI - Math.PI * interiorAngleDegrees / 180; // convert to radians
-    c.save();
-    c.beginPath();
-    c.translate(startX, startY);
-    c.moveTo(0,0);
-    for (var i = 0; i < sideCount; i++) {
-      c.lineTo(sideLength,0);
-      c.translate(sideLength,0);
-      c.rotate(interiorAngle);
-    }
-    //c.stroke();
-    c.fill();
-    c.restore();
-
-  };
-
-  pJS.fn.vendors.exportImg = function(){
-    window.open(pJS.canvas.el.toDataURL('image/png'), '_blank');
-  };
-
-
-  pJS.fn.vendors.loadImg = function(type){
-
-    pJS.tmp.img_error = undefined;
-
-    if(pJS.particles.shape.image.src != ''){
-
-      if(type == 'svg'){
-
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', pJS.particles.shape.image.src);
-        xhr.onreadystatechange = function (data) {
-          if(xhr.readyState == 4){
-            if(xhr.status == 200){
-              pJS.tmp.source_svg = data.currentTarget.response;
-              pJS.fn.vendors.checkBeforeDraw();
-            }else{
-              console.log('Error pJS - Image not found');
-              pJS.tmp.img_error = true;
-            }
-          }
-        }
-        xhr.send();
-
-      }else{
-
-        var img = new Image();
-        img.addEventListener('load', function(){
-          pJS.tmp.img_obj = img;
-          pJS.fn.vendors.checkBeforeDraw();
-        });
-        img.src = pJS.particles.shape.image.src;
-
-      }
-
-    }else{
-      console.log('Error pJS - No image.src');
-      pJS.tmp.img_error = true;
-    }
-
-  };
-
-
-  pJS.fn.vendors.draw = function(){
-
-    if(pJS.particles.shape.type == 'image'){
-
-      if(pJS.tmp.img_type == 'svg'){
-
-        if(pJS.tmp.count_svg >= pJS.particles.number.value){
-          pJS.fn.particlesDraw();
-          if(!pJS.particles.move.enable) cancelRequestAnimFrame(pJS.fn.drawAnimFrame);
-          else pJS.fn.drawAnimFrame = requestAnimFrame(pJS.fn.vendors.draw);
-        }else{
-          //console.log('still loading...');
-          if(!pJS.tmp.img_error) pJS.fn.drawAnimFrame = requestAnimFrame(pJS.fn.vendors.draw);
-        }
-
-      }else{
-
-        if(pJS.tmp.img_obj != undefined){
-          pJS.fn.particlesDraw();
-          if(!pJS.particles.move.enable) cancelRequestAnimFrame(pJS.fn.drawAnimFrame);
-          else pJS.fn.drawAnimFrame = requestAnimFrame(pJS.fn.vendors.draw);
-        }else{
-          if(!pJS.tmp.img_error) pJS.fn.drawAnimFrame = requestAnimFrame(pJS.fn.vendors.draw);
-        }
-
-      }
-
-    }else{
-      pJS.fn.particlesDraw();
-      if(!pJS.particles.move.enable) cancelRequestAnimFrame(pJS.fn.drawAnimFrame);
-      else pJS.fn.drawAnimFrame = requestAnimFrame(pJS.fn.vendors.draw);
-    }
-
-  };
-
-
-  pJS.fn.vendors.checkBeforeDraw = function(){
-
-    // if shape is image
-    if(pJS.particles.shape.type == 'image'){
-
-      if(pJS.tmp.img_type == 'svg' && pJS.tmp.source_svg == undefined){
-        pJS.tmp.checkAnimFrame = requestAnimFrame(check);
-      }else{
-        //console.log('images loaded! cancel check');
-        cancelRequestAnimFrame(pJS.tmp.checkAnimFrame);
-        if(!pJS.tmp.img_error){
-          pJS.fn.vendors.init();
-          pJS.fn.vendors.draw();
-        }
-        
-      }
-
-    }else{
-      pJS.fn.vendors.init();
-      pJS.fn.vendors.draw();
-    }
-
-  };
-
-
-  pJS.fn.vendors.init = function(){
-
-    /* init canvas + particles */
-    pJS.fn.retinaInit();
-    pJS.fn.canvasInit();
-    pJS.fn.canvasSize();
-    pJS.fn.canvasPaint();
-    pJS.fn.particlesCreate();
-    pJS.fn.vendors.densityAutoParticles();
-
-    /* particles.line_linked - convert hex colors to rgb */
-    pJS.particles.line_linked.color_rgb_line = hexToRgb(pJS.particles.line_linked.color);
-
-  };
-
-
-  pJS.fn.vendors.start = function(){
-
-    if(isInArray('image', pJS.particles.shape.type)){
-      pJS.tmp.img_type = pJS.particles.shape.image.src.substr(pJS.particles.shape.image.src.length - 3);
-      pJS.fn.vendors.loadImg(pJS.tmp.img_type);
-    }else{
-      pJS.fn.vendors.checkBeforeDraw();
-    }
-
-  };
-
-
-
-
-  /* ---------- pJS - start ------------ */
-
-
-  pJS.fn.vendors.eventsListeners();
-
-  pJS.fn.vendors.start();
-  
-
-
-};
-
-/* ---------- global functions - vendors ------------ */
-
-Object.deepExtend = function(destination, source) {
-  for (var property in source) {
-    if (source[property] && source[property].constructor &&
-     source[property].constructor === Object) {
-      destination[property] = destination[property] || {};
-      arguments.callee(destination[property], source[property]);
-    } else {
-      destination[property] = source[property];
-    }
-  }
-  return destination;
-};
-
-window.requestAnimFrame = (function(){
-  return  window.requestAnimationFrame ||
-    window.webkitRequestAnimationFrame ||
-    window.mozRequestAnimationFrame    ||
-    window.oRequestAnimationFrame      ||
-    window.msRequestAnimationFrame     ||
-    function(callback){
-      window.setTimeout(callback, 1000 / 60);
-    };
-})();
-
-window.cancelRequestAnimFrame = ( function() {
-  return window.cancelAnimationFrame         ||
-    window.webkitCancelRequestAnimationFrame ||
-    window.mozCancelRequestAnimationFrame    ||
-    window.oCancelRequestAnimationFrame      ||
-    window.msCancelRequestAnimationFrame     ||
-    clearTimeout
-} )();
-
-function hexToRgb(hex){
-  // By Tim Down - http://stackoverflow.com/a/5624139/3493650
-  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-  hex = hex.replace(shorthandRegex, function(m, r, g, b) {
-     return r + r + g + g + b + b;
-  });
-  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? {
-      r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
-      b: parseInt(result[3], 16)
-  } : null;
-};
-
-function clamp(number, min, max) {
-  return Math.min(Math.max(number, min), max);
-};
-
-function isInArray(value, array) {
-  return array.indexOf(value) > -1;
-}
-
-
-/* ---------- particles.js functions - start ------------ */
-
-window.pJSDom = [];
-
-window.particlesJS = function(tag_id, params){
-
-  //console.log(params);
-
-  /* no string id? so it's object params, and set the id with default id */
-  if(typeof(tag_id) != 'string'){
-    params = tag_id;
-    tag_id = 'particles-js';
-  }
-
-  /* no id? set the id to default id */
-  if(!tag_id){
-    tag_id = 'particles-js';
-  }
-
-  /* pJS elements */
-  var pJS_tag = document.getElementById(tag_id),
-      pJS_canvas_class = 'particles-js-canvas-el',
-      exist_canvas = pJS_tag.getElementsByClassName(pJS_canvas_class);
-
-  /* remove canvas if exists into the pJS target tag */
-  if(exist_canvas.length){
-    while(exist_canvas.length > 0){
-      pJS_tag.removeChild(exist_canvas[0]);
-    }
-  }
-
-  /* create canvas element */
-  var canvas_el = document.createElement('canvas');
-  canvas_el.className = pJS_canvas_class;
-
-  /* set size canvas */
-  canvas_el.style.width = "100%";
-  canvas_el.style.height = "100%";
-
-  /* append canvas */
-  var canvas = document.getElementById(tag_id).appendChild(canvas_el);
-
-  /* launch particle.js */
-  if(canvas != null){
-    pJSDom.push(new pJS(tag_id, params));
-  }
-
-};
-
-window.particlesJS.load = function(tag_id, path_config_json, callback){
-
-  /* load json config */
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', path_config_json);
-  xhr.onreadystatechange = function (data) {
-    if(xhr.readyState == 4){
-      if(xhr.status == 200){
-        var params = JSON.parse(data.currentTarget.response);
-        window.particlesJS(tag_id, params);
-        if(callback) callback();
-      }else{
-        console.log('Error pJS - XMLHttpRequest status: '+xhr.status);
-        console.log('Error pJS - File config not found');
-      }
-    }
-  };
-  xhr.send();
-
-};
-
-/***/ }),
-/* 38 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
- *  Vide - v0.5.1
- *  Easy as hell jQuery plugin for video backgrounds.
- *  http://vodkabears.github.io/vide/
- *
- *  Made by Ilya Makarov
- *  Under MIT License
- */
-!(function(root, factory) {
-  if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-  } else if (typeof exports === 'object') {
-    factory(require('jquery'));
-  } else {
-    factory(root.jQuery);
-  }
-})(this, function($) {
-
-  'use strict';
-
-  /**
-   * Name of the plugin
-   * @private
-   * @const
-   * @type {String}
-   */
-  var PLUGIN_NAME = 'vide';
-
-  /**
-   * Default settings
-   * @private
-   * @const
-   * @type {Object}
-   */
-  var DEFAULTS = {
-    volume: 1,
-    playbackRate: 1,
-    muted: true,
-    loop: true,
-    autoplay: true,
-    position: '50% 50%',
-    posterType: 'detect',
-    resizing: true,
-    bgColor: 'transparent',
-    className: ''
-  };
-
-  /**
-   * Not implemented error message
-   * @private
-   * @const
-   * @type {String}
-   */
-  var NOT_IMPLEMENTED_MSG = 'Not implemented';
-
-  /**
-   * Parse a string with options
-   * @private
-   * @param {String} str
-   * @returns {Object|String}
-   */
-  function parseOptions(str) {
-    var obj = {};
-    var delimiterIndex;
-    var option;
-    var prop;
-    var val;
-    var arr;
-    var len;
-    var i;
-
-    // Remove spaces around delimiters and split
-    arr = str.replace(/\s*:\s*/g, ':').replace(/\s*,\s*/g, ',').split(',');
-
-    // Parse a string
-    for (i = 0, len = arr.length; i < len; i++) {
-      option = arr[i];
-
-      // Ignore urls and a string without colon delimiters
-      if (
-        option.search(/^(http|https|ftp):\/\//) !== -1 ||
-        option.search(':') === -1
-      ) {
-        break;
-      }
-
-      delimiterIndex = option.indexOf(':');
-      prop = option.substring(0, delimiterIndex);
-      val = option.substring(delimiterIndex + 1);
-
-      // If val is an empty string, make it undefined
-      if (!val) {
-        val = undefined;
-      }
-
-      // Convert a string value if it is like a boolean
-      if (typeof val === 'string') {
-        val = val === 'true' || (val === 'false' ? false : val);
-      }
-
-      // Convert a string value if it is like a number
-      if (typeof val === 'string') {
-        val = !isNaN(val) ? +val : val;
-      }
-
-      obj[prop] = val;
-    }
-
-    // If nothing is parsed
-    if (prop == null && val == null) {
-      return str;
-    }
-
-    return obj;
-  }
-
-  /**
-   * Parse a position option
-   * @private
-   * @param {String} str
-   * @returns {Object}
-   */
-  function parsePosition(str) {
-    str = '' + str;
-
-    // Default value is a center
-    var args = str.split(/\s+/);
-    var x = '50%';
-    var y = '50%';
-    var len;
-    var arg;
-    var i;
-
-    for (i = 0, len = args.length; i < len; i++) {
-      arg = args[i];
-
-      // Convert values
-      if (arg === 'left') {
-        x = '0%';
-      } else if (arg === 'right') {
-        x = '100%';
-      } else if (arg === 'top') {
-        y = '0%';
-      } else if (arg === 'bottom') {
-        y = '100%';
-      } else if (arg === 'center') {
-        if (i === 0) {
-          x = '50%';
-        } else {
-          y = '50%';
-        }
-      } else {
-        if (i === 0) {
-          x = arg;
-        } else {
-          y = arg;
-        }
-      }
-    }
-
-    return { x: x, y: y };
-  }
-
-  /**
-   * Search a poster
-   * @private
-   * @param {String} path
-   * @param {Function} callback
-   */
-  function findPoster(path, callback) {
-    var onLoad = function() {
-      callback(this.src);
-    };
-
-    $('<img src="' + path + '.gif">').on('load', onLoad);
-    $('<img src="' + path + '.jpg">').on('load', onLoad);
-    $('<img src="' + path + '.jpeg">').on('load', onLoad);
-    $('<img src="' + path + '.png">').on('load', onLoad);
-  }
-
-  /**
-   * Vide constructor
-   * @param {HTMLElement} element
-   * @param {Object|String} path
-   * @param {Object|String} options
-   * @constructor
-   */
-  function Vide(element, path, options) {
-    this.$element = $(element);
-
-    // Parse path
-    if (typeof path === 'string') {
-      path = parseOptions(path);
-    }
-
-    // Parse options
-    if (!options) {
-      options = {};
-    } else if (typeof options === 'string') {
-      options = parseOptions(options);
-    }
-
-    // Remove an extension
-    if (typeof path === 'string') {
-      path = path.replace(/\.\w*$/, '');
-    } else if (typeof path === 'object') {
-      for (var i in path) {
-        if (path.hasOwnProperty(i)) {
-          path[i] = path[i].replace(/\.\w*$/, '');
-        }
-      }
-    }
-
-    this.settings = $.extend({}, DEFAULTS, options);
-    this.path = path;
-
-    // https://github.com/VodkaBears/Vide/issues/110
-    try {
-      this.init();
-    } catch (e) {
-      if (e.message !== NOT_IMPLEMENTED_MSG) {
-        throw e;
-      }
-    }
-  }
-
-  /**
-   * Initialization
-   * @public
-   */
-  Vide.prototype.init = function() {
-    var vide = this;
-    var path = vide.path;
-    var poster = path;
-    var sources = '';
-    var $element = vide.$element;
-    var settings = vide.settings;
-    var position = parsePosition(settings.position);
-    var posterType = settings.posterType;
-    var $video;
-    var $wrapper;
-
-    // Set styles of a video wrapper
-    $wrapper = vide.$wrapper = $('<div>')
-      .addClass(settings.className)
-      .css({
-        position: 'absolute',
-        'z-index': -1,
-        top: 0,
-        left: 0,
-        bottom: 0,
-        right: 0,
-        overflow: 'hidden',
-        '-webkit-background-size': 'cover',
-        '-moz-background-size': 'cover',
-        '-o-background-size': 'cover',
-        'background-size': 'cover',
-        'background-color': settings.bgColor,
-        'background-repeat': 'no-repeat',
-        'background-position': position.x + ' ' + position.y
-      });
-
-    // Get a poster path
-    if (typeof path === 'object') {
-      if (path.poster) {
-        poster = path.poster;
-      } else {
-        if (path.mp4) {
-          poster = path.mp4;
-        } else if (path.webm) {
-          poster = path.webm;
-        } else if (path.ogv) {
-          poster = path.ogv;
-        }
-      }
-    }
-
-    // Set a video poster
-    if (posterType === 'detect') {
-      findPoster(poster, function(url) {
-        $wrapper.css('background-image', 'url(' + url + ')');
-      });
-    } else if (posterType !== 'none') {
-      $wrapper.css('background-image', 'url(' + poster + '.' + posterType + ')');
-    }
-
-    // If a parent element has a static position, make it relative
-    if ($element.css('position') === 'static') {
-      $element.css('position', 'relative');
-    }
-
-    $element.prepend($wrapper);
-
-    if (typeof path === 'object') {
-      if (path.mp4) {
-        sources += '<source src="' + path.mp4 + '.mp4" type="video/mp4">';
-      }
-
-      if (path.webm) {
-        sources += '<source src="' + path.webm + '.webm" type="video/webm">';
-      }
-
-      if (path.ogv) {
-        sources += '<source src="' + path.ogv + '.ogv" type="video/ogg">';
-      }
-
-      $video = vide.$video = $('<video>' + sources + '</video>');
-    } else {
-      $video = vide.$video = $('<video>' +
-        '<source src="' + path + '.mp4" type="video/mp4">' +
-        '<source src="' + path + '.webm" type="video/webm">' +
-        '<source src="' + path + '.ogv" type="video/ogg">' +
-        '</video>');
-    }
-
-    // https://github.com/VodkaBears/Vide/issues/110
-    try {
-      $video
-
-        // Set video properties
-        .prop({
-          autoplay: settings.autoplay,
-          loop: settings.loop,
-          volume: settings.volume,
-          muted: settings.muted,
-          defaultMuted: settings.muted,
-          playbackRate: settings.playbackRate,
-          defaultPlaybackRate: settings.playbackRate
-        });
-    } catch (e) {
-      throw new Error(NOT_IMPLEMENTED_MSG);
-    }
-
-    // Video alignment
-    $video.css({
-      margin: 'auto',
-      position: 'absolute',
-      'z-index': -1,
-      top: position.y,
-      left: position.x,
-      '-webkit-transform': 'translate(-' + position.x + ', -' + position.y + ')',
-      '-ms-transform': 'translate(-' + position.x + ', -' + position.y + ')',
-      '-moz-transform': 'translate(-' + position.x + ', -' + position.y + ')',
-      transform: 'translate(-' + position.x + ', -' + position.y + ')',
-
-      // Disable visibility, while loading
-      visibility: 'hidden',
-      opacity: 0
-    })
-
-    // Resize a video, when it's loaded
-    .one('canplaythrough.' + PLUGIN_NAME, function() {
-      vide.resize();
-    })
-
-    // Make it visible, when it's already playing
-    .one('playing.' + PLUGIN_NAME, function() {
-      $video.css({
-        visibility: 'visible',
-        opacity: 1
-      });
-      $wrapper.css('background-image', 'none');
-    });
-
-    // Resize event is available only for 'window'
-    // Use another code solutions to detect DOM elements resizing
-    $element.on('resize.' + PLUGIN_NAME, function() {
-      if (settings.resizing) {
-        vide.resize();
-      }
-    });
-
-    // Append a video
-    $wrapper.append($video);
-  };
-
-  /**
-   * Get a video element
-   * @public
-   * @returns {HTMLVideoElement}
-   */
-  Vide.prototype.getVideoObject = function() {
-    return this.$video[0];
-  };
-
-  /**
-   * Resize a video background
-   * @public
-   */
-  Vide.prototype.resize = function() {
-    if (!this.$video) {
-      return;
-    }
-
-    var $wrapper = this.$wrapper;
-    var $video = this.$video;
-    var video = $video[0];
-
-    // Get a native video size
-    var videoHeight = video.videoHeight;
-    var videoWidth = video.videoWidth;
-
-    // Get a wrapper size
-    var wrapperHeight = $wrapper.height();
-    var wrapperWidth = $wrapper.width();
-
-    if (wrapperWidth / videoWidth > wrapperHeight / videoHeight) {
-      $video.css({
-
-        // +2 pixels to prevent an empty space after transformation
-        width: wrapperWidth + 2,
-        height: 'auto'
-      });
-    } else {
-      $video.css({
-        width: 'auto',
-
-        // +2 pixels to prevent an empty space after transformation
-        height: wrapperHeight + 2
-      });
-    }
-  };
-
-  /**
-   * Destroy a video background
-   * @public
-   */
-  Vide.prototype.destroy = function() {
-    delete $[PLUGIN_NAME].lookup[this.index];
-    this.$video && this.$video.off(PLUGIN_NAME);
-    this.$element.off(PLUGIN_NAME).removeData(PLUGIN_NAME);
-    this.$wrapper.remove();
-  };
-
-  /**
-   * Special plugin object for instances.
-   * @public
-   * @type {Object}
-   */
-  $[PLUGIN_NAME] = {
-    lookup: []
-  };
-
-  /**
-   * Plugin constructor
-   * @param {Object|String} path
-   * @param {Object|String} options
-   * @returns {JQuery}
-   * @constructor
-   */
-  $.fn[PLUGIN_NAME] = function(path, options) {
-    var instance;
-
-    this.each(function() {
-      instance = $.data(this, PLUGIN_NAME);
-
-      // Destroy the plugin instance if exists
-      instance && instance.destroy();
-
-      // Create the plugin instance
-      instance = new Vide(this, path, options);
-      instance.index = $[PLUGIN_NAME].lookup.push(instance) - 1;
-      $.data(this, PLUGIN_NAME, instance);
-    });
-
-    return this;
-  };
-
-  $(document).ready(function() {
-    var $window = $(window);
-
-    // Window resize event listener
-    $window.on('resize.' + PLUGIN_NAME, function() {
-      for (var len = $[PLUGIN_NAME].lookup.length, i = 0, instance; i < len; i++) {
-        instance = $[PLUGIN_NAME].lookup[i];
-
-        if (instance && instance.settings.resizing) {
-          instance.resize();
-        }
-      }
-    });
-
-    // https://github.com/VodkaBears/Vide/issues/68
-    $window.on('unload.' + PLUGIN_NAME, function() {
-      return false;
-    });
-
-    // Auto initialization
-    // Add 'data-vide-bg' attribute with a path to the video without extension
-    // Also you can pass options throw the 'data-vide-options' attribute
-    // 'data-vide-options' must be like 'muted: false, volume: 0.5'
-    $(document).find('[data-' + PLUGIN_NAME + '-bg]').each(function(i, element) {
-      var $element = $(element);
-      var options = $element.data(PLUGIN_NAME + '-options');
-      var path = $element.data(PLUGIN_NAME + '-bg');
-
-      $element[PLUGIN_NAME](path, options);
-    });
-  });
-
-});
-
-
-/***/ }),
-/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49116,10 +46172,10 @@ Vue.compile = compileToFunctions;
 
 module.exports = Vue;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(40).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(19).setImmediate))
 
 /***/ }),
-/* 40 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {var scope = (typeof global !== "undefined" && global) ||
@@ -49175,7 +46231,7 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(41);
+__webpack_require__(20);
 // On some exotic environments, it's not clear which object `setimmediate` was
 // able to install onto.  Search each possibility in the same order as the
 // `setimmediate` library.
@@ -49189,7 +46245,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 41 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -49382,1864 +46438,895 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(6)))
 
 /***/ }),
-/* 42 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
-Vue.component('discord-background', __webpack_require__(61));
-Vue.component('loading-logo', __webpack_require__(43));
-Vue.component('header-video', __webpack_require__(45));
-
-// const COMPONENTS = [
-//     "example_component",
-//     "loading_logo",
-//     "video_header"
-// ];
-
-// // Load the components
-// COMPONENTS.forEach((component) => {
-//     require(`./components/${component}`);
-// });
+module.exports = __webpack_require__(22);
 
 /***/ }),
-/* 43 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var normalizeComponent = __webpack_require__(11)
-/* script */
-var __vue_script__ = null
-/* template */
-var __vue_template__ = __webpack_require__(44)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/assets/js/vue/LoadingLogo.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-4b9ff89c", Component.options)
-  } else {
-    hotAPI.reload("data-v-4b9ff89c", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 44 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "svg",
-    {
-      staticClass: "loading-logo",
-      staticStyle: { isolation: "isolate" },
-      attrs: {
-        xmlns: "http://www.w3.org/2000/svg",
-        width: "512",
-        height: "512",
-        viewBox: "0 0 512 512",
-        preserveAspectRatio: "xMidYMid"
-      }
-    },
-    [
-      _c("defs", [
-        _c("clipPath", { attrs: { id: "a" } }, [
-          _c("path", { attrs: { d: "M0 0h512v512H0z" } })
-        ])
-      ]),
-      _vm._v(" "),
-      _c("g", { attrs: { "clip-path": "url(#a)" } }, [
-        _c("g", { staticClass: "logo-edges" }, [
-          _c("rect", {
-            staticClass: "logo-edge-6",
-            attrs: {
-              width: "22",
-              height: "215",
-              x: "338.1",
-              y: "309.754",
-              fill: "rgb(0,0,0)",
-              transform: "matrix(-0.5,-0.866,0.866,-0.5,162.297,928.21)"
-            }
-          }),
-          _vm._v(" "),
-          _c("rect", {
-            staticClass: "logo-edge-5",
-            attrs: {
-              width: "22",
-              height: "215",
-              x: "151.9",
-              y: "309.754",
-              fill: "rgb(0,0,0)",
-              transform: "matrix(0.5,-0.866,0.866,0.5,-279.903,349.703)"
-            }
-          }),
-          _vm._v(" "),
-          _c("rect", {
-            staticClass: "logo-edge-4",
-            attrs: {
-              width: "22",
-              height: "215",
-              x: "58.8",
-              y: "148.5",
-              fill: "rgb(0,0,0)",
-              transform: "matrix(1,0,0,1,0,0)"
-            }
-          }),
-          _vm._v(" "),
-          _c("rect", {
-            staticClass: "logo-edge-3",
-            attrs: {
-              width: "22",
-              height: "215",
-              x: "151.9",
-              y: "-12.754",
-              fill: "rgb(0,0,0)",
-              transform: "matrix(0.5,0.866,-0.866,0.5,163.503,-93.703)"
-            }
-          }),
-          _vm._v(" "),
-          _c("rect", {
-            staticClass: "logo-edge-2",
-            attrs: {
-              width: "22",
-              height: "215",
-              x: "338.1",
-              y: "-12.754",
-              fill: "rgb(0,0,0)",
-              transform: "matrix(-0.5,0.866,-0.866,-0.5,605.703,-160.21)"
-            }
-          }),
-          _vm._v(" "),
-          _c("rect", {
-            staticClass: "logo-edge-1",
-            attrs: {
-              width: "22",
-              height: "215",
-              x: "431.2",
-              y: "148.5",
-              fill: "rgb(0,0,0)",
-              transform: "matrix(-1,0,0,-1,884.4,512)"
-            }
-          }),
-          _vm._v(" "),
-          _c("rect", {
-            staticClass: "logo-edge-long-3",
-            attrs: {
-              width: "22",
-              height: "430",
-              x: "245",
-              y: "41",
-              fill: "rgb(0,0,0)",
-              transform: "matrix(1,0,0,1,0,0)"
-            }
-          }),
-          _vm._v(" "),
-          _c("rect", {
-            staticClass: "logo-edge-long-2",
-            attrs: {
-              width: "22",
-              height: "430",
-              x: "245",
-              y: "41",
-              fill: "rgb(0,0,0)",
-              transform: "matrix(0.5,0.866,-0.866,0.5,349.703,-93.703)"
-            }
-          }),
-          _vm._v(" "),
-          _c("rect", {
-            staticClass: "logo-edge-long-1",
-            attrs: {
-              width: "22",
-              height: "430",
-              x: "245",
-              y: "41",
-              fill: "rgb(0,0,0)",
-              transform: "matrix(-0.5,0.866,-0.866,-0.5,605.703,162.297)"
-            }
-          })
-        ]),
-        _vm._v(" "),
-        _c("g", { staticClass: "logo-circles" }, [
-          _c("circle", {
-            staticClass: "logo-circle-6",
-            attrs: {
-              cx: "256",
-              cy: "471",
-              r: "32",
-              "vector-effect": "non-scaling-stroke"
-            }
-          }),
-          _vm._v(" "),
-          _c("circle", {
-            staticClass: "logo-circle-5",
-            attrs: {
-              cx: "69.8",
-              cy: "363.5",
-              r: "32",
-              "vector-effect": "non-scaling-stroke"
-            }
-          }),
-          _vm._v(" "),
-          _c("circle", {
-            staticClass: "logo-circle-4",
-            attrs: {
-              cx: "69.8",
-              cy: "148.5",
-              r: "32",
-              "vector-effect": "non-scaling-stroke"
-            }
-          }),
-          _vm._v(" "),
-          _c("circle", {
-            staticClass: "logo-circle-3",
-            attrs: {
-              cx: "256",
-              cy: "41",
-              r: "32",
-              "vector-effect": "non-scaling-stroke"
-            }
-          }),
-          _vm._v(" "),
-          _c("circle", {
-            staticClass: "logo-circle-2",
-            attrs: {
-              cx: "442.2",
-              cy: "148.5",
-              r: "32",
-              "vector-effect": "non-scaling-stroke"
-            }
-          }),
-          _vm._v(" "),
-          _c("circle", {
-            staticClass: "logo-circle-1",
-            attrs: {
-              cx: "442.2",
-              cy: "363.5",
-              r: "32",
-              "vector-effect": "non-scaling-stroke"
-            }
-          })
-        ])
-      ])
-    ]
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-4b9ff89c", module.exports)
-  }
-}
-
-/***/ }),
-/* 45 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var normalizeComponent = __webpack_require__(11)
-/* script */
-var __vue_script__ = __webpack_require__(46)
-/* template */
-var __vue_template__ = __webpack_require__(47)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/assets/js/vue/HeaderVideo.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-31c3e203", Component.options)
-  } else {
-    hotAPI.reload("data-v-31c3e203", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 46 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
-/* harmony default export */ __webpack_exports__["default"] = ({
-    data: function data() {
-        return {
-            queue: new EventQueue()
-        };
-    },
 
-    methods: {
-        /**
-         * Cancel the current transition
-         */
-        __cancel: function __cancel() {
-            this.queue.clear();
-            $(this.$el).find("h1, p").stop().clearQueue();
-            $(this.$el).find("video").parent().stop().clearQueue();
-        },
-        __setText: function __setText(title, lead) {
-            var _this = this;
-
-            var elems = $(this.$el).find("h1, p");
-            elems.addClass("text-invisible");
-            this.queue.do(function (queue) {
-                _this.title = title;
-                _this.lead = lead;
-                elems.each(function (index) {
-                    var _this2 = this;
-
-                    queue.do(function () {
-                        $(_this2).removeClass("text-invisible");
-                    }, index * 300);
-                });
-            }, 1000);
-        },
-        __setVideo: function __setVideo(video) {
-            var _this3 = this;
-
-            $(this.$el).find("video").parent().fadeOut(500);
-            this.queue.do(function (queue) {
-                $(_this3.$el).vide(video, {
-                    loop: true,
-                    muted: true,
-                    position: "50% 50%",
-                    posterType: "png",
-                    resizing: true
-                }).find("video").parent().hide();
-                queue.do(function () {
-                    $(_this3.$el).find("video").parent().fadeIn(500);
-                }, 800);
-            }, 300);
-        },
-        setHeader: function setHeader(video, title, lead) {
-            this.__cancel();
-            this.__setVideo(video);
-            this.__setText(title, lead);
-        }
-    },
-    mounted: function mounted() {
-        this.__cancel();
-        $(this.$el).find("#particles_header").fadeIn(3000);
-        this.setHeader(this.video, this.title, this.lead);
-    },
-
-    props: {
-        "title": String,
-        "lead": String,
-        "video": String
-    }
-});
-
-/***/ }),
-/* 47 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "header",
-    { staticClass: "video-header", attrs: { id: "video_header" } },
-    [
-      _c("div", { staticClass: "video-overlay container-fluid" }, [
-        _c("div", { staticClass: "row h-100" }, [
-          _c("div", { staticClass: "col-md-12 my-auto text-center" }, [
-            _c(
-              "h1",
-              {
-                staticClass:
-                  "display-1 align-middle header-brand text-invisible"
-              },
-              [
-                _vm._v(
-                  "\n                    " +
-                    _vm._s(_vm.title) +
-                    "\n                "
-                )
-              ]
-            ),
-            _vm._v(" "),
-            _c("p", { staticClass: "header-motto text-invisible" }, [
-              _vm._v(
-                "\n                    " +
-                  _vm._s(_vm.lead) +
-                  "\n                "
-              )
-            ]),
-            _vm._v(" "),
-            _c("a", { staticClass: "pointer", attrs: { href: "" } })
-          ])
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", {
-        staticStyle: { display: "none" },
-        attrs: { id: "particles_header" }
-      })
-    ]
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-31c3e203", module.exports)
-  }
-}
-
-/***/ }),
-/* 48 */
-/***/ (function(module, exports) {
-
-var tracker = {};
+var utils = __webpack_require__(0);
+var bind = __webpack_require__(7);
+var Axios = __webpack_require__(24);
+var defaults = __webpack_require__(3);
 
 /**
- * Invoked when the animation finishes an iteration
- */
-var finished = function finished(e) {
-    if (e.target !== this) return;
-    var logo = $(this).parents(".loading-logo");
-    if (!tracker[logo[0]]) {
-        logo.removeClass("active");
-        $(this).off("animationiteration", finished);
-        delete tracker[logo[0]];
-    }
-};
-
-window.loading = {
-
-    /**
-     * Activate a loading animation
-     */
-    activate: function activate(elem) {
-        if (tracker[elem[0]]) return false;
-        elem.addClass("active").find(".logo-circles").on("animationiteration", finished);
-        tracker[elem[0]] = true;
-        return true;
-    },
-
-
-    /**
-     * Deactivate a loading animation
-     */
-    deactivate: function deactivate(elem) {
-        console.log("Deactivating...");
-        tracker[elem[0]] = false;
-    },
-
-
-    /**
-     * Play a single iteration of a loading animation
-     */
-    once: function once(elem) {
-        if (this.activate(elem)) this.deactivate(elem);
-    }
-};
-
-/***/ }),
-/* 49 */
-/***/ (function(module, exports) {
-
-// $(".navbar-brand a").mouseover(function () {
-//     loading.once(".loading-logo-nav");
-// });
-
-/**
- * How far from the top can we be before it is no longer
- * considered the top
- */
-var TOP_MARGIN = 100;
-
-/**
- * Keep track if we're at the top of the page
- */
-var top = true;
-
-navigate.event.on("scroll", function (pos) {
-  var isTop = pos < TOP_MARGIN;
-  if (top != isTop) {
-    top = isTop;
-    $("nav.navbar").toggleClass("navbar-top", top).toggleClass("navbar-dark", top).toggleClass("navbar-light", !top).toggleClass("navbar-color", !top);
-    console.log("Navbar changed state");
-  }
-});
-
-/***/ }),
-/* 50 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var EventEmitter = __webpack_require__(51);
-
-/**
- * HTTP status codes
- */
-var HTTP_STATUS = {
-    100: "Continue",
-    101: "Switching Protocols",
-    102: "Processing",
-    200: "OK",
-    201: "Created",
-    202: "Accepted",
-    203: "Non-Authoritative Information",
-    204: "No Content",
-    205: "Reset Content",
-    206: "Partial Content",
-    207: "Multi-Status",
-    208: "Already Reported",
-    226: "IM Used",
-    300: "Multiple Choices",
-    301: "Moved Permanently",
-    302: "Found",
-    303: "See Other",
-    304: "Not Modified",
-    305: "Use Proxy",
-    306: "Reserved",
-    307: "Temporary Redirect",
-    308: "Permanent Redirect",
-    400: "Bad Request",
-    401: "Unauthorized",
-    402: "Payment Required",
-    403: "Forbidden",
-    404: "Not Found",
-    405: "Method Not Allowed",
-    406: "Not Acceptable",
-    407: "Proxy Authentication Required",
-    408: "Request Timeout",
-    409: "Conflict",
-    410: "Gone",
-    411: "Length Required",
-    412: "Precondition Failed",
-    413: "Request Entity Too Large",
-    414: "Request-URI Too Long",
-    415: "Unsupported Media Type",
-    416: "Requested Range Not Satisfiable",
-    417: "Expectation Failed",
-    422: "Unprocessable Entity",
-    423: "Locked",
-    424: "Failed Dependency",
-    425: "Unassigned",
-    426: "Upgrade Required",
-    427: "Unassigned",
-    428: "Precondition Required",
-    429: "Too Many Requests",
-    430: "Unassigned",
-    431: "Request Header Fields Too Large",
-    500: "Internal Server Error",
-    501: "Not Implemented",
-    502: "Bad Gateway",
-    503: "Service Unavailable",
-    504: "Gateway Timeout",
-    505: "HTTP Version Not Supported",
-    506: "Variant Also Negotiates (Experimental)",
-    507: "Insufficient Storage",
-    508: "Loop Detected",
-    509: "Unassigned",
-    510: "Not Extended",
-    511: "Network Authentication Required"
-};
-
-/**
- * A regular expression to test local links
- */
-var EXP = new RegExp(location.host);
-
-/**
- * The event emitter
- */
-var eventEmitter = new EventEmitter();
-
-/**
- * Ajax information
- */
-var cancel = null;
-var isLoading = false;
-
-/**
- * Page information
- */
-var pageInfo = {
-    title: document.title,
-    url: location.href
-};
-
-/**
- * The configuration for Axios
- */
-var AXIOS_CONFIG = {
-    cancelToken: new axios.CancelToken(function (c) {
-        cancel = c;
-    })
-};
-
-/**
- * Create the listeners for links
- */
-var initLinkListeners = function initLinkListeners() {
-    $(document).on("click", "[href]", function (event) {
-        if (EXP.test($(this).attr("href"))) {
-            onLinkClick(this);
-            event.preventDefault();
-        }
-    });
-};
-
-/**
- * Request a page
- */
-var requestPage = function requestPage(url) {
-    var pushState = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
-    if (!history.pushState) {
-        location.assign(url);
-        return;
-    }
-    if (isLoading) {
-        return;
-    }
-    isLoading = true;
-    pageInfo.url = url;
-    eventEmitter.emit("beforeload");
-    axios.get(url, AXIOS_CONFIG).then(function (response) {
-        onAjaxLoad(response, url, pushState);
-    }).catch(onAjaxError).then(function () {
-        isLoading = false;
-        eventEmitter.emit("load");
-    });
-};
-
-/**
- * Invoked when an error occurs
- */
-var onAjaxError = function onAjaxError(err) {
-    console.error("Navigation Error: ", err, {
-        request: err.request,
-        response: err.response
-    });
-};
-
-/**
- * Invoked when the Ajax completed successfully
- */
-var onAjaxLoad = function onAjaxLoad(response, url, pushState) {
-    pageInfo.title = response.data.title;
-    if (pushState) {
-        history.pushState(pageInfo, response.data.title, url);
-    }
-    page.set(response.data.title, response.data.view);
-};
-
-/**
- * Invoked when a link is clicked
- */
-var onLinkClick = function onLinkClick(elem) {
-    navigate.to($(elem).attr("href"));
-};
-
-/**
- * Invoked when the browser pops a state off of the history stack
- */
-var onPopState = function onPopState(event) {
-    pageInfo.title = event.originalEvent.state.title;
-    pageInfo.url = event.originalEvent.state.url;
-    requestPage(pageInfo.url, false);
-};
-
-/**
- * Invoked when the user scrolls in the application
- */
-var onScroll = function onScroll() {
-    eventEmitter.emit("scroll", $(window).scrollTop());
-};
-
-/**
- * Navigation module
- */
-window.navigate = {
-
-    /**
-     * Store the event emitter
-     */
-    event: eventEmitter,
-
-    /**
-     * Initialize the navigation system
-     */
-    init: function init() {
-        initLinkListeners();
-        $(window).on("popstate", onPopState);
-        $(window).scroll(onScroll);
-        history.replaceState(pageInfo, pageInfo.title, pageInfo.url);
-        onScroll();
-    },
-
-
-    /**
-     * Cancel the current navigation attempt
-     */
-    abort: function abort() {
-        if (cancel) cancel();
-    },
-
-
-    /**
-     * Go to a URL via Ajax
-     */
-    to: function to(url) {
-        requestPage(url, true);
-    }
-};
-
-/***/ }),
-/* 51 */
-/***/ (function(module, exports) {
-
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-function EventEmitter() {
-  this._events = this._events || {};
-  this._maxListeners = this._maxListeners || undefined;
-}
-module.exports = EventEmitter;
-
-// Backwards-compat with node 0.10.x
-EventEmitter.EventEmitter = EventEmitter;
-
-EventEmitter.prototype._events = undefined;
-EventEmitter.prototype._maxListeners = undefined;
-
-// By default EventEmitters will print a warning if more than 10 listeners are
-// added to it. This is a useful default which helps finding memory leaks.
-EventEmitter.defaultMaxListeners = 10;
-
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!isNumber(n) || n < 0 || isNaN(n))
-    throw TypeError('n must be a positive number');
-  this._maxListeners = n;
-  return this;
-};
-
-EventEmitter.prototype.emit = function(type) {
-  var er, handler, len, args, i, listeners;
-
-  if (!this._events)
-    this._events = {};
-
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events.error ||
-        (isObject(this._events.error) && !this._events.error.length)) {
-      er = arguments[1];
-      if (er instanceof Error) {
-        throw er; // Unhandled 'error' event
-      } else {
-        // At least give some kind of context to the user
-        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
-        err.context = er;
-        throw err;
-      }
-    }
-  }
-
-  handler = this._events[type];
-
-  if (isUndefined(handler))
-    return false;
-
-  if (isFunction(handler)) {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        args = Array.prototype.slice.call(arguments, 1);
-        handler.apply(this, args);
-    }
-  } else if (isObject(handler)) {
-    args = Array.prototype.slice.call(arguments, 1);
-    listeners = handler.slice();
-    len = listeners.length;
-    for (i = 0; i < len; i++)
-      listeners[i].apply(this, args);
-  }
-
-  return true;
-};
-
-EventEmitter.prototype.addListener = function(type, listener) {
-  var m;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events)
-    this._events = {};
-
-  // To avoid recursion in the case that type === "newListener"! Before
-  // adding it to the listeners, first emit "newListener".
-  if (this._events.newListener)
-    this.emit('newListener', type,
-              isFunction(listener.listener) ?
-              listener.listener : listener);
-
-  if (!this._events[type])
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  else if (isObject(this._events[type]))
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  else
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-
-  // Check for listener leak
-  if (isObject(this._events[type]) && !this._events[type].warned) {
-    if (!isUndefined(this._maxListeners)) {
-      m = this._maxListeners;
-    } else {
-      m = EventEmitter.defaultMaxListeners;
-    }
-
-    if (m && m > 0 && this._events[type].length > m) {
-      this._events[type].warned = true;
-      console.error('(node) warning: possible EventEmitter memory ' +
-                    'leak detected. %d listeners added. ' +
-                    'Use emitter.setMaxListeners() to increase limit.',
-                    this._events[type].length);
-      if (typeof console.trace === 'function') {
-        // not supported in IE 10
-        console.trace();
-      }
-    }
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  var fired = false;
-
-  function g() {
-    this.removeListener(type, g);
-
-    if (!fired) {
-      fired = true;
-      listener.apply(this, arguments);
-    }
-  }
-
-  g.listener = listener;
-  this.on(type, g);
-
-  return this;
-};
-
-// emits a 'removeListener' event iff the listener was removed
-EventEmitter.prototype.removeListener = function(type, listener) {
-  var list, position, length, i;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events || !this._events[type])
-    return this;
-
-  list = this._events[type];
-  length = list.length;
-  position = -1;
-
-  if (list === listener ||
-      (isFunction(list.listener) && list.listener === listener)) {
-    delete this._events[type];
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-
-  } else if (isObject(list)) {
-    for (i = length; i-- > 0;) {
-      if (list[i] === listener ||
-          (list[i].listener && list[i].listener === listener)) {
-        position = i;
-        break;
-      }
-    }
-
-    if (position < 0)
-      return this;
-
-    if (list.length === 1) {
-      list.length = 0;
-      delete this._events[type];
-    } else {
-      list.splice(position, 1);
-    }
-
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  var key, listeners;
-
-  if (!this._events)
-    return this;
-
-  // not listening for removeListener, no need to emit
-  if (!this._events.removeListener) {
-    if (arguments.length === 0)
-      this._events = {};
-    else if (this._events[type])
-      delete this._events[type];
-    return this;
-  }
-
-  // emit removeListener for all listeners on all events
-  if (arguments.length === 0) {
-    for (key in this._events) {
-      if (key === 'removeListener') continue;
-      this.removeAllListeners(key);
-    }
-    this.removeAllListeners('removeListener');
-    this._events = {};
-    return this;
-  }
-
-  listeners = this._events[type];
-
-  if (isFunction(listeners)) {
-    this.removeListener(type, listeners);
-  } else if (listeners) {
-    // LIFO order
-    while (listeners.length)
-      this.removeListener(type, listeners[listeners.length - 1]);
-  }
-  delete this._events[type];
-
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  var ret;
-  if (!this._events || !this._events[type])
-    ret = [];
-  else if (isFunction(this._events[type]))
-    ret = [this._events[type]];
-  else
-    ret = this._events[type].slice();
-  return ret;
-};
-
-EventEmitter.prototype.listenerCount = function(type) {
-  if (this._events) {
-    var evlistener = this._events[type];
-
-    if (isFunction(evlistener))
-      return 1;
-    else if (evlistener)
-      return evlistener.length;
-  }
-  return 0;
-};
-
-EventEmitter.listenerCount = function(emitter, type) {
-  return emitter.listenerCount(type);
-};
-
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-
-
-/***/ }),
-/* 52 */
-/***/ (function(module, exports) {
-
-/**
- * Keep track of the sections that are hidden
- */
-var hiddenSections = new Set();
-
-/**
- * Create a new Vue instance
- */
-var createVue = function createVue() {
-    page.app = new Vue({
-        el: "#body"
-    });
-};
-
-/**
- * Display the visible sections
- */
-var displaySections = function displaySections() {
-    hiddenSections.forEach(function (section) {
-        if ($(section).isInViewport()) {
-            $(section).addClass("visible");
-            hiddenSections.delete(section);
-        }
-    });
-};
-
-/**
- * Locate any hidden sections and keep track of them
- */
-var findHiddenSections = function findHiddenSections() {
-    hiddenSections.clear();
-    $("#body").find("section:not(.visible)").each(function () {
-        hiddenSections.add(this);
-    });
-};
-
-/**
- * Page management
- */
-window.page = {
-
-    /**
-     * The amount of delay for transitions in miliseconds
-     */
-    TRANSITION_DELAY: 100,
-
-    /**
-     * The Vue app instance
-     */
-    app: null,
-
-    /**
-     * Append content to the page
-     */
-    append: function append(content) {
-        $("#body").append(content);
-        page.render();
-    },
-
-
-    /**
-     * Set the current page content
-     */
-    set: function set(title, content) {
-        document.title = title;
-        $("#body").stop().clearQueue();
-        $("#body").fadeOut(page.TRANSITION_DELAY, function () {
-            $(this).html(content).show();
-            createVue();
-            findHiddenSections();
-            page.render();
-        });
-    },
-
-
-    /**
-     * Render the page
-     */
-    render: function render() {
-        displaySections();
-    },
-
-
-    /**
-     * Initial rendering of the page
-     */
-    init: function init() {
-        createVue();
-        findHiddenSections();
-        particles.render();
-        $(".navbar").fadeIn(1000);
-        setTimeout(function () {
-            page.render();
-        }, 1400);
-    }
-};
-
-/***/ }),
-/* 53 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 54 */,
-/* 55 */,
-/* 56 */,
-/* 57 */,
-/* 58 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var CONFIG = __webpack_require__(59);
-
-window.particles = {
-    /**
-     * Render the particles
-     */
-    render: function render() {
-        if (utils.isMobile()) return;
-        for (id in CONFIG) {
-            if ($("#" + id).length) {
-                particlesJS(id, CONFIG[id]);
-            }
-        }
-    }
-};
-
-/***/ }),
-/* 59 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/**
- * Export the particle configurations
+ * Create an instance of Axios
  *
- * Format: <id>: require("config")
+ * @param {Object} defaultConfig The default config for the instance
+ * @return {Axios} A new instance of Axios
  */
-module.exports = {
-  "particles_header": __webpack_require__(60)
+function createInstance(defaultConfig) {
+  var context = new Axios(defaultConfig);
+  var instance = bind(Axios.prototype.request, context);
+
+  // Copy axios.prototype to instance
+  utils.extend(instance, Axios.prototype, context);
+
+  // Copy context to instance
+  utils.extend(instance, context);
+
+  return instance;
+}
+
+// Create the default instance to be exported
+var axios = createInstance(defaults);
+
+// Expose Axios class to allow class inheritance
+axios.Axios = Axios;
+
+// Factory for creating new instances
+axios.create = function create(instanceConfig) {
+  return createInstance(utils.merge(defaults, instanceConfig));
 };
 
+// Expose Cancel & CancelToken
+axios.Cancel = __webpack_require__(11);
+axios.CancelToken = __webpack_require__(38);
+axios.isCancel = __webpack_require__(10);
+
+// Expose all/spread
+axios.all = function all(promises) {
+  return Promise.all(promises);
+};
+axios.spread = __webpack_require__(39);
+
+module.exports = axios;
+
+// Allow use of default import syntax in TypeScript
+module.exports.default = axios;
+
+
 /***/ }),
-/* 60 */
+/* 23 */
 /***/ (function(module, exports) {
 
-module.exports = {"particles":{"number":{"value":25,"density":{"enable":true,"value_area":800}},"color":{"value":"#ffffff"},"shape":{"type":"circle","stroke":{"width":0,"color":"#000000"},"polygon":{"nb_sides":5},"image":{"src":"img/github.svg","width":100,"height":100}},"opacity":{"value":0.5,"random":false,"anim":{"enable":false,"speed":1,"opacity_min":0.1,"sync":false}},"size":{"value":5,"random":true,"anim":{"enable":false,"speed":20,"size_min":0.3,"sync":false}},"line_linked":{"enable":true,"distance":150,"color":"#ffffff","opacity":0.4,"width":1},"move":{"enable":true,"speed":2,"direction":"none","random":false,"straight":false,"out_mode":"out","attract":{"enable":false,"rotateX":600,"rotateY":1200}}},"interactivity":{"detect_on":"canvas","events":{"onhover":{"enable":false,"mode":"repulse"},"onclick":{"enable":false,"mode":"push"},"resize":true},"modes":{"grab":{"distance":400,"line_linked":{"opacity":1}},"bubble":{"distance":400,"size":40,"duration":2,"opacity":8,"speed":3},"repulse":{"distance":200},"push":{"particles_nb":4},"remove":{"particles_nb":2}}},"retina_detect":true,"config_demo":{"hide_card":false,"background_color":"#b61924","background_image":"","background_position":"50% 50%","background_repeat":"no-repeat","background_size":"cover"}}
+/*!
+ * Determine if an object is a Buffer
+ *
+ * @author   Feross Aboukhadijeh <https://feross.org>
+ * @license  MIT
+ */
 
-/***/ }),
-/* 61 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var normalizeComponent = __webpack_require__(11)
-/* script */
-var __vue_script__ = null
-/* template */
-var __vue_template__ = __webpack_require__(62)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/assets/js/vue/DiscordBackground.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-85c58062", Component.options)
-  } else {
-    hotAPI.reload("data-v-85c58062", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 62 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "svg",
-    {
-      staticClass: "discord-background",
-      staticStyle: { isolation: "isolate" },
-      attrs: {
-        xmlns: "http://www.w3.org/2000/svg",
-        "xmlns:xlink": "http://www.w3.org/1999/xlink",
-        width: "547.6",
-        height: "310.35",
-        viewBox: "0 0 547.6 310.35"
-      }
-    },
-    [
-      _c("defs", [
-        _c(
-          "clipPath",
-          { attrs: { id: "_clipPath_UWzzaioe1rQTjQrPsuLwIlWEgl3T0pb2" } },
-          [_c("rect", { attrs: { width: "547.6", height: "310.35" } })]
-        )
-      ]),
-      _vm._v(" "),
-      _c(
-        "g",
-        {
-          attrs: {
-            "clip-path": "url(#_clipPath_UWzzaioe1rQTjQrPsuLwIlWEgl3T0pb2)"
-          }
-        },
-        [
-          _c("g", [
-            _c("path", {
-              attrs: {
-                fill: "rgb(54,57,62)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 180.175 308.837 L 546.009 308.837 L 546.009 1.5 L 180.175 1.5"
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(46,49,54)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 49.33 308.837 L 180.175 308.837 L 180.175 1.749 L 49.33 1.749"
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(85,90,97)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 89.085 84.29 L 64.626 84.29 C 63.24 84.29 62.116 83.167 62.116 81.781 L 62.116 76.766 C 62.116 75.381 63.24 74.258 64.626 74.258 L 89.085 74.258 C 90.471 74.258 91.594 75.381 91.594 76.766 L 91.594 81.781 C 91.594 83.167 90.471 84.29 89.085 84.29 Z  M 140.035 84.29 L 100.576 84.29 C 99.19 84.29 98.067 83.167 98.067 81.781 L 98.067 76.766 C 98.067 75.381 99.19 74.258 100.576 74.258 L 140.035 74.258 C 141.421 74.258 142.545 75.381 142.545 76.766 L 142.545 81.781 C 142.545 83.167 141.421 84.29 140.035 84.29 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(44,47,54)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 51.435 60.181 L 180.175 60.181 L 180.175 37.693 L 51.435 37.693"
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(85,90,97)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 124.859 54.106 L 86.15 54.106 C 84.764 54.106 83.641 52.983 83.641 51.598 L 83.641 46.582 C 83.641 45.197 84.764 44.074 86.15 44.074 L 124.859 44.074 C 126.245 44.074 127.369 45.197 127.369 46.582 L 127.369 51.598 C 127.369 52.983 126.245 54.106 124.859 54.106 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(135,139,151)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 50.354 60.181 L 52.515 60.181 L 52.515 37.693 L 50.354 37.693"
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(40,43,48)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 49.33 308.837 L 180.175 308.837 L 180.175 265.764 L 49.33 265.764"
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(163,212,156)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 86.968 286.177 C 86.968 293.103 81.351 298.717 74.422 298.717 C 67.492 298.717 61.876 293.103 61.876 286.177 C 61.876 279.252 67.492 273.638 74.422 273.638 C 81.351 273.638 86.968 279.252 86.968 286.177"
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(67,181,129)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 92.99 292.447 C 92.99 295.909 90.181 298.717 86.717 298.717 C 83.253 298.717 80.444 295.909 80.444 292.447 C 80.444 288.985 83.253 286.177 86.717 286.177 C 90.181 286.177 92.99 288.985 92.99 292.447 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(135,139,151)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 141.928 284.923 L 101.781 284.923 C 100.395 284.923 99.271 283.8 99.271 282.415 L 99.271 279.908 C 99.271 278.522 100.395 277.4 101.781 277.4 L 141.928 277.4 C 143.314 277.4 144.438 278.522 144.438 279.908 L 144.438 282.415 C 144.438 283.8 143.314 284.923 141.928 284.923 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(85,90,97)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 123.109 294.824 L 101.78 294.824 C 100.394 294.824 99.271 293.701 99.271 292.316 L 99.271 291.062 C 99.271 289.677 100.394 288.554 101.78 288.554 L 123.109 288.554 C 124.495 288.554 125.618 289.677 125.618 291.062 L 125.618 292.316 C 125.618 293.701 124.495 294.824 123.109 294.824 Z  M 164.151 24.496 L 64.629 24.496 C 63.241 24.496 62.117 23.372 62.117 21.985 L 62.117 14.468 C 62.117 13.081 63.241 11.957 64.629 11.957 L 164.151 11.957 C 165.539 11.957 166.664 13.081 166.664 14.468 L 166.664 21.985 C 166.664 23.372 165.539 24.496 164.151 24.496 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(33,35,38)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 1.733 308.837 L 50.354 308.837 L 50.354 1.749 L 1.733 1.749"
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(45,48,54)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 40.6 121.832 C 40.6 130.142 33.86 136.88 25.545 136.88 C 17.23 136.88 10.489 130.142 10.489 121.832 C 10.489 113.522 17.23 106.785 25.545 106.785 C 33.86 106.785 40.6 113.522 40.6 121.832 Z  M 28.864 9.286 C 28.864 11.119 27.378 12.604 25.545 12.604 C 23.711 12.604 22.225 11.119 22.225 9.286 C 22.225 7.454 23.711 5.969 25.545 5.969 C 27.378 5.969 28.864 7.454 28.864 9.286 Z  M 17.246 9.286 C 17.246 11.119 15.759 12.604 13.926 12.604 C 12.093 12.604 10.607 11.119 10.607 9.286 C 10.607 7.454 12.093 5.969 13.926 5.969 C 15.759 5.969 17.246 7.454 17.246 9.286 Z  M 40.483 9.286 C 40.483 11.119 38.996 12.604 37.163 12.604 C 35.33 12.604 33.844 11.119 33.844 9.286 C 33.844 7.454 35.33 5.969 37.163 5.969 C 38.996 5.969 40.483 7.454 40.483 9.286 Z  M 40.6 159.451 C 40.6 167.761 33.86 174.498 25.545 174.498 C 17.23 174.498 10.489 167.761 10.489 159.451 C 10.489 151.141 17.23 144.403 25.545 144.403 C 33.86 144.403 40.6 151.141 40.6 159.451 Z  M 40.6 84.406 C 40.6 92.716 33.86 99.453 25.545 99.453 C 17.23 99.453 10.489 92.716 10.489 84.406 C 10.489 76.096 17.23 69.358 25.545 69.358 C 33.86 69.358 40.6 76.096 40.6 84.406 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(90,200,250)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 40.6 197.069 C 40.6 205.379 33.86 212.116 25.545 212.116 C 17.23 212.116 10.489 205.379 10.489 197.069 C 10.489 188.759 17.23 182.021 25.545 182.021 C 33.86 182.021 40.6 188.759 40.6 197.069 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(45,48,54)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 38.718 61.81 L 12.371 61.81 C 11.332 61.81 10.49 60.969 10.49 59.93 C 10.49 58.891 11.332 58.049 12.371 58.049 L 38.718 58.049 C 39.758 58.049 40.6 58.891 40.6 59.93 C 40.6 60.969 39.758 61.81 38.718 61.81 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(135,139,151)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 245.566 24.496 L 200.201 24.496 C 198.826 24.496 197.712 23.382 197.712 22.008 L 197.712 14.445 C 197.712 13.071 198.826 11.957 200.201 11.957 L 245.566 11.957 C 246.941 11.957 248.056 13.071 248.056 14.445 L 248.056 22.008 C 248.056 23.382 246.941 24.496 245.566 24.496"
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(105,111,117)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 223.816 46.822 L 200.201 46.822 C 198.826 46.822 197.712 45.708 197.712 44.333 L 197.712 41.268 C 197.712 39.894 198.826 38.78 200.201 38.78 L 223.816 38.78 C 225.191 38.78 226.306 39.894 226.306 41.268 L 226.306 44.333 C 226.306 45.708 225.191 46.822 223.816 46.822 Z  M 323.066 46.822 L 299.451 46.822 C 298.076 46.822 296.962 45.708 296.962 44.333 L 296.962 41.268 C 296.962 39.894 298.076 38.78 299.451 38.78 L 323.066 38.78 C 324.441 38.78 325.556 39.894 325.556 41.268 L 325.556 44.333 C 325.556 45.708 324.441 46.822 323.066 46.822 Z  M 299.114 24.496 L 276.248 24.496 C 274.874 24.496 273.759 23.382 273.759 22.008 L 273.759 14.445 C 273.759 13.071 274.874 11.957 276.248 11.957 L 299.114 11.957 C 300.488 11.957 301.604 13.071 301.604 14.445 L 301.604 22.008 C 301.604 23.382 300.488 24.496 299.114 24.496 Z  M 336.614 24.496 L 313.748 24.496 C 312.374 24.496 311.259 23.382 311.259 22.008 L 311.259 14.445 C 311.259 13.071 312.374 11.957 313.748 11.957 L 336.614 11.957 C 337.988 11.957 339.104 13.071 339.104 14.445 L 339.104 22.008 C 339.104 23.382 337.988 24.496 336.614 24.496 Z  M 374.114 24.496 L 351.248 24.496 C 349.874 24.496 348.759 23.382 348.759 22.008 L 348.759 14.445 C 348.759 13.071 349.874 11.957 351.248 11.957 L 374.114 11.957 C 375.488 11.957 376.604 13.071 376.604 14.445 L 376.604 22.008 C 376.604 23.382 375.488 24.496 374.114 24.496 Z  M 411.614 24.496 L 388.748 24.496 C 387.374 24.496 386.259 23.382 386.259 22.008 L 386.259 14.445 C 386.259 13.071 387.374 11.957 388.748 11.957 L 411.614 11.957 C 412.988 11.957 414.104 13.071 414.104 14.445 L 414.104 22.008 C 414.104 23.382 412.988 24.496 411.614 24.496 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(135,139,151)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 530.947 24.496 C 527.482 24.496 524.674 21.689 524.674 18.227 C 524.674 14.764 527.482 11.957 530.947 11.957 C 534.411 11.957 537.22 14.764 537.22 18.227 C 537.22 21.689 534.411 24.496 530.947 24.496 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(105,111,117)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 537.168 55.836 L 189.087 55.836 C 188.466 55.836 187.962 55.333 187.962 54.712 C 187.962 54.091 188.466 53.587 189.087 53.587 L 537.168 53.587 C 537.789 53.587 538.293 54.091 538.293 54.712 C 538.293 55.333 537.789 55.836 537.168 55.836 Z  M 530.418 90.162 L 198.837 90.162 C 198.216 90.162 197.712 89.658 197.712 89.037 C 197.712 88.417 198.216 87.913 198.837 87.913 L 530.418 87.913 C 531.039 87.913 531.543 88.417 531.543 89.037 C 531.543 89.658 531.039 90.162 530.418 90.162 Z  M 260.695 76.872 L 221.986 76.872 C 220.6 76.872 219.476 75.749 219.476 74.364 L 219.476 69.348 C 219.476 67.963 220.6 66.84 221.986 66.84 L 260.695 66.84 C 262.081 66.84 263.204 67.963 263.204 69.348 L 263.204 74.364 C 263.204 75.749 262.081 76.872 260.695 76.872 Z  M 339.728 76.872 L 316.019 76.872 C 314.633 76.872 313.509 75.749 313.509 74.364 L 313.509 69.348 C 313.509 67.963 314.633 66.84 316.019 66.84 L 339.728 66.84 C 341.114 66.84 342.237 67.963 342.237 69.348 L 342.237 74.364 C 342.237 75.749 341.114 76.872 339.728 76.872 Z  M 402.955 76.872 L 349.246 76.872 C 347.86 76.872 346.737 75.749 346.737 74.364 L 346.737 69.348 C 346.737 67.963 347.86 66.84 349.246 66.84 L 402.955 66.84 C 404.341 66.84 405.465 67.963 405.465 69.348 L 405.465 74.364 C 405.465 75.749 404.341 76.872 402.955 76.872 Z  M 421.183 76.872 L 412.474 76.872 C 411.088 76.872 409.965 75.749 409.965 74.364 L 409.965 69.348 C 409.965 67.963 411.088 66.84 412.474 66.84 L 421.183 66.84 C 422.569 66.84 423.693 67.963 423.693 69.348 L 423.693 74.364 C 423.693 75.749 422.569 76.872 421.183 76.872 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(230,235,244)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 211.962 72.009 C 211.962 75.942 208.772 79.13 204.837 79.13 C 200.901 79.13 197.712 75.942 197.712 72.009 C 197.712 68.076 200.901 64.888 204.837 64.888 C 208.772 64.888 211.962 68.076 211.962 72.009 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(67,181,129)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 306.337 72.009 C 306.337 73.665 304.994 75.008 303.337 75.008 C 301.68 75.008 300.337 73.665 300.337 72.009 C 300.337 70.353 301.68 69.011 303.337 69.011 C 304.994 69.011 306.337 70.353 306.337 72.009 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(105,111,117)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 530.418 125.393 L 198.837 125.393 C 198.216 125.393 197.712 124.889 197.712 124.268 C 197.712 123.648 198.216 123.144 198.837 123.144 L 530.418 123.144 C 531.039 123.144 531.543 123.648 531.543 124.268 C 531.543 124.889 531.039 125.393 530.418 125.393 Z  M 272.695 112.103 L 221.986 112.103 C 220.6 112.103 219.476 110.98 219.476 109.595 L 219.476 104.579 C 219.476 103.194 220.6 102.071 221.986 102.071 L 272.695 102.071 C 274.081 102.071 275.204 103.194 275.204 104.579 L 275.204 109.595 C 275.204 110.98 274.081 112.103 272.695 112.103 Z  M 339.728 112.103 L 316.019 112.103 C 314.633 112.103 313.509 110.98 313.509 109.595 L 313.509 104.579 C 313.509 103.194 314.633 102.071 316.019 102.071 L 339.728 102.071 C 341.114 102.071 342.237 103.194 342.237 104.579 L 342.237 109.595 C 342.237 110.98 341.114 112.103 339.728 112.103 Z  M 380.455 112.103 L 349.246 112.103 C 347.86 112.103 346.737 110.98 346.737 109.595 L 346.737 104.579 C 346.737 103.194 347.86 102.071 349.246 102.071 L 380.455 102.071 C 381.841 102.071 382.965 103.194 382.965 104.579 L 382.965 109.595 C 382.965 110.98 381.841 112.103 380.455 112.103 Z  M 413.683 112.103 L 389.974 112.103 C 388.588 112.103 387.465 110.98 387.465 109.595 L 387.465 104.579 C 387.465 103.194 388.588 102.071 389.974 102.071 L 413.683 102.071 C 415.069 102.071 416.193 103.194 416.193 104.579 L 416.193 109.595 C 416.193 110.98 415.069 112.103 413.683 112.103 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(246,152,157)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 211.962 107.24 C 211.962 111.174 208.772 114.362 204.837 114.362 C 200.901 114.362 197.712 111.174 197.712 107.24 C 197.712 103.307 200.901 100.119 204.837 100.119 C 208.772 100.119 211.962 103.307 211.962 107.24"
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(67,181,129)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 306.337 107.24 C 306.337 108.896 304.994 110.239 303.337 110.239 C 301.68 110.239 300.337 108.896 300.337 107.24 C 300.337 105.585 301.68 104.242 303.337 104.242 C 304.994 104.242 306.337 105.585 306.337 107.24 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(105,111,117)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 530.418 160.624 L 198.837 160.624 C 198.216 160.624 197.712 160.12 197.712 159.5 C 197.712 158.879 198.216 158.375 198.837 158.375 L 530.418 158.375 C 531.039 158.375 531.543 158.879 531.543 159.5 C 531.543 160.12 531.039 160.624 530.418 160.624 Z  M 238.195 147.334 L 221.986 147.334 C 220.6 147.334 219.476 146.212 219.476 144.826 L 219.476 139.811 C 219.476 138.425 220.6 137.303 221.986 137.303 L 238.195 137.303 C 239.581 137.303 240.704 138.425 240.704 139.811 L 240.704 144.826 C 240.704 146.212 239.581 147.334 238.195 147.334 Z  M 339.728 147.334 L 316.019 147.334 C 314.633 147.334 313.509 146.212 313.509 144.826 L 313.509 139.811 C 313.509 138.425 314.633 137.303 316.019 137.303 L 339.728 137.303 C 341.114 137.303 342.237 138.425 342.237 139.811 L 342.237 144.826 C 342.237 146.212 341.114 147.334 339.728 147.334 Z  M 402.955 147.334 L 349.246 147.334 C 347.86 147.334 346.737 146.212 346.737 144.826 L 346.737 139.811 C 346.737 138.425 347.86 137.303 349.246 137.303 L 402.955 137.303 C 404.341 137.303 405.465 138.425 405.465 139.811 L 405.465 144.826 C 405.465 146.212 404.341 147.334 402.955 147.334 Z  M 421.183 147.334 L 412.474 147.334 C 411.088 147.334 409.965 146.212 409.965 144.826 L 409.965 139.811 C 409.965 138.425 411.088 137.303 412.474 137.303 L 421.183 137.303 C 422.569 137.303 423.693 138.425 423.693 139.811 L 423.693 144.826 C 423.693 146.212 422.569 147.334 421.183 147.334 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(250,166,26)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 211.962 142.472 C 211.962 146.405 208.772 149.593 204.837 149.593 C 200.901 149.593 197.712 146.405 197.712 142.472 C 197.712 138.539 200.901 135.351 204.837 135.351 C 208.772 135.351 211.962 138.539 211.962 142.472 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(67,181,129)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 306.337 142.472 C 306.337 144.128 304.994 145.47 303.337 145.47 C 301.68 145.47 300.337 144.128 300.337 142.472 C 300.337 140.816 301.68 139.473 303.337 139.473 C 304.994 139.473 306.337 140.816 306.337 142.472 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(105,111,117)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 530.418 195.855 L 198.837 195.855 C 198.216 195.855 197.712 195.352 197.712 194.731 C 197.712 194.11 198.216 193.607 198.837 193.607 L 530.418 193.607 C 531.039 193.607 531.543 194.11 531.543 194.731 C 531.543 195.352 531.039 195.855 530.418 195.855 Z  M 245.695 182.566 L 221.986 182.566 C 220.6 182.566 219.476 181.443 219.476 180.058 L 219.476 175.042 C 219.476 173.657 220.6 172.534 221.986 172.534 L 245.695 172.534 C 247.081 172.534 248.204 173.657 248.204 175.042 L 248.204 180.058 C 248.204 181.443 247.081 182.566 245.695 182.566 Z  M 339.728 182.566 L 316.019 182.566 C 314.633 182.566 313.509 181.443 313.509 180.058 L 313.509 175.042 C 313.509 173.657 314.633 172.534 316.019 172.534 L 339.728 172.534 C 341.114 172.534 342.237 173.657 342.237 175.042 L 342.237 180.058 C 342.237 181.443 341.114 182.566 339.728 182.566 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(250,166,26)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 211.962 177.703 C 211.962 181.636 208.772 184.824 204.837 184.824 C 200.901 184.824 197.712 181.636 197.712 177.703 C 197.712 173.77 200.901 170.582 204.837 170.582 C 208.772 170.582 211.962 173.77 211.962 177.703 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(255,204,0)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 306.337 177.703 C 306.337 179.359 304.994 180.701 303.337 180.701 C 301.68 180.701 300.337 179.359 300.337 177.703 C 300.337 176.047 301.68 174.705 303.337 174.705 C 304.994 174.705 306.337 176.047 306.337 177.703 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(105,111,117)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 530.418 231.087 L 198.837 231.087 C 198.216 231.087 197.712 230.583 197.712 229.962 C 197.712 229.342 198.216 228.838 198.837 228.838 L 530.418 228.838 C 531.039 228.838 531.543 229.342 531.543 229.962 C 531.543 230.583 531.039 231.087 530.418 231.087 Z  M 274.195 217.797 L 221.986 217.797 C 220.6 217.797 219.476 216.674 219.476 215.289 L 219.476 210.273 C 219.476 208.888 220.6 207.765 221.986 207.765 L 274.195 207.765 C 275.581 207.765 276.704 208.888 276.704 210.273 L 276.704 215.289 C 276.704 216.674 275.581 217.797 274.195 217.797 Z  M 339.728 217.797 L 316.019 217.797 C 314.633 217.797 313.509 216.674 313.509 215.289 L 313.509 210.273 C 313.509 208.888 314.633 207.765 316.019 207.765 L 339.728 207.765 C 341.114 207.765 342.237 208.888 342.237 210.273 L 342.237 215.289 C 342.237 216.674 341.114 217.797 339.728 217.797 Z  M 402.955 217.797 L 349.246 217.797 C 347.86 217.797 346.737 216.674 346.737 215.289 L 346.737 210.273 C 346.737 208.888 347.86 207.765 349.246 207.765 L 402.955 207.765 C 404.341 207.765 405.465 208.888 405.465 210.273 L 405.465 215.289 C 405.465 216.674 404.341 217.797 402.955 217.797 Z  M 421.183 217.797 L 412.474 217.797 C 411.088 217.797 409.965 216.674 409.965 215.289 L 409.965 210.273 C 409.965 208.888 411.088 207.765 412.474 207.765 L 421.183 207.765 C 422.569 207.765 423.693 208.888 423.693 210.273 L 423.693 215.289 C 423.693 216.674 422.569 217.797 421.183 217.797 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(230,235,244)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 211.962 212.934 C 211.962 216.867 208.772 220.055 204.837 220.055 C 200.901 220.055 197.712 216.867 197.712 212.934 C 197.712 209.001 200.901 205.813 204.837 205.813 C 208.772 205.813 211.962 209.001 211.962 212.934"
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(67,181,129)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 306.337 212.934 C 306.337 214.59 304.994 215.933 303.337 215.933 C 301.68 215.933 300.337 214.59 300.337 212.934 C 300.337 211.278 301.68 209.936 303.337 209.936 C 304.994 209.936 306.337 211.278 306.337 212.934 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(105,111,117)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 530.418 266.318 L 198.837 266.318 C 198.216 266.318 197.712 265.814 197.712 265.194 C 197.712 264.573 198.216 264.069 198.837 264.069 L 530.418 264.069 C 531.039 264.069 531.543 264.573 531.543 265.194 C 531.543 265.814 531.039 266.318 530.418 266.318 Z  M 256.195 253.028 L 221.986 253.028 C 220.6 253.028 219.476 251.905 219.476 250.52 L 219.476 245.505 C 219.476 244.119 220.6 242.996 221.986 242.996 L 256.195 242.996 C 257.581 242.996 258.704 244.119 258.704 245.505 L 258.704 250.52 C 258.704 251.905 257.581 253.028 256.195 253.028 Z  M 339.728 253.028 L 316.019 253.028 C 314.633 253.028 313.509 251.905 313.509 250.52 L 313.509 245.505 C 313.509 244.119 314.633 242.996 316.019 242.996 L 339.728 242.996 C 341.114 242.996 342.237 244.119 342.237 245.505 L 342.237 250.52 C 342.237 251.905 341.114 253.028 339.728 253.028 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(250,166,26)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 211.962 248.166 C 211.962 252.099 208.772 255.287 204.837 255.287 C 200.901 255.287 197.712 252.099 197.712 248.166 C 197.712 244.232 200.901 241.044 204.837 241.044 C 208.772 241.044 211.962 244.232 211.962 248.166 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(105,111,117)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 306.337 248.166 C 306.337 249.821 304.994 251.164 303.337 251.164 C 301.68 251.164 300.337 249.821 300.337 248.166 C 300.337 246.51 301.68 245.167 303.337 245.167 C 304.994 245.167 306.337 246.51 306.337 248.166 Z  M 530.418 299.3 L 198.837 299.3 C 198.216 299.3 197.712 298.797 197.712 298.176 C 197.712 297.555 198.216 297.052 198.837 297.052 L 530.418 297.052 C 531.039 297.052 531.543 297.555 531.543 298.176 C 531.543 298.797 531.039 299.3 530.418 299.3 Z  M 267.445 286.011 L 221.986 286.011 C 220.6 286.011 219.476 284.888 219.476 283.503 L 219.476 278.487 C 219.476 277.102 220.6 275.979 221.986 275.979 L 267.445 275.979 C 268.831 275.979 269.954 277.102 269.954 278.487 L 269.954 283.503 C 269.954 284.888 268.831 286.011 267.445 286.011 Z  M 339.728 286.011 L 316.019 286.011 C 314.633 286.011 313.509 284.888 313.509 283.503 L 313.509 278.487 C 313.509 277.102 314.633 275.979 316.019 275.979 L 339.728 275.979 C 341.114 275.979 342.237 277.102 342.237 278.487 L 342.237 283.503 C 342.237 284.888 341.114 286.011 339.728 286.011 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(90,200,250)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 211.962 281.148 C 211.962 285.081 208.772 288.269 204.837 288.269 C 200.901 288.269 197.712 285.081 197.712 281.148 C 197.712 277.215 200.901 274.027 204.837 274.027 C 208.772 274.027 211.962 277.215 211.962 281.148 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(255,204,0)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 306.337 281.148 C 306.337 282.804 304.994 284.146 303.337 284.146 C 301.68 284.146 300.337 282.804 300.337 281.148 C 300.337 279.492 301.68 278.15 303.337 278.15 C 304.994 278.15 306.337 279.492 306.337 281.148 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(85,90,97)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 76.126 49.09 C 76.126 53.023 72.936 56.211 69.001 56.211 C 65.066 56.211 61.876 53.023 61.876 49.09 C 61.876 45.157 65.066 41.969 69.001 41.969 C 72.936 41.969 76.126 45.157 76.126 49.09 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(135,139,151)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 1.732 26.24 L 4.242 26.24 C 5.627 26.24 6.751 27.363 6.751 28.749 L 6.751 42.542 C 6.751 43.927 5.627 45.049 4.242 45.049 L 1.732 45.049 L 1.732 26.24 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(115,139,215)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 33.072 50.692 L 18.017 50.692 C 13.86 50.692 10.489 47.324 10.489 43.169 L 10.489 28.121 C 10.489 23.966 13.86 20.597 18.017 20.597 L 33.072 20.597 C 37.23 20.597 40.6 23.966 40.6 28.121 L 40.6 43.169 C 40.6 47.324 37.23 50.692 33.072 50.692 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(85,90,97)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 124.859 101.318 L 86.15 101.318 C 84.764 101.318 83.641 100.195 83.641 98.809 L 83.641 93.794 C 83.641 92.409 84.764 91.286 86.15 91.286 L 124.859 91.286 C 126.245 91.286 127.369 92.409 127.369 93.794 L 127.369 98.809 C 127.369 100.195 126.245 101.318 124.859 101.318 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(250,166,26)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 76.126 96.455 C 76.126 100.388 72.936 103.576 69.001 103.576 C 65.066 103.576 61.876 100.388 61.876 96.455 C 61.876 92.522 65.066 89.334 69.001 89.334 C 72.936 89.334 76.126 92.522 76.126 96.455 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(67,181,129)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 76.126 101.327 C 76.126 102.569 75.119 103.576 73.876 103.576 C 72.633 103.576 71.626 102.569 71.626 101.327 C 71.626 100.085 72.633 99.078 73.876 99.078 C 75.119 99.078 76.126 100.085 76.126 101.327 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(85,90,97)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 124.859 122.306 L 86.15 122.306 C 84.764 122.306 83.641 121.184 83.641 119.798 L 83.641 114.783 C 83.641 113.397 84.764 112.275 86.15 112.275 L 124.859 112.275 C 126.245 112.275 127.369 113.397 127.369 114.783 L 127.369 119.798 C 127.369 121.184 126.245 122.306 124.859 122.306 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(90,200,250)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 76.126 117.444 C 76.126 121.377 72.936 124.565 69.001 124.565 C 65.066 124.565 61.876 121.377 61.876 117.444 C 61.876 113.511 65.066 110.322 69.001 110.322 C 72.936 110.322 76.126 113.511 76.126 117.444 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "rgb(67,181,129)",
-                "fill-rule": "evenodd",
-                d:
-                  " M 76.126 122.316 C 76.126 123.558 75.119 124.565 73.876 124.565 C 72.633 124.565 71.626 123.558 71.626 122.316 C 71.626 121.074 72.633 120.067 73.876 120.067 C 75.119 120.067 76.126 121.074 76.126 122.316 Z "
-              }
-            }),
-            _vm._v(" "),
-            _c("path", {
-              attrs: {
-                fill: "none",
-                "fill-rule": "evenodd",
-                stroke: "rgb(26,28,30)",
-                "stroke-linecap": "round",
-                "stroke-linejoin": "round",
-                "stroke-miterlimit": "4",
-                "stroke-width": "3",
-                d:
-                  " M 1.5 308.837 L 546.009 308.837 L 546.009 1.5 L 1.5 1.5 L 1.5 308.837 Z ",
-                "vector-effect": "non-scaling-stroke"
-              }
-            })
-          ])
-        ]
-      )
-    ]
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-85c58062", module.exports)
-  }
+// The _isBuffer check is for Safari 5-7 support, because it's missing
+// Object.prototype.constructor. Remove this eventually
+module.exports = function (obj) {
+  return obj != null && (isBuffer(obj) || isSlowBuffer(obj) || !!obj._isBuffer)
 }
 
+function isBuffer (obj) {
+  return !!obj.constructor && typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
+}
+
+// For Node v0.10 support. Remove this eventually.
+function isSlowBuffer (obj) {
+  return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
+}
+
+
 /***/ }),
-/* 63 */,
-/* 64 */
-/***/ (function(module, exports) {
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+"use strict";
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var defaults = __webpack_require__(3);
+var utils = __webpack_require__(0);
+var InterceptorManager = __webpack_require__(33);
+var dispatchRequest = __webpack_require__(34);
 
 /**
- * This class controls events in a queue
+ * Create a new instance of Axios
+ *
+ * @param {Object} instanceConfig The default config for the instance
  */
-var EventQueue = function () {
-    function EventQueue() {
-        _classCallCheck(this, EventQueue);
+function Axios(instanceConfig) {
+  this.defaults = instanceConfig;
+  this.interceptors = {
+    request: new InterceptorManager(),
+    response: new InterceptorManager()
+  };
+}
 
-        this.__queue = new Set();
-    }
+/**
+ * Dispatch a request
+ *
+ * @param {Object} config The config specific for this request (merged with this.defaults)
+ */
+Axios.prototype.request = function request(config) {
+  /*eslint no-param-reassign:0*/
+  // Allow for axios('example/url'[, config]) a la fetch API
+  if (typeof config === 'string') {
+    config = utils.merge({
+      url: arguments[0]
+    }, arguments[1]);
+  }
 
-    /**
-     * Perform an action after an amount of delay
-     */
+  config = utils.merge(defaults, {method: 'get'}, this.defaults, config);
+  config.method = config.method.toLowerCase();
 
+  // Hook up interceptors middleware
+  var chain = [dispatchRequest, undefined];
+  var promise = Promise.resolve(config);
 
-    _createClass(EventQueue, [{
-        key: "do",
-        value: function _do(action, delay) {
-            for (var _len = arguments.length, params = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-                params[_key - 2] = arguments[_key];
-            }
+  this.interceptors.request.forEach(function unshiftRequestInterceptors(interceptor) {
+    chain.unshift(interceptor.fulfilled, interceptor.rejected);
+  });
 
-            var _this = this;
+  this.interceptors.response.forEach(function pushResponseInterceptors(interceptor) {
+    chain.push(interceptor.fulfilled, interceptor.rejected);
+  });
 
-            var tid = 0;
-            var queue = this.__queue;
-            var done = function done() {
-                queue.delete(tid);
-            };
-            tid = setTimeout(function () {
-                action.apply(undefined, [_this].concat(params));
-                done();
-            }, delay);
-            this.__queue.add(tid);
-        }
+  while (chain.length) {
+    promise = promise.then(chain.shift(), chain.shift());
+  }
 
-        /**
-         * Clear the current queue
-         */
+  return promise;
+};
 
-    }, {
-        key: "clear",
-        value: function clear() {
-            this.__queue.forEach(function (key) {
-                clearTimeout(key);
-            });
-            this.__queue.clear();
-        }
+// Provide aliases for supported request methods
+utils.forEach(['delete', 'get', 'head', 'options'], function forEachMethodNoData(method) {
+  /*eslint func-names:0*/
+  Axios.prototype[method] = function(url, config) {
+    return this.request(utils.merge(config || {}, {
+      method: method,
+      url: url
+    }));
+  };
+});
 
-        /**
-         * Number of items in the queue
-         */
+utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
+  /*eslint func-names:0*/
+  Axios.prototype[method] = function(url, data, config) {
+    return this.request(utils.merge(config || {}, {
+      method: method,
+      url: url,
+      data: data
+    }));
+  };
+});
 
-    }, {
-        key: "length",
-        value: function length() {
-            return this.__queue.size;
-        }
-    }]);
+module.exports = Axios;
 
-    return EventQueue;
-}();
-
-;
-
-window.EventQueue = EventQueue;
 
 /***/ }),
-/* 65 */
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(0);
+
+module.exports = function normalizeHeaderName(headers, normalizedName) {
+  utils.forEach(headers, function processHeader(value, name) {
+    if (name !== normalizedName && name.toUpperCase() === normalizedName.toUpperCase()) {
+      headers[normalizedName] = value;
+      delete headers[name];
+    }
+  });
+};
+
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var createError = __webpack_require__(9);
+
+/**
+ * Resolve or reject a Promise based on response status.
+ *
+ * @param {Function} resolve A function that resolves the promise.
+ * @param {Function} reject A function that rejects the promise.
+ * @param {object} response The response.
+ */
+module.exports = function settle(resolve, reject, response) {
+  var validateStatus = response.config.validateStatus;
+  // Note: status is not exposed by XDomainRequest
+  if (!response.status || !validateStatus || validateStatus(response.status)) {
+    resolve(response);
+  } else {
+    reject(createError(
+      'Request failed with status code ' + response.status,
+      response.config,
+      null,
+      response.request,
+      response
+    ));
+  }
+};
+
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * Update an Error with the specified config, error code, and response.
+ *
+ * @param {Error} error The error to update.
+ * @param {Object} config The config.
+ * @param {string} [code] The error code (for example, 'ECONNABORTED').
+ * @param {Object} [request] The request.
+ * @param {Object} [response] The response.
+ * @returns {Error} The error.
+ */
+module.exports = function enhanceError(error, config, code, request, response) {
+  error.config = config;
+  if (code) {
+    error.code = code;
+  }
+  error.request = request;
+  error.response = response;
+  return error;
+};
+
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(0);
+
+function encode(val) {
+  return encodeURIComponent(val).
+    replace(/%40/gi, '@').
+    replace(/%3A/gi, ':').
+    replace(/%24/g, '$').
+    replace(/%2C/gi, ',').
+    replace(/%20/g, '+').
+    replace(/%5B/gi, '[').
+    replace(/%5D/gi, ']');
+}
+
+/**
+ * Build a URL by appending params to the end
+ *
+ * @param {string} url The base of the url (e.g., http://www.google.com)
+ * @param {object} [params] The params to be appended
+ * @returns {string} The formatted url
+ */
+module.exports = function buildURL(url, params, paramsSerializer) {
+  /*eslint no-param-reassign:0*/
+  if (!params) {
+    return url;
+  }
+
+  var serializedParams;
+  if (paramsSerializer) {
+    serializedParams = paramsSerializer(params);
+  } else if (utils.isURLSearchParams(params)) {
+    serializedParams = params.toString();
+  } else {
+    var parts = [];
+
+    utils.forEach(params, function serialize(val, key) {
+      if (val === null || typeof val === 'undefined') {
+        return;
+      }
+
+      if (utils.isArray(val)) {
+        key = key + '[]';
+      } else {
+        val = [val];
+      }
+
+      utils.forEach(val, function parseValue(v) {
+        if (utils.isDate(v)) {
+          v = v.toISOString();
+        } else if (utils.isObject(v)) {
+          v = JSON.stringify(v);
+        }
+        parts.push(encode(key) + '=' + encode(v));
+      });
+    });
+
+    serializedParams = parts.join('&');
+  }
+
+  if (serializedParams) {
+    url += (url.indexOf('?') === -1 ? '?' : '&') + serializedParams;
+  }
+
+  return url;
+};
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(0);
+
+// Headers whose duplicates are ignored by node
+// c.f. https://nodejs.org/api/http.html#http_message_headers
+var ignoreDuplicateOf = [
+  'age', 'authorization', 'content-length', 'content-type', 'etag',
+  'expires', 'from', 'host', 'if-modified-since', 'if-unmodified-since',
+  'last-modified', 'location', 'max-forwards', 'proxy-authorization',
+  'referer', 'retry-after', 'user-agent'
+];
+
+/**
+ * Parse headers into an object
+ *
+ * ```
+ * Date: Wed, 27 Aug 2014 08:58:49 GMT
+ * Content-Type: application/json
+ * Connection: keep-alive
+ * Transfer-Encoding: chunked
+ * ```
+ *
+ * @param {String} headers Headers needing to be parsed
+ * @returns {Object} Headers parsed into an object
+ */
+module.exports = function parseHeaders(headers) {
+  var parsed = {};
+  var key;
+  var val;
+  var i;
+
+  if (!headers) { return parsed; }
+
+  utils.forEach(headers.split('\n'), function parser(line) {
+    i = line.indexOf(':');
+    key = utils.trim(line.substr(0, i)).toLowerCase();
+    val = utils.trim(line.substr(i + 1));
+
+    if (key) {
+      if (parsed[key] && ignoreDuplicateOf.indexOf(key) >= 0) {
+        return;
+      }
+      if (key === 'set-cookie') {
+        parsed[key] = (parsed[key] ? parsed[key] : []).concat([val]);
+      } else {
+        parsed[key] = parsed[key] ? parsed[key] + ', ' + val : val;
+      }
+    }
+  });
+
+  return parsed;
+};
+
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(0);
+
+module.exports = (
+  utils.isStandardBrowserEnv() ?
+
+  // Standard browser envs have full support of the APIs needed to test
+  // whether the request URL is of the same origin as current location.
+  (function standardBrowserEnv() {
+    var msie = /(msie|trident)/i.test(navigator.userAgent);
+    var urlParsingNode = document.createElement('a');
+    var originURL;
+
+    /**
+    * Parse a URL to discover it's components
+    *
+    * @param {String} url The URL to be parsed
+    * @returns {Object}
+    */
+    function resolveURL(url) {
+      var href = url;
+
+      if (msie) {
+        // IE needs attribute set twice to normalize properties
+        urlParsingNode.setAttribute('href', href);
+        href = urlParsingNode.href;
+      }
+
+      urlParsingNode.setAttribute('href', href);
+
+      // urlParsingNode provides the UrlUtils interface - http://url.spec.whatwg.org/#urlutils
+      return {
+        href: urlParsingNode.href,
+        protocol: urlParsingNode.protocol ? urlParsingNode.protocol.replace(/:$/, '') : '',
+        host: urlParsingNode.host,
+        search: urlParsingNode.search ? urlParsingNode.search.replace(/^\?/, '') : '',
+        hash: urlParsingNode.hash ? urlParsingNode.hash.replace(/^#/, '') : '',
+        hostname: urlParsingNode.hostname,
+        port: urlParsingNode.port,
+        pathname: (urlParsingNode.pathname.charAt(0) === '/') ?
+                  urlParsingNode.pathname :
+                  '/' + urlParsingNode.pathname
+      };
+    }
+
+    originURL = resolveURL(window.location.href);
+
+    /**
+    * Determine if a URL shares the same origin as the current location
+    *
+    * @param {String} requestURL The URL to test
+    * @returns {boolean} True if URL shares the same origin, otherwise false
+    */
+    return function isURLSameOrigin(requestURL) {
+      var parsed = (utils.isString(requestURL)) ? resolveURL(requestURL) : requestURL;
+      return (parsed.protocol === originURL.protocol &&
+            parsed.host === originURL.host);
+    };
+  })() :
+
+  // Non standard browser envs (web workers, react-native) lack needed support.
+  (function nonStandardBrowserEnv() {
+    return function isURLSameOrigin() {
+      return true;
+    };
+  })()
+);
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+// btoa polyfill for IE<10 courtesy https://github.com/davidchambers/Base64.js
+
+var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+
+function E() {
+  this.message = 'String contains an invalid character';
+}
+E.prototype = new Error;
+E.prototype.code = 5;
+E.prototype.name = 'InvalidCharacterError';
+
+function btoa(input) {
+  var str = String(input);
+  var output = '';
+  for (
+    // initialize result and counter
+    var block, charCode, idx = 0, map = chars;
+    // if the next str index does not exist:
+    //   change the mapping table to "="
+    //   check if d has no fractional digits
+    str.charAt(idx | 0) || (map = '=', idx % 1);
+    // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
+    output += map.charAt(63 & block >> 8 - idx % 1 * 8)
+  ) {
+    charCode = str.charCodeAt(idx += 3 / 4);
+    if (charCode > 0xFF) {
+      throw new E();
+    }
+    block = block << 8 | charCode;
+  }
+  return output;
+}
+
+module.exports = btoa;
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(0);
+
+module.exports = (
+  utils.isStandardBrowserEnv() ?
+
+  // Standard browser envs support document.cookie
+  (function standardBrowserEnv() {
+    return {
+      write: function write(name, value, expires, path, domain, secure) {
+        var cookie = [];
+        cookie.push(name + '=' + encodeURIComponent(value));
+
+        if (utils.isNumber(expires)) {
+          cookie.push('expires=' + new Date(expires).toGMTString());
+        }
+
+        if (utils.isString(path)) {
+          cookie.push('path=' + path);
+        }
+
+        if (utils.isString(domain)) {
+          cookie.push('domain=' + domain);
+        }
+
+        if (secure === true) {
+          cookie.push('secure');
+        }
+
+        document.cookie = cookie.join('; ');
+      },
+
+      read: function read(name) {
+        var match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
+        return (match ? decodeURIComponent(match[3]) : null);
+      },
+
+      remove: function remove(name) {
+        this.write(name, '', Date.now() - 86400000);
+      }
+    };
+  })() :
+
+  // Non standard browser env (web workers, react-native) lack needed support.
+  (function nonStandardBrowserEnv() {
+    return {
+      write: function write() {},
+      read: function read() { return null; },
+      remove: function remove() {}
+    };
+  })()
+);
+
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(0);
+
+function InterceptorManager() {
+  this.handlers = [];
+}
+
+/**
+ * Add a new interceptor to the stack
+ *
+ * @param {Function} fulfilled The function to handle `then` for a `Promise`
+ * @param {Function} rejected The function to handle `reject` for a `Promise`
+ *
+ * @return {Number} An ID used to remove interceptor later
+ */
+InterceptorManager.prototype.use = function use(fulfilled, rejected) {
+  this.handlers.push({
+    fulfilled: fulfilled,
+    rejected: rejected
+  });
+  return this.handlers.length - 1;
+};
+
+/**
+ * Remove an interceptor from the stack
+ *
+ * @param {Number} id The ID that was returned by `use`
+ */
+InterceptorManager.prototype.eject = function eject(id) {
+  if (this.handlers[id]) {
+    this.handlers[id] = null;
+  }
+};
+
+/**
+ * Iterate over all the registered interceptors
+ *
+ * This method is particularly useful for skipping over any
+ * interceptors that may have become `null` calling `eject`.
+ *
+ * @param {Function} fn The function to call for each interceptor
+ */
+InterceptorManager.prototype.forEach = function forEach(fn) {
+  utils.forEach(this.handlers, function forEachHandler(h) {
+    if (h !== null) {
+      fn(h);
+    }
+  });
+};
+
+module.exports = InterceptorManager;
+
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(0);
+var transformData = __webpack_require__(35);
+var isCancel = __webpack_require__(10);
+var defaults = __webpack_require__(3);
+var isAbsoluteURL = __webpack_require__(36);
+var combineURLs = __webpack_require__(37);
+
+/**
+ * Throws a `Cancel` if cancellation has been requested.
+ */
+function throwIfCancellationRequested(config) {
+  if (config.cancelToken) {
+    config.cancelToken.throwIfRequested();
+  }
+}
+
+/**
+ * Dispatch a request to the server using the configured adapter.
+ *
+ * @param {object} config The config that is to be used for the request
+ * @returns {Promise} The Promise to be fulfilled
+ */
+module.exports = function dispatchRequest(config) {
+  throwIfCancellationRequested(config);
+
+  // Support baseURL config
+  if (config.baseURL && !isAbsoluteURL(config.url)) {
+    config.url = combineURLs(config.baseURL, config.url);
+  }
+
+  // Ensure headers exist
+  config.headers = config.headers || {};
+
+  // Transform request data
+  config.data = transformData(
+    config.data,
+    config.headers,
+    config.transformRequest
+  );
+
+  // Flatten headers
+  config.headers = utils.merge(
+    config.headers.common || {},
+    config.headers[config.method] || {},
+    config.headers || {}
+  );
+
+  utils.forEach(
+    ['delete', 'get', 'head', 'post', 'put', 'patch', 'common'],
+    function cleanHeaderConfig(method) {
+      delete config.headers[method];
+    }
+  );
+
+  var adapter = config.adapter || defaults.adapter;
+
+  return adapter(config).then(function onAdapterResolution(response) {
+    throwIfCancellationRequested(config);
+
+    // Transform response data
+    response.data = transformData(
+      response.data,
+      response.headers,
+      config.transformResponse
+    );
+
+    return response;
+  }, function onAdapterRejection(reason) {
+    if (!isCancel(reason)) {
+      throwIfCancellationRequested(config);
+
+      // Transform response data
+      if (reason && reason.response) {
+        reason.response.data = transformData(
+          reason.response.data,
+          reason.response.headers,
+          config.transformResponse
+        );
+      }
+    }
+
+    return Promise.reject(reason);
+  });
+};
+
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(0);
+
+/**
+ * Transform the data for a request or a response
+ *
+ * @param {Object|String} data The data to be transformed
+ * @param {Array} headers The headers for the request or response
+ * @param {Array|Function} fns A single function or Array of functions
+ * @returns {*} The resulting transformed data
+ */
+module.exports = function transformData(data, headers, fns) {
+  /*eslint no-param-reassign:0*/
+  utils.forEach(fns, function transform(fn) {
+    data = fn(data, headers);
+  });
+
+  return data;
+};
+
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * Determines whether the specified URL is absolute
+ *
+ * @param {string} url The URL to test
+ * @returns {boolean} True if the specified URL is absolute, otherwise false
+ */
+module.exports = function isAbsoluteURL(url) {
+  // A URL is considered absolute if it begins with "<scheme>://" or "//" (protocol-relative URL).
+  // RFC 3986 defines scheme name as a sequence of characters beginning with a letter and followed
+  // by any combination of letters, digits, plus, period, or hyphen.
+  return /^([a-z][a-z\d\+\-\.]*:)?\/\//i.test(url);
+};
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * Creates a new URL by combining the specified URLs
+ *
+ * @param {string} baseURL The base URL
+ * @param {string} relativeURL The relative URL
+ * @returns {string} The combined URL
+ */
+module.exports = function combineURLs(baseURL, relativeURL) {
+  return relativeURL
+    ? baseURL.replace(/\/+$/, '') + '/' + relativeURL.replace(/^\/+/, '')
+    : baseURL;
+};
+
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var Cancel = __webpack_require__(11);
+
+/**
+ * A `CancelToken` is an object that can be used to request cancellation of an operation.
+ *
+ * @class
+ * @param {Function} executor The executor function.
+ */
+function CancelToken(executor) {
+  if (typeof executor !== 'function') {
+    throw new TypeError('executor must be a function.');
+  }
+
+  var resolvePromise;
+  this.promise = new Promise(function promiseExecutor(resolve) {
+    resolvePromise = resolve;
+  });
+
+  var token = this;
+  executor(function cancel(message) {
+    if (token.reason) {
+      // Cancellation has already been requested
+      return;
+    }
+
+    token.reason = new Cancel(message);
+    resolvePromise(token.reason);
+  });
+}
+
+/**
+ * Throws a `Cancel` if cancellation has been requested.
+ */
+CancelToken.prototype.throwIfRequested = function throwIfRequested() {
+  if (this.reason) {
+    throw this.reason;
+  }
+};
+
+/**
+ * Returns an object that contains a new `CancelToken` and a function that, when called,
+ * cancels the `CancelToken`.
+ */
+CancelToken.source = function source() {
+  var cancel;
+  var token = new CancelToken(function executor(c) {
+    cancel = c;
+  });
+  return {
+    token: token,
+    cancel: cancel
+  };
+};
+
+module.exports = CancelToken;
+
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * Syntactic sugar for invoking a function and expanding an array for arguments.
+ *
+ * Common use case would be to use `Function.prototype.apply`.
+ *
+ *  ```js
+ *  function f(x, y, z) {}
+ *  var args = [1, 2, 3];
+ *  f.apply(null, args);
+ *  ```
+ *
+ * With `spread` this example can be re-written.
+ *
+ *  ```js
+ *  spread(function(x, y, z) {})([1, 2, 3]);
+ *  ```
+ *
+ * @param {Function} callback
+ * @returns {Function}
+ */
+module.exports = function spread(callback) {
+  return function wrap(arr) {
+    return callback.apply(null, arr);
+  };
+};
+
+
+/***/ }),
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! PhotoSwipe - v4.1.2 - 2017-04-05
@@ -54982,7 +51069,7 @@ _registerModule('History', {
 });
 
 /***/ }),
-/* 66 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! PhotoSwipe Default UI - 4.1.2 - 2017-04-05
@@ -55853,7 +51940,2677 @@ return PhotoSwipeUI_Default;
 
 
 /***/ }),
-/* 67 */
+/* 42 */
+/***/ (function(module, exports) {
+
+/* -----------------------------------------------
+/* Author : Vincent Garreau  - vincentgarreau.com
+/* MIT license: http://opensource.org/licenses/MIT
+/* Demo / Generator : vincentgarreau.com/particles.js
+/* GitHub : github.com/VincentGarreau/particles.js
+/* How to use? : Check the GitHub README
+/* v2.0.0
+/* ----------------------------------------------- */
+
+var pJS = function(tag_id, params){
+
+  var canvas_el = document.querySelector('#'+tag_id+' > .particles-js-canvas-el');
+
+  /* particles.js variables with default values */
+  this.pJS = {
+    canvas: {
+      el: canvas_el,
+      w: canvas_el.offsetWidth,
+      h: canvas_el.offsetHeight
+    },
+    particles: {
+      number: {
+        value: 400,
+        density: {
+          enable: true,
+          value_area: 800
+        }
+      },
+      color: {
+        value: '#fff'
+      },
+      shape: {
+        type: 'circle',
+        stroke: {
+          width: 0,
+          color: '#ff0000'
+        },
+        polygon: {
+          nb_sides: 5
+        },
+        image: {
+          src: '',
+          width: 100,
+          height: 100
+        }
+      },
+      opacity: {
+        value: 1,
+        random: false,
+        anim: {
+          enable: false,
+          speed: 2,
+          opacity_min: 0,
+          sync: false
+        }
+      },
+      size: {
+        value: 20,
+        random: false,
+        anim: {
+          enable: false,
+          speed: 20,
+          size_min: 0,
+          sync: false
+        }
+      },
+      line_linked: {
+        enable: true,
+        distance: 100,
+        color: '#fff',
+        opacity: 1,
+        width: 1
+      },
+      move: {
+        enable: true,
+        speed: 2,
+        direction: 'none',
+        random: false,
+        straight: false,
+        out_mode: 'out',
+        bounce: false,
+        attract: {
+          enable: false,
+          rotateX: 3000,
+          rotateY: 3000
+        }
+      },
+      array: []
+    },
+    interactivity: {
+      detect_on: 'canvas',
+      events: {
+        onhover: {
+          enable: true,
+          mode: 'grab'
+        },
+        onclick: {
+          enable: true,
+          mode: 'push'
+        },
+        resize: true
+      },
+      modes: {
+        grab:{
+          distance: 100,
+          line_linked:{
+            opacity: 1
+          }
+        },
+        bubble:{
+          distance: 200,
+          size: 80,
+          duration: 0.4
+        },
+        repulse:{
+          distance: 200,
+          duration: 0.4
+        },
+        push:{
+          particles_nb: 4
+        },
+        remove:{
+          particles_nb: 2
+        }
+      },
+      mouse:{}
+    },
+    retina_detect: false,
+    fn: {
+      interact: {},
+      modes: {},
+      vendors:{}
+    },
+    tmp: {}
+  };
+
+  var pJS = this.pJS;
+
+  /* params settings */
+  if(params){
+    Object.deepExtend(pJS, params);
+  }
+
+  pJS.tmp.obj = {
+    size_value: pJS.particles.size.value,
+    size_anim_speed: pJS.particles.size.anim.speed,
+    move_speed: pJS.particles.move.speed,
+    line_linked_distance: pJS.particles.line_linked.distance,
+    line_linked_width: pJS.particles.line_linked.width,
+    mode_grab_distance: pJS.interactivity.modes.grab.distance,
+    mode_bubble_distance: pJS.interactivity.modes.bubble.distance,
+    mode_bubble_size: pJS.interactivity.modes.bubble.size,
+    mode_repulse_distance: pJS.interactivity.modes.repulse.distance
+  };
+
+
+  pJS.fn.retinaInit = function(){
+
+    if(pJS.retina_detect && window.devicePixelRatio > 1){
+      pJS.canvas.pxratio = window.devicePixelRatio; 
+      pJS.tmp.retina = true;
+    } 
+    else{
+      pJS.canvas.pxratio = 1;
+      pJS.tmp.retina = false;
+    }
+
+    pJS.canvas.w = pJS.canvas.el.offsetWidth * pJS.canvas.pxratio;
+    pJS.canvas.h = pJS.canvas.el.offsetHeight * pJS.canvas.pxratio;
+
+    pJS.particles.size.value = pJS.tmp.obj.size_value * pJS.canvas.pxratio;
+    pJS.particles.size.anim.speed = pJS.tmp.obj.size_anim_speed * pJS.canvas.pxratio;
+    pJS.particles.move.speed = pJS.tmp.obj.move_speed * pJS.canvas.pxratio;
+    pJS.particles.line_linked.distance = pJS.tmp.obj.line_linked_distance * pJS.canvas.pxratio;
+    pJS.interactivity.modes.grab.distance = pJS.tmp.obj.mode_grab_distance * pJS.canvas.pxratio;
+    pJS.interactivity.modes.bubble.distance = pJS.tmp.obj.mode_bubble_distance * pJS.canvas.pxratio;
+    pJS.particles.line_linked.width = pJS.tmp.obj.line_linked_width * pJS.canvas.pxratio;
+    pJS.interactivity.modes.bubble.size = pJS.tmp.obj.mode_bubble_size * pJS.canvas.pxratio;
+    pJS.interactivity.modes.repulse.distance = pJS.tmp.obj.mode_repulse_distance * pJS.canvas.pxratio;
+
+  };
+
+
+
+  /* ---------- pJS functions - canvas ------------ */
+
+  pJS.fn.canvasInit = function(){
+    pJS.canvas.ctx = pJS.canvas.el.getContext('2d');
+  };
+
+  pJS.fn.canvasSize = function(){
+
+    pJS.canvas.el.width = pJS.canvas.w;
+    pJS.canvas.el.height = pJS.canvas.h;
+
+    if(pJS && pJS.interactivity.events.resize){
+
+      window.addEventListener('resize', function(){
+
+          pJS.canvas.w = pJS.canvas.el.offsetWidth;
+          pJS.canvas.h = pJS.canvas.el.offsetHeight;
+
+          /* resize canvas */
+          if(pJS.tmp.retina){
+            pJS.canvas.w *= pJS.canvas.pxratio;
+            pJS.canvas.h *= pJS.canvas.pxratio;
+          }
+
+          pJS.canvas.el.width = pJS.canvas.w;
+          pJS.canvas.el.height = pJS.canvas.h;
+
+          /* repaint canvas on anim disabled */
+          if(!pJS.particles.move.enable){
+            pJS.fn.particlesEmpty();
+            pJS.fn.particlesCreate();
+            pJS.fn.particlesDraw();
+            pJS.fn.vendors.densityAutoParticles();
+          }
+
+        /* density particles enabled */
+        pJS.fn.vendors.densityAutoParticles();
+
+      });
+
+    }
+
+  };
+
+
+  pJS.fn.canvasPaint = function(){
+    pJS.canvas.ctx.fillRect(0, 0, pJS.canvas.w, pJS.canvas.h);
+  };
+
+  pJS.fn.canvasClear = function(){
+    pJS.canvas.ctx.clearRect(0, 0, pJS.canvas.w, pJS.canvas.h);
+  };
+
+
+  /* --------- pJS functions - particles ----------- */
+
+  pJS.fn.particle = function(color, opacity, position){
+
+    /* size */
+    this.radius = (pJS.particles.size.random ? Math.random() : 1) * pJS.particles.size.value;
+    if(pJS.particles.size.anim.enable){
+      this.size_status = false;
+      this.vs = pJS.particles.size.anim.speed / 100;
+      if(!pJS.particles.size.anim.sync){
+        this.vs = this.vs * Math.random();
+      }
+    }
+
+    /* position */
+    this.x = position ? position.x : Math.random() * pJS.canvas.w;
+    this.y = position ? position.y : Math.random() * pJS.canvas.h;
+
+    /* check position  - into the canvas */
+    if(this.x > pJS.canvas.w - this.radius*2) this.x = this.x - this.radius;
+    else if(this.x < this.radius*2) this.x = this.x + this.radius;
+    if(this.y > pJS.canvas.h - this.radius*2) this.y = this.y - this.radius;
+    else if(this.y < this.radius*2) this.y = this.y + this.radius;
+
+    /* check position - avoid overlap */
+    if(pJS.particles.move.bounce){
+      pJS.fn.vendors.checkOverlap(this, position);
+    }
+
+    /* color */
+    this.color = {};
+    if(typeof(color.value) == 'object'){
+
+      if(color.value instanceof Array){
+        var color_selected = color.value[Math.floor(Math.random() * pJS.particles.color.value.length)];
+        this.color.rgb = hexToRgb(color_selected);
+      }else{
+        if(color.value.r != undefined && color.value.g != undefined && color.value.b != undefined){
+          this.color.rgb = {
+            r: color.value.r,
+            g: color.value.g,
+            b: color.value.b
+          }
+        }
+        if(color.value.h != undefined && color.value.s != undefined && color.value.l != undefined){
+          this.color.hsl = {
+            h: color.value.h,
+            s: color.value.s,
+            l: color.value.l
+          }
+        }
+      }
+
+    }
+    else if(color.value == 'random'){
+      this.color.rgb = {
+        r: (Math.floor(Math.random() * (255 - 0 + 1)) + 0),
+        g: (Math.floor(Math.random() * (255 - 0 + 1)) + 0),
+        b: (Math.floor(Math.random() * (255 - 0 + 1)) + 0)
+      }
+    }
+    else if(typeof(color.value) == 'string'){
+      this.color = color;
+      this.color.rgb = hexToRgb(this.color.value);
+    }
+
+    /* opacity */
+    this.opacity = (pJS.particles.opacity.random ? Math.random() : 1) * pJS.particles.opacity.value;
+    if(pJS.particles.opacity.anim.enable){
+      this.opacity_status = false;
+      this.vo = pJS.particles.opacity.anim.speed / 100;
+      if(!pJS.particles.opacity.anim.sync){
+        this.vo = this.vo * Math.random();
+      }
+    }
+
+    /* animation - velocity for speed */
+    var velbase = {}
+    switch(pJS.particles.move.direction){
+      case 'top':
+        velbase = { x:0, y:-1 };
+      break;
+      case 'top-right':
+        velbase = { x:0.5, y:-0.5 };
+      break;
+      case 'right':
+        velbase = { x:1, y:-0 };
+      break;
+      case 'bottom-right':
+        velbase = { x:0.5, y:0.5 };
+      break;
+      case 'bottom':
+        velbase = { x:0, y:1 };
+      break;
+      case 'bottom-left':
+        velbase = { x:-0.5, y:1 };
+      break;
+      case 'left':
+        velbase = { x:-1, y:0 };
+      break;
+      case 'top-left':
+        velbase = { x:-0.5, y:-0.5 };
+      break;
+      default:
+        velbase = { x:0, y:0 };
+      break;
+    }
+
+    if(pJS.particles.move.straight){
+      this.vx = velbase.x;
+      this.vy = velbase.y;
+      if(pJS.particles.move.random){
+        this.vx = this.vx * (Math.random());
+        this.vy = this.vy * (Math.random());
+      }
+    }else{
+      this.vx = velbase.x + Math.random()-0.5;
+      this.vy = velbase.y + Math.random()-0.5;
+    }
+
+    // var theta = 2.0 * Math.PI * Math.random();
+    // this.vx = Math.cos(theta);
+    // this.vy = Math.sin(theta);
+
+    this.vx_i = this.vx;
+    this.vy_i = this.vy;
+
+    
+
+    /* if shape is image */
+
+    var shape_type = pJS.particles.shape.type;
+    if(typeof(shape_type) == 'object'){
+      if(shape_type instanceof Array){
+        var shape_selected = shape_type[Math.floor(Math.random() * shape_type.length)];
+        this.shape = shape_selected;
+      }
+    }else{
+      this.shape = shape_type;
+    }
+
+    if(this.shape == 'image'){
+      var sh = pJS.particles.shape;
+      this.img = {
+        src: sh.image.src,
+        ratio: sh.image.width / sh.image.height
+      }
+      if(!this.img.ratio) this.img.ratio = 1;
+      if(pJS.tmp.img_type == 'svg' && pJS.tmp.source_svg != undefined){
+        pJS.fn.vendors.createSvgImg(this);
+        if(pJS.tmp.pushing){
+          this.img.loaded = false;
+        }
+      }
+    }
+
+    
+
+  };
+
+
+  pJS.fn.particle.prototype.draw = function() {
+
+    var p = this;
+
+    if(p.radius_bubble != undefined){
+      var radius = p.radius_bubble; 
+    }else{
+      var radius = p.radius;
+    }
+
+    if(p.opacity_bubble != undefined){
+      var opacity = p.opacity_bubble;
+    }else{
+      var opacity = p.opacity;
+    }
+
+    if(p.color.rgb){
+      var color_value = 'rgba('+p.color.rgb.r+','+p.color.rgb.g+','+p.color.rgb.b+','+opacity+')';
+    }else{
+      var color_value = 'hsla('+p.color.hsl.h+','+p.color.hsl.s+'%,'+p.color.hsl.l+'%,'+opacity+')';
+    }
+
+    pJS.canvas.ctx.fillStyle = color_value;
+    pJS.canvas.ctx.beginPath();
+
+    switch(p.shape){
+
+      case 'circle':
+        pJS.canvas.ctx.arc(p.x, p.y, radius, 0, Math.PI * 2, false);
+      break;
+
+      case 'edge':
+        pJS.canvas.ctx.rect(p.x-radius, p.y-radius, radius*2, radius*2);
+      break;
+
+      case 'triangle':
+        pJS.fn.vendors.drawShape(pJS.canvas.ctx, p.x-radius, p.y+radius / 1.66, radius*2, 3, 2);
+      break;
+
+      case 'polygon':
+        pJS.fn.vendors.drawShape(
+          pJS.canvas.ctx,
+          p.x - radius / (pJS.particles.shape.polygon.nb_sides/3.5), // startX
+          p.y - radius / (2.66/3.5), // startY
+          radius*2.66 / (pJS.particles.shape.polygon.nb_sides/3), // sideLength
+          pJS.particles.shape.polygon.nb_sides, // sideCountNumerator
+          1 // sideCountDenominator
+        );
+      break;
+
+      case 'star':
+        pJS.fn.vendors.drawShape(
+          pJS.canvas.ctx,
+          p.x - radius*2 / (pJS.particles.shape.polygon.nb_sides/4), // startX
+          p.y - radius / (2*2.66/3.5), // startY
+          radius*2*2.66 / (pJS.particles.shape.polygon.nb_sides/3), // sideLength
+          pJS.particles.shape.polygon.nb_sides, // sideCountNumerator
+          2 // sideCountDenominator
+        );
+      break;
+
+      case 'image':
+
+        function draw(){
+          pJS.canvas.ctx.drawImage(
+            img_obj,
+            p.x-radius,
+            p.y-radius,
+            radius*2,
+            radius*2 / p.img.ratio
+          );
+        }
+
+        if(pJS.tmp.img_type == 'svg'){
+          var img_obj = p.img.obj;
+        }else{
+          var img_obj = pJS.tmp.img_obj;
+        }
+
+        if(img_obj){
+          draw();
+        }
+
+      break;
+
+    }
+
+    pJS.canvas.ctx.closePath();
+
+    if(pJS.particles.shape.stroke.width > 0){
+      pJS.canvas.ctx.strokeStyle = pJS.particles.shape.stroke.color;
+      pJS.canvas.ctx.lineWidth = pJS.particles.shape.stroke.width;
+      pJS.canvas.ctx.stroke();
+    }
+    
+    pJS.canvas.ctx.fill();
+    
+  };
+
+
+  pJS.fn.particlesCreate = function(){
+    for(var i = 0; i < pJS.particles.number.value; i++) {
+      pJS.particles.array.push(new pJS.fn.particle(pJS.particles.color, pJS.particles.opacity.value));
+    }
+  };
+
+  pJS.fn.particlesUpdate = function(){
+
+    for(var i = 0; i < pJS.particles.array.length; i++){
+
+      /* the particle */
+      var p = pJS.particles.array[i];
+
+      // var d = ( dx = pJS.interactivity.mouse.click_pos_x - p.x ) * dx + ( dy = pJS.interactivity.mouse.click_pos_y - p.y ) * dy;
+      // var f = -BANG_SIZE / d;
+      // if ( d < BANG_SIZE ) {
+      //     var t = Math.atan2( dy, dx );
+      //     p.vx = f * Math.cos(t);
+      //     p.vy = f * Math.sin(t);
+      // }
+
+      /* move the particle */
+      if(pJS.particles.move.enable){
+        var ms = pJS.particles.move.speed/2;
+        p.x += p.vx * ms;
+        p.y += p.vy * ms;
+      }
+
+      /* change opacity status */
+      if(pJS.particles.opacity.anim.enable) {
+        if(p.opacity_status == true) {
+          if(p.opacity >= pJS.particles.opacity.value) p.opacity_status = false;
+          p.opacity += p.vo;
+        }else {
+          if(p.opacity <= pJS.particles.opacity.anim.opacity_min) p.opacity_status = true;
+          p.opacity -= p.vo;
+        }
+        if(p.opacity < 0) p.opacity = 0;
+      }
+
+      /* change size */
+      if(pJS.particles.size.anim.enable){
+        if(p.size_status == true){
+          if(p.radius >= pJS.particles.size.value) p.size_status = false;
+          p.radius += p.vs;
+        }else{
+          if(p.radius <= pJS.particles.size.anim.size_min) p.size_status = true;
+          p.radius -= p.vs;
+        }
+        if(p.radius < 0) p.radius = 0;
+      }
+
+      /* change particle position if it is out of canvas */
+      if(pJS.particles.move.out_mode == 'bounce'){
+        var new_pos = {
+          x_left: p.radius,
+          x_right:  pJS.canvas.w,
+          y_top: p.radius,
+          y_bottom: pJS.canvas.h
+        }
+      }else{
+        var new_pos = {
+          x_left: -p.radius,
+          x_right: pJS.canvas.w + p.radius,
+          y_top: -p.radius,
+          y_bottom: pJS.canvas.h + p.radius
+        }
+      }
+
+      if(p.x - p.radius > pJS.canvas.w){
+        p.x = new_pos.x_left;
+        p.y = Math.random() * pJS.canvas.h;
+      }
+      else if(p.x + p.radius < 0){
+        p.x = new_pos.x_right;
+        p.y = Math.random() * pJS.canvas.h;
+      }
+      if(p.y - p.radius > pJS.canvas.h){
+        p.y = new_pos.y_top;
+        p.x = Math.random() * pJS.canvas.w;
+      }
+      else if(p.y + p.radius < 0){
+        p.y = new_pos.y_bottom;
+        p.x = Math.random() * pJS.canvas.w;
+      }
+
+      /* out of canvas modes */
+      switch(pJS.particles.move.out_mode){
+        case 'bounce':
+          if (p.x + p.radius > pJS.canvas.w) p.vx = -p.vx;
+          else if (p.x - p.radius < 0) p.vx = -p.vx;
+          if (p.y + p.radius > pJS.canvas.h) p.vy = -p.vy;
+          else if (p.y - p.radius < 0) p.vy = -p.vy;
+        break;
+      }
+
+      /* events */
+      if(isInArray('grab', pJS.interactivity.events.onhover.mode)){
+        pJS.fn.modes.grabParticle(p);
+      }
+
+      if(isInArray('bubble', pJS.interactivity.events.onhover.mode) || isInArray('bubble', pJS.interactivity.events.onclick.mode)){
+        pJS.fn.modes.bubbleParticle(p);
+      }
+
+      if(isInArray('repulse', pJS.interactivity.events.onhover.mode) || isInArray('repulse', pJS.interactivity.events.onclick.mode)){
+        pJS.fn.modes.repulseParticle(p);
+      }
+
+      /* interaction auto between particles */
+      if(pJS.particles.line_linked.enable || pJS.particles.move.attract.enable){
+        for(var j = i + 1; j < pJS.particles.array.length; j++){
+          var p2 = pJS.particles.array[j];
+
+          /* link particles */
+          if(pJS.particles.line_linked.enable){
+            pJS.fn.interact.linkParticles(p,p2);
+          }
+
+          /* attract particles */
+          if(pJS.particles.move.attract.enable){
+            pJS.fn.interact.attractParticles(p,p2);
+          }
+
+          /* bounce particles */
+          if(pJS.particles.move.bounce){
+            pJS.fn.interact.bounceParticles(p,p2);
+          }
+
+        }
+      }
+
+
+    }
+
+  };
+
+  pJS.fn.particlesDraw = function(){
+
+    /* clear canvas */
+    pJS.canvas.ctx.clearRect(0, 0, pJS.canvas.w, pJS.canvas.h);
+
+    /* update each particles param */
+    pJS.fn.particlesUpdate();
+
+    /* draw each particle */
+    for(var i = 0; i < pJS.particles.array.length; i++){
+      var p = pJS.particles.array[i];
+      p.draw();
+    }
+
+  };
+
+  pJS.fn.particlesEmpty = function(){
+    pJS.particles.array = [];
+  };
+
+  pJS.fn.particlesRefresh = function(){
+
+    /* init all */
+    cancelRequestAnimFrame(pJS.fn.checkAnimFrame);
+    cancelRequestAnimFrame(pJS.fn.drawAnimFrame);
+    pJS.tmp.source_svg = undefined;
+    pJS.tmp.img_obj = undefined;
+    pJS.tmp.count_svg = 0;
+    pJS.fn.particlesEmpty();
+    pJS.fn.canvasClear();
+    
+    /* restart */
+    pJS.fn.vendors.start();
+
+  };
+
+
+  /* ---------- pJS functions - particles interaction ------------ */
+
+  pJS.fn.interact.linkParticles = function(p1, p2){
+
+    var dx = p1.x - p2.x,
+        dy = p1.y - p2.y,
+        dist = Math.sqrt(dx*dx + dy*dy);
+
+    /* draw a line between p1 and p2 if the distance between them is under the config distance */
+    if(dist <= pJS.particles.line_linked.distance){
+
+      var opacity_line = pJS.particles.line_linked.opacity - (dist / (1/pJS.particles.line_linked.opacity)) / pJS.particles.line_linked.distance;
+
+      if(opacity_line > 0){        
+        
+        /* style */
+        var color_line = pJS.particles.line_linked.color_rgb_line;
+        pJS.canvas.ctx.strokeStyle = 'rgba('+color_line.r+','+color_line.g+','+color_line.b+','+opacity_line+')';
+        pJS.canvas.ctx.lineWidth = pJS.particles.line_linked.width;
+        //pJS.canvas.ctx.lineCap = 'round'; /* performance issue */
+        
+        /* path */
+        pJS.canvas.ctx.beginPath();
+        pJS.canvas.ctx.moveTo(p1.x, p1.y);
+        pJS.canvas.ctx.lineTo(p2.x, p2.y);
+        pJS.canvas.ctx.stroke();
+        pJS.canvas.ctx.closePath();
+
+      }
+
+    }
+
+  };
+
+
+  pJS.fn.interact.attractParticles  = function(p1, p2){
+
+    /* condensed particles */
+    var dx = p1.x - p2.x,
+        dy = p1.y - p2.y,
+        dist = Math.sqrt(dx*dx + dy*dy);
+
+    if(dist <= pJS.particles.line_linked.distance){
+
+      var ax = dx/(pJS.particles.move.attract.rotateX*1000),
+          ay = dy/(pJS.particles.move.attract.rotateY*1000);
+
+      p1.vx -= ax;
+      p1.vy -= ay;
+
+      p2.vx += ax;
+      p2.vy += ay;
+
+    }
+    
+
+  }
+
+
+  pJS.fn.interact.bounceParticles = function(p1, p2){
+
+    var dx = p1.x - p2.x,
+        dy = p1.y - p2.y,
+        dist = Math.sqrt(dx*dx + dy*dy),
+        dist_p = p1.radius+p2.radius;
+
+    if(dist <= dist_p){
+      p1.vx = -p1.vx;
+      p1.vy = -p1.vy;
+
+      p2.vx = -p2.vx;
+      p2.vy = -p2.vy;
+    }
+
+  }
+
+
+  /* ---------- pJS functions - modes events ------------ */
+
+  pJS.fn.modes.pushParticles = function(nb, pos){
+
+    pJS.tmp.pushing = true;
+
+    for(var i = 0; i < nb; i++){
+      pJS.particles.array.push(
+        new pJS.fn.particle(
+          pJS.particles.color,
+          pJS.particles.opacity.value,
+          {
+            'x': pos ? pos.pos_x : Math.random() * pJS.canvas.w,
+            'y': pos ? pos.pos_y : Math.random() * pJS.canvas.h
+          }
+        )
+      )
+      if(i == nb-1){
+        if(!pJS.particles.move.enable){
+          pJS.fn.particlesDraw();
+        }
+        pJS.tmp.pushing = false;
+      }
+    }
+
+  };
+
+
+  pJS.fn.modes.removeParticles = function(nb){
+
+    pJS.particles.array.splice(0, nb);
+    if(!pJS.particles.move.enable){
+      pJS.fn.particlesDraw();
+    }
+
+  };
+
+
+  pJS.fn.modes.bubbleParticle = function(p){
+
+    /* on hover event */
+    if(pJS.interactivity.events.onhover.enable && isInArray('bubble', pJS.interactivity.events.onhover.mode)){
+
+      var dx_mouse = p.x - pJS.interactivity.mouse.pos_x,
+          dy_mouse = p.y - pJS.interactivity.mouse.pos_y,
+          dist_mouse = Math.sqrt(dx_mouse*dx_mouse + dy_mouse*dy_mouse),
+          ratio = 1 - dist_mouse / pJS.interactivity.modes.bubble.distance;
+
+      function init(){
+        p.opacity_bubble = p.opacity;
+        p.radius_bubble = p.radius;
+      }
+
+      /* mousemove - check ratio */
+      if(dist_mouse <= pJS.interactivity.modes.bubble.distance){
+
+        if(ratio >= 0 && pJS.interactivity.status == 'mousemove'){
+          
+          /* size */
+          if(pJS.interactivity.modes.bubble.size != pJS.particles.size.value){
+
+            if(pJS.interactivity.modes.bubble.size > pJS.particles.size.value){
+              var size = p.radius + (pJS.interactivity.modes.bubble.size*ratio);
+              if(size >= 0){
+                p.radius_bubble = size;
+              }
+            }else{
+              var dif = p.radius - pJS.interactivity.modes.bubble.size,
+                  size = p.radius - (dif*ratio);
+              if(size > 0){
+                p.radius_bubble = size;
+              }else{
+                p.radius_bubble = 0;
+              }
+            }
+
+          }
+
+          /* opacity */
+          if(pJS.interactivity.modes.bubble.opacity != pJS.particles.opacity.value){
+
+            if(pJS.interactivity.modes.bubble.opacity > pJS.particles.opacity.value){
+              var opacity = pJS.interactivity.modes.bubble.opacity*ratio;
+              if(opacity > p.opacity && opacity <= pJS.interactivity.modes.bubble.opacity){
+                p.opacity_bubble = opacity;
+              }
+            }else{
+              var opacity = p.opacity - (pJS.particles.opacity.value-pJS.interactivity.modes.bubble.opacity)*ratio;
+              if(opacity < p.opacity && opacity >= pJS.interactivity.modes.bubble.opacity){
+                p.opacity_bubble = opacity;
+              }
+            }
+
+          }
+
+        }
+
+      }else{
+        init();
+      }
+
+
+      /* mouseleave */
+      if(pJS.interactivity.status == 'mouseleave'){
+        init();
+      }
+    
+    }
+
+    /* on click event */
+    else if(pJS.interactivity.events.onclick.enable && isInArray('bubble', pJS.interactivity.events.onclick.mode)){
+
+
+      if(pJS.tmp.bubble_clicking){
+        var dx_mouse = p.x - pJS.interactivity.mouse.click_pos_x,
+            dy_mouse = p.y - pJS.interactivity.mouse.click_pos_y,
+            dist_mouse = Math.sqrt(dx_mouse*dx_mouse + dy_mouse*dy_mouse),
+            time_spent = (new Date().getTime() - pJS.interactivity.mouse.click_time)/1000;
+
+        if(time_spent > pJS.interactivity.modes.bubble.duration){
+          pJS.tmp.bubble_duration_end = true;
+        }
+
+        if(time_spent > pJS.interactivity.modes.bubble.duration*2){
+          pJS.tmp.bubble_clicking = false;
+          pJS.tmp.bubble_duration_end = false;
+        }
+      }
+
+
+      function process(bubble_param, particles_param, p_obj_bubble, p_obj, id){
+
+        if(bubble_param != particles_param){
+
+          if(!pJS.tmp.bubble_duration_end){
+            if(dist_mouse <= pJS.interactivity.modes.bubble.distance){
+              if(p_obj_bubble != undefined) var obj = p_obj_bubble;
+              else var obj = p_obj;
+              if(obj != bubble_param){
+                var value = p_obj - (time_spent * (p_obj - bubble_param) / pJS.interactivity.modes.bubble.duration);
+                if(id == 'size') p.radius_bubble = value;
+                if(id == 'opacity') p.opacity_bubble = value;
+              }
+            }else{
+              if(id == 'size') p.radius_bubble = undefined;
+              if(id == 'opacity') p.opacity_bubble = undefined;
+            }
+          }else{
+            if(p_obj_bubble != undefined){
+              var value_tmp = p_obj - (time_spent * (p_obj - bubble_param) / pJS.interactivity.modes.bubble.duration),
+                  dif = bubble_param - value_tmp;
+                  value = bubble_param + dif;
+              if(id == 'size') p.radius_bubble = value;
+              if(id == 'opacity') p.opacity_bubble = value;
+            }
+          }
+
+        }
+
+      }
+
+      if(pJS.tmp.bubble_clicking){
+        /* size */
+        process(pJS.interactivity.modes.bubble.size, pJS.particles.size.value, p.radius_bubble, p.radius, 'size');
+        /* opacity */
+        process(pJS.interactivity.modes.bubble.opacity, pJS.particles.opacity.value, p.opacity_bubble, p.opacity, 'opacity');
+      }
+
+    }
+
+  };
+
+
+  pJS.fn.modes.repulseParticle = function(p){
+
+    if(pJS.interactivity.events.onhover.enable && isInArray('repulse', pJS.interactivity.events.onhover.mode) && pJS.interactivity.status == 'mousemove') {
+
+      var dx_mouse = p.x - pJS.interactivity.mouse.pos_x,
+          dy_mouse = p.y - pJS.interactivity.mouse.pos_y,
+          dist_mouse = Math.sqrt(dx_mouse*dx_mouse + dy_mouse*dy_mouse);
+
+      var normVec = {x: dx_mouse/dist_mouse, y: dy_mouse/dist_mouse},
+          repulseRadius = pJS.interactivity.modes.repulse.distance,
+          velocity = 100,
+          repulseFactor = clamp((1/repulseRadius)*(-1*Math.pow(dist_mouse/repulseRadius,2)+1)*repulseRadius*velocity, 0, 50);
+      
+      var pos = {
+        x: p.x + normVec.x * repulseFactor,
+        y: p.y + normVec.y * repulseFactor
+      }
+
+      if(pJS.particles.move.out_mode == 'bounce'){
+        if(pos.x - p.radius > 0 && pos.x + p.radius < pJS.canvas.w) p.x = pos.x;
+        if(pos.y - p.radius > 0 && pos.y + p.radius < pJS.canvas.h) p.y = pos.y;
+      }else{
+        p.x = pos.x;
+        p.y = pos.y;
+      }
+    
+    }
+
+
+    else if(pJS.interactivity.events.onclick.enable && isInArray('repulse', pJS.interactivity.events.onclick.mode)) {
+
+      if(!pJS.tmp.repulse_finish){
+        pJS.tmp.repulse_count++;
+        if(pJS.tmp.repulse_count == pJS.particles.array.length){
+          pJS.tmp.repulse_finish = true;
+        }
+      }
+
+      if(pJS.tmp.repulse_clicking){
+
+        var repulseRadius = Math.pow(pJS.interactivity.modes.repulse.distance/6, 3);
+
+        var dx = pJS.interactivity.mouse.click_pos_x - p.x,
+            dy = pJS.interactivity.mouse.click_pos_y - p.y,
+            d = dx*dx + dy*dy;
+
+        var force = -repulseRadius / d * 1;
+
+        function process(){
+
+          var f = Math.atan2(dy,dx);
+          p.vx = force * Math.cos(f);
+          p.vy = force * Math.sin(f);
+
+          if(pJS.particles.move.out_mode == 'bounce'){
+            var pos = {
+              x: p.x + p.vx,
+              y: p.y + p.vy
+            }
+            if (pos.x + p.radius > pJS.canvas.w) p.vx = -p.vx;
+            else if (pos.x - p.radius < 0) p.vx = -p.vx;
+            if (pos.y + p.radius > pJS.canvas.h) p.vy = -p.vy;
+            else if (pos.y - p.radius < 0) p.vy = -p.vy;
+          }
+
+        }
+
+        // default
+        if(d <= repulseRadius){
+          process();
+        }
+
+        // bang - slow motion mode
+        // if(!pJS.tmp.repulse_finish){
+        //   if(d <= repulseRadius){
+        //     process();
+        //   }
+        // }else{
+        //   process();
+        // }
+        
+
+      }else{
+
+        if(pJS.tmp.repulse_clicking == false){
+
+          p.vx = p.vx_i;
+          p.vy = p.vy_i;
+        
+        }
+
+      }
+
+    }
+
+  }
+
+
+  pJS.fn.modes.grabParticle = function(p){
+
+    if(pJS.interactivity.events.onhover.enable && pJS.interactivity.status == 'mousemove'){
+
+      var dx_mouse = p.x - pJS.interactivity.mouse.pos_x,
+          dy_mouse = p.y - pJS.interactivity.mouse.pos_y,
+          dist_mouse = Math.sqrt(dx_mouse*dx_mouse + dy_mouse*dy_mouse);
+
+      /* draw a line between the cursor and the particle if the distance between them is under the config distance */
+      if(dist_mouse <= pJS.interactivity.modes.grab.distance){
+
+        var opacity_line = pJS.interactivity.modes.grab.line_linked.opacity - (dist_mouse / (1/pJS.interactivity.modes.grab.line_linked.opacity)) / pJS.interactivity.modes.grab.distance;
+
+        if(opacity_line > 0){
+
+          /* style */
+          var color_line = pJS.particles.line_linked.color_rgb_line;
+          pJS.canvas.ctx.strokeStyle = 'rgba('+color_line.r+','+color_line.g+','+color_line.b+','+opacity_line+')';
+          pJS.canvas.ctx.lineWidth = pJS.particles.line_linked.width;
+          //pJS.canvas.ctx.lineCap = 'round'; /* performance issue */
+          
+          /* path */
+          pJS.canvas.ctx.beginPath();
+          pJS.canvas.ctx.moveTo(p.x, p.y);
+          pJS.canvas.ctx.lineTo(pJS.interactivity.mouse.pos_x, pJS.interactivity.mouse.pos_y);
+          pJS.canvas.ctx.stroke();
+          pJS.canvas.ctx.closePath();
+
+        }
+
+      }
+
+    }
+
+  };
+
+
+
+  /* ---------- pJS functions - vendors ------------ */
+
+  pJS.fn.vendors.eventsListeners = function(){
+
+    /* events target element */
+    if(pJS.interactivity.detect_on == 'window'){
+      pJS.interactivity.el = window;
+    }else{
+      pJS.interactivity.el = pJS.canvas.el;
+    }
+
+
+    /* detect mouse pos - on hover / click event */
+    if(pJS.interactivity.events.onhover.enable || pJS.interactivity.events.onclick.enable){
+
+      /* el on mousemove */
+      pJS.interactivity.el.addEventListener('mousemove', function(e){
+
+        if(pJS.interactivity.el == window){
+          var pos_x = e.clientX,
+              pos_y = e.clientY;
+        }
+        else{
+          var pos_x = e.offsetX || e.clientX,
+              pos_y = e.offsetY || e.clientY;
+        }
+
+        pJS.interactivity.mouse.pos_x = pos_x;
+        pJS.interactivity.mouse.pos_y = pos_y;
+
+        if(pJS.tmp.retina){
+          pJS.interactivity.mouse.pos_x *= pJS.canvas.pxratio;
+          pJS.interactivity.mouse.pos_y *= pJS.canvas.pxratio;
+        }
+
+        pJS.interactivity.status = 'mousemove';
+
+      });
+
+      /* el on onmouseleave */
+      pJS.interactivity.el.addEventListener('mouseleave', function(e){
+
+        pJS.interactivity.mouse.pos_x = null;
+        pJS.interactivity.mouse.pos_y = null;
+        pJS.interactivity.status = 'mouseleave';
+
+      });
+
+    }
+
+    /* on click event */
+    if(pJS.interactivity.events.onclick.enable){
+
+      pJS.interactivity.el.addEventListener('click', function(){
+
+        pJS.interactivity.mouse.click_pos_x = pJS.interactivity.mouse.pos_x;
+        pJS.interactivity.mouse.click_pos_y = pJS.interactivity.mouse.pos_y;
+        pJS.interactivity.mouse.click_time = new Date().getTime();
+
+        if(pJS.interactivity.events.onclick.enable){
+
+          switch(pJS.interactivity.events.onclick.mode){
+
+            case 'push':
+              if(pJS.particles.move.enable){
+                pJS.fn.modes.pushParticles(pJS.interactivity.modes.push.particles_nb, pJS.interactivity.mouse);
+              }else{
+                if(pJS.interactivity.modes.push.particles_nb == 1){
+                  pJS.fn.modes.pushParticles(pJS.interactivity.modes.push.particles_nb, pJS.interactivity.mouse);
+                }
+                else if(pJS.interactivity.modes.push.particles_nb > 1){
+                  pJS.fn.modes.pushParticles(pJS.interactivity.modes.push.particles_nb);
+                }
+              }
+            break;
+
+            case 'remove':
+              pJS.fn.modes.removeParticles(pJS.interactivity.modes.remove.particles_nb);
+            break;
+
+            case 'bubble':
+              pJS.tmp.bubble_clicking = true;
+            break;
+
+            case 'repulse':
+              pJS.tmp.repulse_clicking = true;
+              pJS.tmp.repulse_count = 0;
+              pJS.tmp.repulse_finish = false;
+              setTimeout(function(){
+                pJS.tmp.repulse_clicking = false;
+              }, pJS.interactivity.modes.repulse.duration*1000)
+            break;
+
+          }
+
+        }
+
+      });
+        
+    }
+
+
+  };
+
+  pJS.fn.vendors.densityAutoParticles = function(){
+
+    if(pJS.particles.number.density.enable){
+
+      /* calc area */
+      var area = pJS.canvas.el.width * pJS.canvas.el.height / 1000;
+      if(pJS.tmp.retina){
+        area = area/(pJS.canvas.pxratio*2);
+      }
+
+      /* calc number of particles based on density area */
+      var nb_particles = area * pJS.particles.number.value / pJS.particles.number.density.value_area;
+
+      /* add or remove X particles */
+      var missing_particles = pJS.particles.array.length - nb_particles;
+      if(missing_particles < 0) pJS.fn.modes.pushParticles(Math.abs(missing_particles));
+      else pJS.fn.modes.removeParticles(missing_particles);
+
+    }
+
+  };
+
+
+  pJS.fn.vendors.checkOverlap = function(p1, position){
+    for(var i = 0; i < pJS.particles.array.length; i++){
+      var p2 = pJS.particles.array[i];
+
+      var dx = p1.x - p2.x,
+          dy = p1.y - p2.y,
+          dist = Math.sqrt(dx*dx + dy*dy);
+
+      if(dist <= p1.radius + p2.radius){
+        p1.x = position ? position.x : Math.random() * pJS.canvas.w;
+        p1.y = position ? position.y : Math.random() * pJS.canvas.h;
+        pJS.fn.vendors.checkOverlap(p1);
+      }
+    }
+  };
+
+
+  pJS.fn.vendors.createSvgImg = function(p){
+
+    /* set color to svg element */
+    var svgXml = pJS.tmp.source_svg,
+        rgbHex = /#([0-9A-F]{3,6})/gi,
+        coloredSvgXml = svgXml.replace(rgbHex, function (m, r, g, b) {
+          if(p.color.rgb){
+            var color_value = 'rgba('+p.color.rgb.r+','+p.color.rgb.g+','+p.color.rgb.b+','+p.opacity+')';
+          }else{
+            var color_value = 'hsla('+p.color.hsl.h+','+p.color.hsl.s+'%,'+p.color.hsl.l+'%,'+p.opacity+')';
+          }
+          return color_value;
+        });
+
+    /* prepare to create img with colored svg */
+    var svg = new Blob([coloredSvgXml], {type: 'image/svg+xml;charset=utf-8'}),
+        DOMURL = window.URL || window.webkitURL || window,
+        url = DOMURL.createObjectURL(svg);
+
+    /* create particle img obj */
+    var img = new Image();
+    img.addEventListener('load', function(){
+      p.img.obj = img;
+      p.img.loaded = true;
+      DOMURL.revokeObjectURL(url);
+      pJS.tmp.count_svg++;
+    });
+    img.src = url;
+
+  };
+
+
+  pJS.fn.vendors.destroypJS = function(){
+    cancelAnimationFrame(pJS.fn.drawAnimFrame);
+    canvas_el.remove();
+    pJSDom = null;
+  };
+
+
+  pJS.fn.vendors.drawShape = function(c, startX, startY, sideLength, sideCountNumerator, sideCountDenominator){
+
+    // By Programming Thomas - https://programmingthomas.wordpress.com/2013/04/03/n-sided-shapes/
+    var sideCount = sideCountNumerator * sideCountDenominator;
+    var decimalSides = sideCountNumerator / sideCountDenominator;
+    var interiorAngleDegrees = (180 * (decimalSides - 2)) / decimalSides;
+    var interiorAngle = Math.PI - Math.PI * interiorAngleDegrees / 180; // convert to radians
+    c.save();
+    c.beginPath();
+    c.translate(startX, startY);
+    c.moveTo(0,0);
+    for (var i = 0; i < sideCount; i++) {
+      c.lineTo(sideLength,0);
+      c.translate(sideLength,0);
+      c.rotate(interiorAngle);
+    }
+    //c.stroke();
+    c.fill();
+    c.restore();
+
+  };
+
+  pJS.fn.vendors.exportImg = function(){
+    window.open(pJS.canvas.el.toDataURL('image/png'), '_blank');
+  };
+
+
+  pJS.fn.vendors.loadImg = function(type){
+
+    pJS.tmp.img_error = undefined;
+
+    if(pJS.particles.shape.image.src != ''){
+
+      if(type == 'svg'){
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', pJS.particles.shape.image.src);
+        xhr.onreadystatechange = function (data) {
+          if(xhr.readyState == 4){
+            if(xhr.status == 200){
+              pJS.tmp.source_svg = data.currentTarget.response;
+              pJS.fn.vendors.checkBeforeDraw();
+            }else{
+              console.log('Error pJS - Image not found');
+              pJS.tmp.img_error = true;
+            }
+          }
+        }
+        xhr.send();
+
+      }else{
+
+        var img = new Image();
+        img.addEventListener('load', function(){
+          pJS.tmp.img_obj = img;
+          pJS.fn.vendors.checkBeforeDraw();
+        });
+        img.src = pJS.particles.shape.image.src;
+
+      }
+
+    }else{
+      console.log('Error pJS - No image.src');
+      pJS.tmp.img_error = true;
+    }
+
+  };
+
+
+  pJS.fn.vendors.draw = function(){
+
+    if(pJS.particles.shape.type == 'image'){
+
+      if(pJS.tmp.img_type == 'svg'){
+
+        if(pJS.tmp.count_svg >= pJS.particles.number.value){
+          pJS.fn.particlesDraw();
+          if(!pJS.particles.move.enable) cancelRequestAnimFrame(pJS.fn.drawAnimFrame);
+          else pJS.fn.drawAnimFrame = requestAnimFrame(pJS.fn.vendors.draw);
+        }else{
+          //console.log('still loading...');
+          if(!pJS.tmp.img_error) pJS.fn.drawAnimFrame = requestAnimFrame(pJS.fn.vendors.draw);
+        }
+
+      }else{
+
+        if(pJS.tmp.img_obj != undefined){
+          pJS.fn.particlesDraw();
+          if(!pJS.particles.move.enable) cancelRequestAnimFrame(pJS.fn.drawAnimFrame);
+          else pJS.fn.drawAnimFrame = requestAnimFrame(pJS.fn.vendors.draw);
+        }else{
+          if(!pJS.tmp.img_error) pJS.fn.drawAnimFrame = requestAnimFrame(pJS.fn.vendors.draw);
+        }
+
+      }
+
+    }else{
+      pJS.fn.particlesDraw();
+      if(!pJS.particles.move.enable) cancelRequestAnimFrame(pJS.fn.drawAnimFrame);
+      else pJS.fn.drawAnimFrame = requestAnimFrame(pJS.fn.vendors.draw);
+    }
+
+  };
+
+
+  pJS.fn.vendors.checkBeforeDraw = function(){
+
+    // if shape is image
+    if(pJS.particles.shape.type == 'image'){
+
+      if(pJS.tmp.img_type == 'svg' && pJS.tmp.source_svg == undefined){
+        pJS.tmp.checkAnimFrame = requestAnimFrame(check);
+      }else{
+        //console.log('images loaded! cancel check');
+        cancelRequestAnimFrame(pJS.tmp.checkAnimFrame);
+        if(!pJS.tmp.img_error){
+          pJS.fn.vendors.init();
+          pJS.fn.vendors.draw();
+        }
+        
+      }
+
+    }else{
+      pJS.fn.vendors.init();
+      pJS.fn.vendors.draw();
+    }
+
+  };
+
+
+  pJS.fn.vendors.init = function(){
+
+    /* init canvas + particles */
+    pJS.fn.retinaInit();
+    pJS.fn.canvasInit();
+    pJS.fn.canvasSize();
+    pJS.fn.canvasPaint();
+    pJS.fn.particlesCreate();
+    pJS.fn.vendors.densityAutoParticles();
+
+    /* particles.line_linked - convert hex colors to rgb */
+    pJS.particles.line_linked.color_rgb_line = hexToRgb(pJS.particles.line_linked.color);
+
+  };
+
+
+  pJS.fn.vendors.start = function(){
+
+    if(isInArray('image', pJS.particles.shape.type)){
+      pJS.tmp.img_type = pJS.particles.shape.image.src.substr(pJS.particles.shape.image.src.length - 3);
+      pJS.fn.vendors.loadImg(pJS.tmp.img_type);
+    }else{
+      pJS.fn.vendors.checkBeforeDraw();
+    }
+
+  };
+
+
+
+
+  /* ---------- pJS - start ------------ */
+
+
+  pJS.fn.vendors.eventsListeners();
+
+  pJS.fn.vendors.start();
+  
+
+
+};
+
+/* ---------- global functions - vendors ------------ */
+
+Object.deepExtend = function(destination, source) {
+  for (var property in source) {
+    if (source[property] && source[property].constructor &&
+     source[property].constructor === Object) {
+      destination[property] = destination[property] || {};
+      arguments.callee(destination[property], source[property]);
+    } else {
+      destination[property] = source[property];
+    }
+  }
+  return destination;
+};
+
+window.requestAnimFrame = (function(){
+  return  window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame    ||
+    window.oRequestAnimationFrame      ||
+    window.msRequestAnimationFrame     ||
+    function(callback){
+      window.setTimeout(callback, 1000 / 60);
+    };
+})();
+
+window.cancelRequestAnimFrame = ( function() {
+  return window.cancelAnimationFrame         ||
+    window.webkitCancelRequestAnimationFrame ||
+    window.mozCancelRequestAnimationFrame    ||
+    window.oCancelRequestAnimationFrame      ||
+    window.msCancelRequestAnimationFrame     ||
+    clearTimeout
+} )();
+
+function hexToRgb(hex){
+  // By Tim Down - http://stackoverflow.com/a/5624139/3493650
+  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+     return r + r + g + g + b + b;
+  });
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+  } : null;
+};
+
+function clamp(number, min, max) {
+  return Math.min(Math.max(number, min), max);
+};
+
+function isInArray(value, array) {
+  return array.indexOf(value) > -1;
+}
+
+
+/* ---------- particles.js functions - start ------------ */
+
+window.pJSDom = [];
+
+window.particlesJS = function(tag_id, params){
+
+  //console.log(params);
+
+  /* no string id? so it's object params, and set the id with default id */
+  if(typeof(tag_id) != 'string'){
+    params = tag_id;
+    tag_id = 'particles-js';
+  }
+
+  /* no id? set the id to default id */
+  if(!tag_id){
+    tag_id = 'particles-js';
+  }
+
+  /* pJS elements */
+  var pJS_tag = document.getElementById(tag_id),
+      pJS_canvas_class = 'particles-js-canvas-el',
+      exist_canvas = pJS_tag.getElementsByClassName(pJS_canvas_class);
+
+  /* remove canvas if exists into the pJS target tag */
+  if(exist_canvas.length){
+    while(exist_canvas.length > 0){
+      pJS_tag.removeChild(exist_canvas[0]);
+    }
+  }
+
+  /* create canvas element */
+  var canvas_el = document.createElement('canvas');
+  canvas_el.className = pJS_canvas_class;
+
+  /* set size canvas */
+  canvas_el.style.width = "100%";
+  canvas_el.style.height = "100%";
+
+  /* append canvas */
+  var canvas = document.getElementById(tag_id).appendChild(canvas_el);
+
+  /* launch particle.js */
+  if(canvas != null){
+    pJSDom.push(new pJS(tag_id, params));
+  }
+
+};
+
+window.particlesJS.load = function(tag_id, path_config_json, callback){
+
+  /* load json config */
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', path_config_json);
+  xhr.onreadystatechange = function (data) {
+    if(xhr.readyState == 4){
+      if(xhr.status == 200){
+        var params = JSON.parse(data.currentTarget.response);
+        window.particlesJS(tag_id, params);
+        if(callback) callback();
+      }else{
+        console.log('Error pJS - XMLHttpRequest status: '+xhr.status);
+        console.log('Error pJS - File config not found');
+      }
+    }
+  };
+  xhr.send();
+
+};
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
+ *  Vide - v0.5.1
+ *  Easy as hell jQuery plugin for video backgrounds.
+ *  http://vodkabears.github.io/vide/
+ *
+ *  Made by Ilya Makarov
+ *  Under MIT License
+ */
+!(function(root, factory) {
+  if (true) {
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  } else if (typeof exports === 'object') {
+    factory(require('jquery'));
+  } else {
+    factory(root.jQuery);
+  }
+})(this, function($) {
+
+  'use strict';
+
+  /**
+   * Name of the plugin
+   * @private
+   * @const
+   * @type {String}
+   */
+  var PLUGIN_NAME = 'vide';
+
+  /**
+   * Default settings
+   * @private
+   * @const
+   * @type {Object}
+   */
+  var DEFAULTS = {
+    volume: 1,
+    playbackRate: 1,
+    muted: true,
+    loop: true,
+    autoplay: true,
+    position: '50% 50%',
+    posterType: 'detect',
+    resizing: true,
+    bgColor: 'transparent',
+    className: ''
+  };
+
+  /**
+   * Not implemented error message
+   * @private
+   * @const
+   * @type {String}
+   */
+  var NOT_IMPLEMENTED_MSG = 'Not implemented';
+
+  /**
+   * Parse a string with options
+   * @private
+   * @param {String} str
+   * @returns {Object|String}
+   */
+  function parseOptions(str) {
+    var obj = {};
+    var delimiterIndex;
+    var option;
+    var prop;
+    var val;
+    var arr;
+    var len;
+    var i;
+
+    // Remove spaces around delimiters and split
+    arr = str.replace(/\s*:\s*/g, ':').replace(/\s*,\s*/g, ',').split(',');
+
+    // Parse a string
+    for (i = 0, len = arr.length; i < len; i++) {
+      option = arr[i];
+
+      // Ignore urls and a string without colon delimiters
+      if (
+        option.search(/^(http|https|ftp):\/\//) !== -1 ||
+        option.search(':') === -1
+      ) {
+        break;
+      }
+
+      delimiterIndex = option.indexOf(':');
+      prop = option.substring(0, delimiterIndex);
+      val = option.substring(delimiterIndex + 1);
+
+      // If val is an empty string, make it undefined
+      if (!val) {
+        val = undefined;
+      }
+
+      // Convert a string value if it is like a boolean
+      if (typeof val === 'string') {
+        val = val === 'true' || (val === 'false' ? false : val);
+      }
+
+      // Convert a string value if it is like a number
+      if (typeof val === 'string') {
+        val = !isNaN(val) ? +val : val;
+      }
+
+      obj[prop] = val;
+    }
+
+    // If nothing is parsed
+    if (prop == null && val == null) {
+      return str;
+    }
+
+    return obj;
+  }
+
+  /**
+   * Parse a position option
+   * @private
+   * @param {String} str
+   * @returns {Object}
+   */
+  function parsePosition(str) {
+    str = '' + str;
+
+    // Default value is a center
+    var args = str.split(/\s+/);
+    var x = '50%';
+    var y = '50%';
+    var len;
+    var arg;
+    var i;
+
+    for (i = 0, len = args.length; i < len; i++) {
+      arg = args[i];
+
+      // Convert values
+      if (arg === 'left') {
+        x = '0%';
+      } else if (arg === 'right') {
+        x = '100%';
+      } else if (arg === 'top') {
+        y = '0%';
+      } else if (arg === 'bottom') {
+        y = '100%';
+      } else if (arg === 'center') {
+        if (i === 0) {
+          x = '50%';
+        } else {
+          y = '50%';
+        }
+      } else {
+        if (i === 0) {
+          x = arg;
+        } else {
+          y = arg;
+        }
+      }
+    }
+
+    return { x: x, y: y };
+  }
+
+  /**
+   * Search a poster
+   * @private
+   * @param {String} path
+   * @param {Function} callback
+   */
+  function findPoster(path, callback) {
+    var onLoad = function() {
+      callback(this.src);
+    };
+
+    $('<img src="' + path + '.gif">').on('load', onLoad);
+    $('<img src="' + path + '.jpg">').on('load', onLoad);
+    $('<img src="' + path + '.jpeg">').on('load', onLoad);
+    $('<img src="' + path + '.png">').on('load', onLoad);
+  }
+
+  /**
+   * Vide constructor
+   * @param {HTMLElement} element
+   * @param {Object|String} path
+   * @param {Object|String} options
+   * @constructor
+   */
+  function Vide(element, path, options) {
+    this.$element = $(element);
+
+    // Parse path
+    if (typeof path === 'string') {
+      path = parseOptions(path);
+    }
+
+    // Parse options
+    if (!options) {
+      options = {};
+    } else if (typeof options === 'string') {
+      options = parseOptions(options);
+    }
+
+    // Remove an extension
+    if (typeof path === 'string') {
+      path = path.replace(/\.\w*$/, '');
+    } else if (typeof path === 'object') {
+      for (var i in path) {
+        if (path.hasOwnProperty(i)) {
+          path[i] = path[i].replace(/\.\w*$/, '');
+        }
+      }
+    }
+
+    this.settings = $.extend({}, DEFAULTS, options);
+    this.path = path;
+
+    // https://github.com/VodkaBears/Vide/issues/110
+    try {
+      this.init();
+    } catch (e) {
+      if (e.message !== NOT_IMPLEMENTED_MSG) {
+        throw e;
+      }
+    }
+  }
+
+  /**
+   * Initialization
+   * @public
+   */
+  Vide.prototype.init = function() {
+    var vide = this;
+    var path = vide.path;
+    var poster = path;
+    var sources = '';
+    var $element = vide.$element;
+    var settings = vide.settings;
+    var position = parsePosition(settings.position);
+    var posterType = settings.posterType;
+    var $video;
+    var $wrapper;
+
+    // Set styles of a video wrapper
+    $wrapper = vide.$wrapper = $('<div>')
+      .addClass(settings.className)
+      .css({
+        position: 'absolute',
+        'z-index': -1,
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+        overflow: 'hidden',
+        '-webkit-background-size': 'cover',
+        '-moz-background-size': 'cover',
+        '-o-background-size': 'cover',
+        'background-size': 'cover',
+        'background-color': settings.bgColor,
+        'background-repeat': 'no-repeat',
+        'background-position': position.x + ' ' + position.y
+      });
+
+    // Get a poster path
+    if (typeof path === 'object') {
+      if (path.poster) {
+        poster = path.poster;
+      } else {
+        if (path.mp4) {
+          poster = path.mp4;
+        } else if (path.webm) {
+          poster = path.webm;
+        } else if (path.ogv) {
+          poster = path.ogv;
+        }
+      }
+    }
+
+    // Set a video poster
+    if (posterType === 'detect') {
+      findPoster(poster, function(url) {
+        $wrapper.css('background-image', 'url(' + url + ')');
+      });
+    } else if (posterType !== 'none') {
+      $wrapper.css('background-image', 'url(' + poster + '.' + posterType + ')');
+    }
+
+    // If a parent element has a static position, make it relative
+    if ($element.css('position') === 'static') {
+      $element.css('position', 'relative');
+    }
+
+    $element.prepend($wrapper);
+
+    if (typeof path === 'object') {
+      if (path.mp4) {
+        sources += '<source src="' + path.mp4 + '.mp4" type="video/mp4">';
+      }
+
+      if (path.webm) {
+        sources += '<source src="' + path.webm + '.webm" type="video/webm">';
+      }
+
+      if (path.ogv) {
+        sources += '<source src="' + path.ogv + '.ogv" type="video/ogg">';
+      }
+
+      $video = vide.$video = $('<video>' + sources + '</video>');
+    } else {
+      $video = vide.$video = $('<video>' +
+        '<source src="' + path + '.mp4" type="video/mp4">' +
+        '<source src="' + path + '.webm" type="video/webm">' +
+        '<source src="' + path + '.ogv" type="video/ogg">' +
+        '</video>');
+    }
+
+    // https://github.com/VodkaBears/Vide/issues/110
+    try {
+      $video
+
+        // Set video properties
+        .prop({
+          autoplay: settings.autoplay,
+          loop: settings.loop,
+          volume: settings.volume,
+          muted: settings.muted,
+          defaultMuted: settings.muted,
+          playbackRate: settings.playbackRate,
+          defaultPlaybackRate: settings.playbackRate
+        });
+    } catch (e) {
+      throw new Error(NOT_IMPLEMENTED_MSG);
+    }
+
+    // Video alignment
+    $video.css({
+      margin: 'auto',
+      position: 'absolute',
+      'z-index': -1,
+      top: position.y,
+      left: position.x,
+      '-webkit-transform': 'translate(-' + position.x + ', -' + position.y + ')',
+      '-ms-transform': 'translate(-' + position.x + ', -' + position.y + ')',
+      '-moz-transform': 'translate(-' + position.x + ', -' + position.y + ')',
+      transform: 'translate(-' + position.x + ', -' + position.y + ')',
+
+      // Disable visibility, while loading
+      visibility: 'hidden',
+      opacity: 0
+    })
+
+    // Resize a video, when it's loaded
+    .one('canplaythrough.' + PLUGIN_NAME, function() {
+      vide.resize();
+    })
+
+    // Make it visible, when it's already playing
+    .one('playing.' + PLUGIN_NAME, function() {
+      $video.css({
+        visibility: 'visible',
+        opacity: 1
+      });
+      $wrapper.css('background-image', 'none');
+    });
+
+    // Resize event is available only for 'window'
+    // Use another code solutions to detect DOM elements resizing
+    $element.on('resize.' + PLUGIN_NAME, function() {
+      if (settings.resizing) {
+        vide.resize();
+      }
+    });
+
+    // Append a video
+    $wrapper.append($video);
+  };
+
+  /**
+   * Get a video element
+   * @public
+   * @returns {HTMLVideoElement}
+   */
+  Vide.prototype.getVideoObject = function() {
+    return this.$video[0];
+  };
+
+  /**
+   * Resize a video background
+   * @public
+   */
+  Vide.prototype.resize = function() {
+    if (!this.$video) {
+      return;
+    }
+
+    var $wrapper = this.$wrapper;
+    var $video = this.$video;
+    var video = $video[0];
+
+    // Get a native video size
+    var videoHeight = video.videoHeight;
+    var videoWidth = video.videoWidth;
+
+    // Get a wrapper size
+    var wrapperHeight = $wrapper.height();
+    var wrapperWidth = $wrapper.width();
+
+    if (wrapperWidth / videoWidth > wrapperHeight / videoHeight) {
+      $video.css({
+
+        // +2 pixels to prevent an empty space after transformation
+        width: wrapperWidth + 2,
+        height: 'auto'
+      });
+    } else {
+      $video.css({
+        width: 'auto',
+
+        // +2 pixels to prevent an empty space after transformation
+        height: wrapperHeight + 2
+      });
+    }
+  };
+
+  /**
+   * Destroy a video background
+   * @public
+   */
+  Vide.prototype.destroy = function() {
+    delete $[PLUGIN_NAME].lookup[this.index];
+    this.$video && this.$video.off(PLUGIN_NAME);
+    this.$element.off(PLUGIN_NAME).removeData(PLUGIN_NAME);
+    this.$wrapper.remove();
+  };
+
+  /**
+   * Special plugin object for instances.
+   * @public
+   * @type {Object}
+   */
+  $[PLUGIN_NAME] = {
+    lookup: []
+  };
+
+  /**
+   * Plugin constructor
+   * @param {Object|String} path
+   * @param {Object|String} options
+   * @returns {JQuery}
+   * @constructor
+   */
+  $.fn[PLUGIN_NAME] = function(path, options) {
+    var instance;
+
+    this.each(function() {
+      instance = $.data(this, PLUGIN_NAME);
+
+      // Destroy the plugin instance if exists
+      instance && instance.destroy();
+
+      // Create the plugin instance
+      instance = new Vide(this, path, options);
+      instance.index = $[PLUGIN_NAME].lookup.push(instance) - 1;
+      $.data(this, PLUGIN_NAME, instance);
+    });
+
+    return this;
+  };
+
+  $(document).ready(function() {
+    var $window = $(window);
+
+    // Window resize event listener
+    $window.on('resize.' + PLUGIN_NAME, function() {
+      for (var len = $[PLUGIN_NAME].lookup.length, i = 0, instance; i < len; i++) {
+        instance = $[PLUGIN_NAME].lookup[i];
+
+        if (instance && instance.settings.resizing) {
+          instance.resize();
+        }
+      }
+    });
+
+    // https://github.com/VodkaBears/Vide/issues/68
+    $window.on('unload.' + PLUGIN_NAME, function() {
+      return false;
+    });
+
+    // Auto initialization
+    // Add 'data-vide-bg' attribute with a path to the video without extension
+    // Also you can pass options throw the 'data-vide-options' attribute
+    // 'data-vide-options' must be like 'muted: false, volume: 0.5'
+    $(document).find('[data-' + PLUGIN_NAME + '-bg]').each(function(i, element) {
+      var $element = $(element);
+      var options = $element.data(PLUGIN_NAME + '-options');
+      var path = $element.data(PLUGIN_NAME + '-bg');
+
+      $element[PLUGIN_NAME](path, options);
+    });
+  });
+
+});
+
+
+/***/ }),
+/* 44 */
+/***/ (function(module, exports) {
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * This class controls events in a queue
+ */
+var EventQueue = function () {
+    function EventQueue() {
+        _classCallCheck(this, EventQueue);
+
+        this.__queue = new Set();
+    }
+
+    /**
+     * Perform an action after an amount of delay
+     */
+
+
+    _createClass(EventQueue, [{
+        key: "do",
+        value: function _do(action, delay) {
+            for (var _len = arguments.length, params = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+                params[_key - 2] = arguments[_key];
+            }
+
+            var _this = this;
+
+            var tid = 0;
+            var queue = this.__queue;
+            var done = function done() {
+                queue.delete(tid);
+            };
+            tid = setTimeout(function () {
+                action.apply(undefined, [_this].concat(params));
+                done();
+            }, delay);
+            this.__queue.add(tid);
+        }
+
+        /**
+         * Clear the current queue
+         */
+
+    }, {
+        key: "clear",
+        value: function clear() {
+            this.__queue.forEach(function (key) {
+                clearTimeout(key);
+            });
+            this.__queue.clear();
+        }
+
+        /**
+         * Number of items in the queue
+         */
+
+    }, {
+        key: "length",
+        value: function length() {
+            return this.__queue.size;
+        }
+    }]);
+
+    return EventQueue;
+}();
+
+;
+
+window.EventQueue = EventQueue;
+
+/***/ }),
+/* 45 */
+/***/ (function(module, exports) {
+
+window.form = {};
+
+/***/ }),
+/* 46 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var EventEmitter = __webpack_require__(47);
+
+/**
+ * HTTP status codes
+ */
+var HTTP_STATUS = {
+    100: "Continue",
+    101: "Switching Protocols",
+    102: "Processing",
+    200: "OK",
+    201: "Created",
+    202: "Accepted",
+    203: "Non-Authoritative Information",
+    204: "No Content",
+    205: "Reset Content",
+    206: "Partial Content",
+    207: "Multi-Status",
+    208: "Already Reported",
+    226: "IM Used",
+    300: "Multiple Choices",
+    301: "Moved Permanently",
+    302: "Found",
+    303: "See Other",
+    304: "Not Modified",
+    305: "Use Proxy",
+    306: "Reserved",
+    307: "Temporary Redirect",
+    308: "Permanent Redirect",
+    400: "Bad Request",
+    401: "Unauthorized",
+    402: "Payment Required",
+    403: "Forbidden",
+    404: "Not Found",
+    405: "Method Not Allowed",
+    406: "Not Acceptable",
+    407: "Proxy Authentication Required",
+    408: "Request Timeout",
+    409: "Conflict",
+    410: "Gone",
+    411: "Length Required",
+    412: "Precondition Failed",
+    413: "Request Entity Too Large",
+    414: "Request-URI Too Long",
+    415: "Unsupported Media Type",
+    416: "Requested Range Not Satisfiable",
+    417: "Expectation Failed",
+    422: "Unprocessable Entity",
+    423: "Locked",
+    424: "Failed Dependency",
+    425: "Unassigned",
+    426: "Upgrade Required",
+    427: "Unassigned",
+    428: "Precondition Required",
+    429: "Too Many Requests",
+    430: "Unassigned",
+    431: "Request Header Fields Too Large",
+    500: "Internal Server Error",
+    501: "Not Implemented",
+    502: "Bad Gateway",
+    503: "Service Unavailable",
+    504: "Gateway Timeout",
+    505: "HTTP Version Not Supported",
+    506: "Variant Also Negotiates (Experimental)",
+    507: "Insufficient Storage",
+    508: "Loop Detected",
+    509: "Unassigned",
+    510: "Not Extended",
+    511: "Network Authentication Required"
+};
+
+/**
+ * A regular expression to test local links
+ */
+var EXP = new RegExp(location.host);
+
+/**
+ * The event emitter
+ */
+var eventEmitter = new EventEmitter();
+
+/**
+ * Ajax information
+ */
+var cancel = null;
+var isLoading = false;
+
+/**
+ * Page information
+ */
+var pageInfo = {
+    title: document.title,
+    url: location.href
+};
+
+/**
+ * The configuration for Axios
+ */
+var AXIOS_CONFIG = {
+    cancelToken: new axios.CancelToken(function (c) {
+        cancel = c;
+    })
+};
+
+/**
+ * Create the listeners for links
+ */
+var initLinkListeners = function initLinkListeners() {
+    $(document).on("click", "[href]", function (event) {
+        if (EXP.test($(this).attr("href"))) {
+            onLinkClick(this);
+            event.preventDefault();
+        }
+    });
+};
+
+/**
+ * Request a page
+ */
+var requestPage = function requestPage(url) {
+    var pushState = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+    if (!history.pushState) {
+        location.assign(url);
+        return;
+    }
+    if (isLoading) {
+        return;
+    }
+    isLoading = true;
+    pageInfo.url = url;
+    eventEmitter.emit("beforeload");
+    axios.get(url, AXIOS_CONFIG).then(function (response) {
+        onAjaxLoad(response, url, pushState);
+    }).catch(onAjaxError).then(function () {
+        isLoading = false;
+        eventEmitter.emit("load");
+    });
+};
+
+/**
+ * Invoked when an error occurs
+ */
+var onAjaxError = function onAjaxError(err) {
+    console.error("Navigation Error: ", err, {
+        request: err.request,
+        response: err.response
+    });
+};
+
+/**
+ * Invoked when the Ajax completed successfully
+ */
+var onAjaxLoad = function onAjaxLoad(response, url, pushState) {
+    pageInfo.title = response.data.title;
+    if (pushState) {
+        history.pushState(pageInfo, response.data.title, url);
+    }
+    page.set(response.data.title, response.data.view);
+};
+
+/**
+ * Invoked when a link is clicked
+ */
+var onLinkClick = function onLinkClick(elem) {
+    navigate.to($(elem).attr("href"));
+};
+
+/**
+ * Invoked when the browser pops a state off of the history stack
+ */
+var onPopState = function onPopState(event) {
+    pageInfo.title = event.originalEvent.state.title;
+    pageInfo.url = event.originalEvent.state.url;
+    requestPage(pageInfo.url, false);
+};
+
+/**
+ * Invoked when the user scrolls in the application
+ */
+var onScroll = function onScroll() {
+    eventEmitter.emit("scroll", $(window).scrollTop());
+};
+
+/**
+ * Navigation module
+ */
+window.navigate = {
+
+    /**
+     * Store the event emitter
+     */
+    event: eventEmitter,
+
+    /**
+     * Initialize the navigation system
+     */
+    init: function init() {
+        initLinkListeners();
+        $(window).on("popstate", onPopState);
+        $(window).scroll(onScroll);
+        history.replaceState(pageInfo, pageInfo.title, pageInfo.url);
+        onScroll();
+    },
+
+
+    /**
+     * Cancel the current navigation attempt
+     */
+    abort: function abort() {
+        if (cancel) cancel();
+    },
+
+
+    /**
+     * Go to a URL via Ajax
+     */
+    to: function to(url) {
+        requestPage(url, true);
+    }
+};
+
+/***/ }),
+/* 47 */
+/***/ (function(module, exports) {
+
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+function EventEmitter() {
+  this._events = this._events || {};
+  this._maxListeners = this._maxListeners || undefined;
+}
+module.exports = EventEmitter;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+EventEmitter.defaultMaxListeners = 10;
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!isNumber(n) || n < 0 || isNaN(n))
+    throw TypeError('n must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+EventEmitter.prototype.emit = function(type) {
+  var er, handler, len, args, i, listeners;
+
+  if (!this._events)
+    this._events = {};
+
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events.error ||
+        (isObject(this._events.error) && !this._events.error.length)) {
+      er = arguments[1];
+      if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      } else {
+        // At least give some kind of context to the user
+        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
+        err.context = er;
+        throw err;
+      }
+    }
+  }
+
+  handler = this._events[type];
+
+  if (isUndefined(handler))
+    return false;
+
+  if (isFunction(handler)) {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        args = Array.prototype.slice.call(arguments, 1);
+        handler.apply(this, args);
+    }
+  } else if (isObject(handler)) {
+    args = Array.prototype.slice.call(arguments, 1);
+    listeners = handler.slice();
+    len = listeners.length;
+    for (i = 0; i < len; i++)
+      listeners[i].apply(this, args);
+  }
+
+  return true;
+};
+
+EventEmitter.prototype.addListener = function(type, listener) {
+  var m;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events)
+    this._events = {};
+
+  // To avoid recursion in the case that type === "newListener"! Before
+  // adding it to the listeners, first emit "newListener".
+  if (this._events.newListener)
+    this.emit('newListener', type,
+              isFunction(listener.listener) ?
+              listener.listener : listener);
+
+  if (!this._events[type])
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  else if (isObject(this._events[type]))
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  else
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+
+  // Check for listener leak
+  if (isObject(this._events[type]) && !this._events[type].warned) {
+    if (!isUndefined(this._maxListeners)) {
+      m = this._maxListeners;
+    } else {
+      m = EventEmitter.defaultMaxListeners;
+    }
+
+    if (m && m > 0 && this._events[type].length > m) {
+      this._events[type].warned = true;
+      console.error('(node) warning: possible EventEmitter memory ' +
+                    'leak detected. %d listeners added. ' +
+                    'Use emitter.setMaxListeners() to increase limit.',
+                    this._events[type].length);
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
+    }
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  var fired = false;
+
+  function g() {
+    this.removeListener(type, g);
+
+    if (!fired) {
+      fired = true;
+      listener.apply(this, arguments);
+    }
+  }
+
+  g.listener = listener;
+  this.on(type, g);
+
+  return this;
+};
+
+// emits a 'removeListener' event iff the listener was removed
+EventEmitter.prototype.removeListener = function(type, listener) {
+  var list, position, length, i;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events || !this._events[type])
+    return this;
+
+  list = this._events[type];
+  length = list.length;
+  position = -1;
+
+  if (list === listener ||
+      (isFunction(list.listener) && list.listener === listener)) {
+    delete this._events[type];
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+
+  } else if (isObject(list)) {
+    for (i = length; i-- > 0;) {
+      if (list[i] === listener ||
+          (list[i].listener && list[i].listener === listener)) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0)
+      return this;
+
+    if (list.length === 1) {
+      list.length = 0;
+      delete this._events[type];
+    } else {
+      list.splice(position, 1);
+    }
+
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  var key, listeners;
+
+  if (!this._events)
+    return this;
+
+  // not listening for removeListener, no need to emit
+  if (!this._events.removeListener) {
+    if (arguments.length === 0)
+      this._events = {};
+    else if (this._events[type])
+      delete this._events[type];
+    return this;
+  }
+
+  // emit removeListener for all listeners on all events
+  if (arguments.length === 0) {
+    for (key in this._events) {
+      if (key === 'removeListener') continue;
+      this.removeAllListeners(key);
+    }
+    this.removeAllListeners('removeListener');
+    this._events = {};
+    return this;
+  }
+
+  listeners = this._events[type];
+
+  if (isFunction(listeners)) {
+    this.removeListener(type, listeners);
+  } else if (listeners) {
+    // LIFO order
+    while (listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
+  }
+  delete this._events[type];
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  var ret;
+  if (!this._events || !this._events[type])
+    ret = [];
+  else if (isFunction(this._events[type]))
+    ret = [this._events[type]];
+  else
+    ret = this._events[type].slice();
+  return ret;
+};
+
+EventEmitter.prototype.listenerCount = function(type) {
+  if (this._events) {
+    var evlistener = this._events[type];
+
+    if (isFunction(evlistener))
+      return 1;
+    else if (evlistener)
+      return evlistener.length;
+  }
+  return 0;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  return emitter.listenerCount(type);
+};
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
+
+/***/ }),
+/* 48 */
 /***/ (function(module, exports) {
 
 /**
@@ -55879,6 +54636,1280 @@ window.utils = {
         return Boolean(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0, 4)));
     }
 };
+
+/***/ }),
+/* 49 */
+/***/ (function(module, exports, __webpack_require__) {
+
+Vue.component('discord-background', __webpack_require__(50));
+Vue.component('loading-logo', __webpack_require__(52));
+Vue.component('header-video', __webpack_require__(54));
+
+// const COMPONENTS = [
+//     "example_component",
+//     "loading_logo",
+//     "video_header"
+// ];
+
+// // Load the components
+// COMPONENTS.forEach((component) => {
+//     require(`./components/${component}`);
+// });
+
+/***/ }),
+/* 50 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(4)
+/* script */
+var __vue_script__ = null
+/* template */
+var __vue_template__ = __webpack_require__(51)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/vue/DiscordBackground.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-85c58062", Component.options)
+  } else {
+    hotAPI.reload("data-v-85c58062", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 51 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "svg",
+    {
+      staticClass: "discord-background",
+      staticStyle: { isolation: "isolate" },
+      attrs: {
+        xmlns: "http://www.w3.org/2000/svg",
+        "xmlns:xlink": "http://www.w3.org/1999/xlink",
+        width: "547.6",
+        height: "310.35",
+        viewBox: "0 0 547.6 310.35"
+      }
+    },
+    [
+      _c("defs", [
+        _c(
+          "clipPath",
+          { attrs: { id: "_clipPath_UWzzaioe1rQTjQrPsuLwIlWEgl3T0pb2" } },
+          [_c("rect", { attrs: { width: "547.6", height: "310.35" } })]
+        )
+      ]),
+      _vm._v(" "),
+      _c(
+        "g",
+        {
+          attrs: {
+            "clip-path": "url(#_clipPath_UWzzaioe1rQTjQrPsuLwIlWEgl3T0pb2)"
+          }
+        },
+        [
+          _c("g", [
+            _c("path", {
+              attrs: {
+                fill: "rgb(54,57,62)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 180.175 308.837 L 546.009 308.837 L 546.009 1.5 L 180.175 1.5"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(46,49,54)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 49.33 308.837 L 180.175 308.837 L 180.175 1.749 L 49.33 1.749"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(85,90,97)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 89.085 84.29 L 64.626 84.29 C 63.24 84.29 62.116 83.167 62.116 81.781 L 62.116 76.766 C 62.116 75.381 63.24 74.258 64.626 74.258 L 89.085 74.258 C 90.471 74.258 91.594 75.381 91.594 76.766 L 91.594 81.781 C 91.594 83.167 90.471 84.29 89.085 84.29 Z  M 140.035 84.29 L 100.576 84.29 C 99.19 84.29 98.067 83.167 98.067 81.781 L 98.067 76.766 C 98.067 75.381 99.19 74.258 100.576 74.258 L 140.035 74.258 C 141.421 74.258 142.545 75.381 142.545 76.766 L 142.545 81.781 C 142.545 83.167 141.421 84.29 140.035 84.29 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(44,47,54)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 51.435 60.181 L 180.175 60.181 L 180.175 37.693 L 51.435 37.693"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(85,90,97)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 124.859 54.106 L 86.15 54.106 C 84.764 54.106 83.641 52.983 83.641 51.598 L 83.641 46.582 C 83.641 45.197 84.764 44.074 86.15 44.074 L 124.859 44.074 C 126.245 44.074 127.369 45.197 127.369 46.582 L 127.369 51.598 C 127.369 52.983 126.245 54.106 124.859 54.106 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(135,139,151)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 50.354 60.181 L 52.515 60.181 L 52.515 37.693 L 50.354 37.693"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(40,43,48)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 49.33 308.837 L 180.175 308.837 L 180.175 265.764 L 49.33 265.764"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(163,212,156)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 86.968 286.177 C 86.968 293.103 81.351 298.717 74.422 298.717 C 67.492 298.717 61.876 293.103 61.876 286.177 C 61.876 279.252 67.492 273.638 74.422 273.638 C 81.351 273.638 86.968 279.252 86.968 286.177"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(67,181,129)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 92.99 292.447 C 92.99 295.909 90.181 298.717 86.717 298.717 C 83.253 298.717 80.444 295.909 80.444 292.447 C 80.444 288.985 83.253 286.177 86.717 286.177 C 90.181 286.177 92.99 288.985 92.99 292.447 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(135,139,151)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 141.928 284.923 L 101.781 284.923 C 100.395 284.923 99.271 283.8 99.271 282.415 L 99.271 279.908 C 99.271 278.522 100.395 277.4 101.781 277.4 L 141.928 277.4 C 143.314 277.4 144.438 278.522 144.438 279.908 L 144.438 282.415 C 144.438 283.8 143.314 284.923 141.928 284.923 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(85,90,97)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 123.109 294.824 L 101.78 294.824 C 100.394 294.824 99.271 293.701 99.271 292.316 L 99.271 291.062 C 99.271 289.677 100.394 288.554 101.78 288.554 L 123.109 288.554 C 124.495 288.554 125.618 289.677 125.618 291.062 L 125.618 292.316 C 125.618 293.701 124.495 294.824 123.109 294.824 Z  M 164.151 24.496 L 64.629 24.496 C 63.241 24.496 62.117 23.372 62.117 21.985 L 62.117 14.468 C 62.117 13.081 63.241 11.957 64.629 11.957 L 164.151 11.957 C 165.539 11.957 166.664 13.081 166.664 14.468 L 166.664 21.985 C 166.664 23.372 165.539 24.496 164.151 24.496 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(33,35,38)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 1.733 308.837 L 50.354 308.837 L 50.354 1.749 L 1.733 1.749"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(45,48,54)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 40.6 121.832 C 40.6 130.142 33.86 136.88 25.545 136.88 C 17.23 136.88 10.489 130.142 10.489 121.832 C 10.489 113.522 17.23 106.785 25.545 106.785 C 33.86 106.785 40.6 113.522 40.6 121.832 Z  M 28.864 9.286 C 28.864 11.119 27.378 12.604 25.545 12.604 C 23.711 12.604 22.225 11.119 22.225 9.286 C 22.225 7.454 23.711 5.969 25.545 5.969 C 27.378 5.969 28.864 7.454 28.864 9.286 Z  M 17.246 9.286 C 17.246 11.119 15.759 12.604 13.926 12.604 C 12.093 12.604 10.607 11.119 10.607 9.286 C 10.607 7.454 12.093 5.969 13.926 5.969 C 15.759 5.969 17.246 7.454 17.246 9.286 Z  M 40.483 9.286 C 40.483 11.119 38.996 12.604 37.163 12.604 C 35.33 12.604 33.844 11.119 33.844 9.286 C 33.844 7.454 35.33 5.969 37.163 5.969 C 38.996 5.969 40.483 7.454 40.483 9.286 Z  M 40.6 159.451 C 40.6 167.761 33.86 174.498 25.545 174.498 C 17.23 174.498 10.489 167.761 10.489 159.451 C 10.489 151.141 17.23 144.403 25.545 144.403 C 33.86 144.403 40.6 151.141 40.6 159.451 Z  M 40.6 84.406 C 40.6 92.716 33.86 99.453 25.545 99.453 C 17.23 99.453 10.489 92.716 10.489 84.406 C 10.489 76.096 17.23 69.358 25.545 69.358 C 33.86 69.358 40.6 76.096 40.6 84.406 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(90,200,250)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 40.6 197.069 C 40.6 205.379 33.86 212.116 25.545 212.116 C 17.23 212.116 10.489 205.379 10.489 197.069 C 10.489 188.759 17.23 182.021 25.545 182.021 C 33.86 182.021 40.6 188.759 40.6 197.069 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(45,48,54)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 38.718 61.81 L 12.371 61.81 C 11.332 61.81 10.49 60.969 10.49 59.93 C 10.49 58.891 11.332 58.049 12.371 58.049 L 38.718 58.049 C 39.758 58.049 40.6 58.891 40.6 59.93 C 40.6 60.969 39.758 61.81 38.718 61.81 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(135,139,151)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 245.566 24.496 L 200.201 24.496 C 198.826 24.496 197.712 23.382 197.712 22.008 L 197.712 14.445 C 197.712 13.071 198.826 11.957 200.201 11.957 L 245.566 11.957 C 246.941 11.957 248.056 13.071 248.056 14.445 L 248.056 22.008 C 248.056 23.382 246.941 24.496 245.566 24.496"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(105,111,117)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 223.816 46.822 L 200.201 46.822 C 198.826 46.822 197.712 45.708 197.712 44.333 L 197.712 41.268 C 197.712 39.894 198.826 38.78 200.201 38.78 L 223.816 38.78 C 225.191 38.78 226.306 39.894 226.306 41.268 L 226.306 44.333 C 226.306 45.708 225.191 46.822 223.816 46.822 Z  M 323.066 46.822 L 299.451 46.822 C 298.076 46.822 296.962 45.708 296.962 44.333 L 296.962 41.268 C 296.962 39.894 298.076 38.78 299.451 38.78 L 323.066 38.78 C 324.441 38.78 325.556 39.894 325.556 41.268 L 325.556 44.333 C 325.556 45.708 324.441 46.822 323.066 46.822 Z  M 299.114 24.496 L 276.248 24.496 C 274.874 24.496 273.759 23.382 273.759 22.008 L 273.759 14.445 C 273.759 13.071 274.874 11.957 276.248 11.957 L 299.114 11.957 C 300.488 11.957 301.604 13.071 301.604 14.445 L 301.604 22.008 C 301.604 23.382 300.488 24.496 299.114 24.496 Z  M 336.614 24.496 L 313.748 24.496 C 312.374 24.496 311.259 23.382 311.259 22.008 L 311.259 14.445 C 311.259 13.071 312.374 11.957 313.748 11.957 L 336.614 11.957 C 337.988 11.957 339.104 13.071 339.104 14.445 L 339.104 22.008 C 339.104 23.382 337.988 24.496 336.614 24.496 Z  M 374.114 24.496 L 351.248 24.496 C 349.874 24.496 348.759 23.382 348.759 22.008 L 348.759 14.445 C 348.759 13.071 349.874 11.957 351.248 11.957 L 374.114 11.957 C 375.488 11.957 376.604 13.071 376.604 14.445 L 376.604 22.008 C 376.604 23.382 375.488 24.496 374.114 24.496 Z  M 411.614 24.496 L 388.748 24.496 C 387.374 24.496 386.259 23.382 386.259 22.008 L 386.259 14.445 C 386.259 13.071 387.374 11.957 388.748 11.957 L 411.614 11.957 C 412.988 11.957 414.104 13.071 414.104 14.445 L 414.104 22.008 C 414.104 23.382 412.988 24.496 411.614 24.496 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(135,139,151)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 530.947 24.496 C 527.482 24.496 524.674 21.689 524.674 18.227 C 524.674 14.764 527.482 11.957 530.947 11.957 C 534.411 11.957 537.22 14.764 537.22 18.227 C 537.22 21.689 534.411 24.496 530.947 24.496 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(105,111,117)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 537.168 55.836 L 189.087 55.836 C 188.466 55.836 187.962 55.333 187.962 54.712 C 187.962 54.091 188.466 53.587 189.087 53.587 L 537.168 53.587 C 537.789 53.587 538.293 54.091 538.293 54.712 C 538.293 55.333 537.789 55.836 537.168 55.836 Z  M 530.418 90.162 L 198.837 90.162 C 198.216 90.162 197.712 89.658 197.712 89.037 C 197.712 88.417 198.216 87.913 198.837 87.913 L 530.418 87.913 C 531.039 87.913 531.543 88.417 531.543 89.037 C 531.543 89.658 531.039 90.162 530.418 90.162 Z  M 260.695 76.872 L 221.986 76.872 C 220.6 76.872 219.476 75.749 219.476 74.364 L 219.476 69.348 C 219.476 67.963 220.6 66.84 221.986 66.84 L 260.695 66.84 C 262.081 66.84 263.204 67.963 263.204 69.348 L 263.204 74.364 C 263.204 75.749 262.081 76.872 260.695 76.872 Z  M 339.728 76.872 L 316.019 76.872 C 314.633 76.872 313.509 75.749 313.509 74.364 L 313.509 69.348 C 313.509 67.963 314.633 66.84 316.019 66.84 L 339.728 66.84 C 341.114 66.84 342.237 67.963 342.237 69.348 L 342.237 74.364 C 342.237 75.749 341.114 76.872 339.728 76.872 Z  M 402.955 76.872 L 349.246 76.872 C 347.86 76.872 346.737 75.749 346.737 74.364 L 346.737 69.348 C 346.737 67.963 347.86 66.84 349.246 66.84 L 402.955 66.84 C 404.341 66.84 405.465 67.963 405.465 69.348 L 405.465 74.364 C 405.465 75.749 404.341 76.872 402.955 76.872 Z  M 421.183 76.872 L 412.474 76.872 C 411.088 76.872 409.965 75.749 409.965 74.364 L 409.965 69.348 C 409.965 67.963 411.088 66.84 412.474 66.84 L 421.183 66.84 C 422.569 66.84 423.693 67.963 423.693 69.348 L 423.693 74.364 C 423.693 75.749 422.569 76.872 421.183 76.872 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(230,235,244)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 211.962 72.009 C 211.962 75.942 208.772 79.13 204.837 79.13 C 200.901 79.13 197.712 75.942 197.712 72.009 C 197.712 68.076 200.901 64.888 204.837 64.888 C 208.772 64.888 211.962 68.076 211.962 72.009 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(67,181,129)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 306.337 72.009 C 306.337 73.665 304.994 75.008 303.337 75.008 C 301.68 75.008 300.337 73.665 300.337 72.009 C 300.337 70.353 301.68 69.011 303.337 69.011 C 304.994 69.011 306.337 70.353 306.337 72.009 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(105,111,117)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 530.418 125.393 L 198.837 125.393 C 198.216 125.393 197.712 124.889 197.712 124.268 C 197.712 123.648 198.216 123.144 198.837 123.144 L 530.418 123.144 C 531.039 123.144 531.543 123.648 531.543 124.268 C 531.543 124.889 531.039 125.393 530.418 125.393 Z  M 272.695 112.103 L 221.986 112.103 C 220.6 112.103 219.476 110.98 219.476 109.595 L 219.476 104.579 C 219.476 103.194 220.6 102.071 221.986 102.071 L 272.695 102.071 C 274.081 102.071 275.204 103.194 275.204 104.579 L 275.204 109.595 C 275.204 110.98 274.081 112.103 272.695 112.103 Z  M 339.728 112.103 L 316.019 112.103 C 314.633 112.103 313.509 110.98 313.509 109.595 L 313.509 104.579 C 313.509 103.194 314.633 102.071 316.019 102.071 L 339.728 102.071 C 341.114 102.071 342.237 103.194 342.237 104.579 L 342.237 109.595 C 342.237 110.98 341.114 112.103 339.728 112.103 Z  M 380.455 112.103 L 349.246 112.103 C 347.86 112.103 346.737 110.98 346.737 109.595 L 346.737 104.579 C 346.737 103.194 347.86 102.071 349.246 102.071 L 380.455 102.071 C 381.841 102.071 382.965 103.194 382.965 104.579 L 382.965 109.595 C 382.965 110.98 381.841 112.103 380.455 112.103 Z  M 413.683 112.103 L 389.974 112.103 C 388.588 112.103 387.465 110.98 387.465 109.595 L 387.465 104.579 C 387.465 103.194 388.588 102.071 389.974 102.071 L 413.683 102.071 C 415.069 102.071 416.193 103.194 416.193 104.579 L 416.193 109.595 C 416.193 110.98 415.069 112.103 413.683 112.103 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(246,152,157)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 211.962 107.24 C 211.962 111.174 208.772 114.362 204.837 114.362 C 200.901 114.362 197.712 111.174 197.712 107.24 C 197.712 103.307 200.901 100.119 204.837 100.119 C 208.772 100.119 211.962 103.307 211.962 107.24"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(67,181,129)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 306.337 107.24 C 306.337 108.896 304.994 110.239 303.337 110.239 C 301.68 110.239 300.337 108.896 300.337 107.24 C 300.337 105.585 301.68 104.242 303.337 104.242 C 304.994 104.242 306.337 105.585 306.337 107.24 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(105,111,117)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 530.418 160.624 L 198.837 160.624 C 198.216 160.624 197.712 160.12 197.712 159.5 C 197.712 158.879 198.216 158.375 198.837 158.375 L 530.418 158.375 C 531.039 158.375 531.543 158.879 531.543 159.5 C 531.543 160.12 531.039 160.624 530.418 160.624 Z  M 238.195 147.334 L 221.986 147.334 C 220.6 147.334 219.476 146.212 219.476 144.826 L 219.476 139.811 C 219.476 138.425 220.6 137.303 221.986 137.303 L 238.195 137.303 C 239.581 137.303 240.704 138.425 240.704 139.811 L 240.704 144.826 C 240.704 146.212 239.581 147.334 238.195 147.334 Z  M 339.728 147.334 L 316.019 147.334 C 314.633 147.334 313.509 146.212 313.509 144.826 L 313.509 139.811 C 313.509 138.425 314.633 137.303 316.019 137.303 L 339.728 137.303 C 341.114 137.303 342.237 138.425 342.237 139.811 L 342.237 144.826 C 342.237 146.212 341.114 147.334 339.728 147.334 Z  M 402.955 147.334 L 349.246 147.334 C 347.86 147.334 346.737 146.212 346.737 144.826 L 346.737 139.811 C 346.737 138.425 347.86 137.303 349.246 137.303 L 402.955 137.303 C 404.341 137.303 405.465 138.425 405.465 139.811 L 405.465 144.826 C 405.465 146.212 404.341 147.334 402.955 147.334 Z  M 421.183 147.334 L 412.474 147.334 C 411.088 147.334 409.965 146.212 409.965 144.826 L 409.965 139.811 C 409.965 138.425 411.088 137.303 412.474 137.303 L 421.183 137.303 C 422.569 137.303 423.693 138.425 423.693 139.811 L 423.693 144.826 C 423.693 146.212 422.569 147.334 421.183 147.334 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(250,166,26)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 211.962 142.472 C 211.962 146.405 208.772 149.593 204.837 149.593 C 200.901 149.593 197.712 146.405 197.712 142.472 C 197.712 138.539 200.901 135.351 204.837 135.351 C 208.772 135.351 211.962 138.539 211.962 142.472 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(67,181,129)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 306.337 142.472 C 306.337 144.128 304.994 145.47 303.337 145.47 C 301.68 145.47 300.337 144.128 300.337 142.472 C 300.337 140.816 301.68 139.473 303.337 139.473 C 304.994 139.473 306.337 140.816 306.337 142.472 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(105,111,117)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 530.418 195.855 L 198.837 195.855 C 198.216 195.855 197.712 195.352 197.712 194.731 C 197.712 194.11 198.216 193.607 198.837 193.607 L 530.418 193.607 C 531.039 193.607 531.543 194.11 531.543 194.731 C 531.543 195.352 531.039 195.855 530.418 195.855 Z  M 245.695 182.566 L 221.986 182.566 C 220.6 182.566 219.476 181.443 219.476 180.058 L 219.476 175.042 C 219.476 173.657 220.6 172.534 221.986 172.534 L 245.695 172.534 C 247.081 172.534 248.204 173.657 248.204 175.042 L 248.204 180.058 C 248.204 181.443 247.081 182.566 245.695 182.566 Z  M 339.728 182.566 L 316.019 182.566 C 314.633 182.566 313.509 181.443 313.509 180.058 L 313.509 175.042 C 313.509 173.657 314.633 172.534 316.019 172.534 L 339.728 172.534 C 341.114 172.534 342.237 173.657 342.237 175.042 L 342.237 180.058 C 342.237 181.443 341.114 182.566 339.728 182.566 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(250,166,26)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 211.962 177.703 C 211.962 181.636 208.772 184.824 204.837 184.824 C 200.901 184.824 197.712 181.636 197.712 177.703 C 197.712 173.77 200.901 170.582 204.837 170.582 C 208.772 170.582 211.962 173.77 211.962 177.703 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(255,204,0)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 306.337 177.703 C 306.337 179.359 304.994 180.701 303.337 180.701 C 301.68 180.701 300.337 179.359 300.337 177.703 C 300.337 176.047 301.68 174.705 303.337 174.705 C 304.994 174.705 306.337 176.047 306.337 177.703 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(105,111,117)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 530.418 231.087 L 198.837 231.087 C 198.216 231.087 197.712 230.583 197.712 229.962 C 197.712 229.342 198.216 228.838 198.837 228.838 L 530.418 228.838 C 531.039 228.838 531.543 229.342 531.543 229.962 C 531.543 230.583 531.039 231.087 530.418 231.087 Z  M 274.195 217.797 L 221.986 217.797 C 220.6 217.797 219.476 216.674 219.476 215.289 L 219.476 210.273 C 219.476 208.888 220.6 207.765 221.986 207.765 L 274.195 207.765 C 275.581 207.765 276.704 208.888 276.704 210.273 L 276.704 215.289 C 276.704 216.674 275.581 217.797 274.195 217.797 Z  M 339.728 217.797 L 316.019 217.797 C 314.633 217.797 313.509 216.674 313.509 215.289 L 313.509 210.273 C 313.509 208.888 314.633 207.765 316.019 207.765 L 339.728 207.765 C 341.114 207.765 342.237 208.888 342.237 210.273 L 342.237 215.289 C 342.237 216.674 341.114 217.797 339.728 217.797 Z  M 402.955 217.797 L 349.246 217.797 C 347.86 217.797 346.737 216.674 346.737 215.289 L 346.737 210.273 C 346.737 208.888 347.86 207.765 349.246 207.765 L 402.955 207.765 C 404.341 207.765 405.465 208.888 405.465 210.273 L 405.465 215.289 C 405.465 216.674 404.341 217.797 402.955 217.797 Z  M 421.183 217.797 L 412.474 217.797 C 411.088 217.797 409.965 216.674 409.965 215.289 L 409.965 210.273 C 409.965 208.888 411.088 207.765 412.474 207.765 L 421.183 207.765 C 422.569 207.765 423.693 208.888 423.693 210.273 L 423.693 215.289 C 423.693 216.674 422.569 217.797 421.183 217.797 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(230,235,244)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 211.962 212.934 C 211.962 216.867 208.772 220.055 204.837 220.055 C 200.901 220.055 197.712 216.867 197.712 212.934 C 197.712 209.001 200.901 205.813 204.837 205.813 C 208.772 205.813 211.962 209.001 211.962 212.934"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(67,181,129)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 306.337 212.934 C 306.337 214.59 304.994 215.933 303.337 215.933 C 301.68 215.933 300.337 214.59 300.337 212.934 C 300.337 211.278 301.68 209.936 303.337 209.936 C 304.994 209.936 306.337 211.278 306.337 212.934 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(105,111,117)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 530.418 266.318 L 198.837 266.318 C 198.216 266.318 197.712 265.814 197.712 265.194 C 197.712 264.573 198.216 264.069 198.837 264.069 L 530.418 264.069 C 531.039 264.069 531.543 264.573 531.543 265.194 C 531.543 265.814 531.039 266.318 530.418 266.318 Z  M 256.195 253.028 L 221.986 253.028 C 220.6 253.028 219.476 251.905 219.476 250.52 L 219.476 245.505 C 219.476 244.119 220.6 242.996 221.986 242.996 L 256.195 242.996 C 257.581 242.996 258.704 244.119 258.704 245.505 L 258.704 250.52 C 258.704 251.905 257.581 253.028 256.195 253.028 Z  M 339.728 253.028 L 316.019 253.028 C 314.633 253.028 313.509 251.905 313.509 250.52 L 313.509 245.505 C 313.509 244.119 314.633 242.996 316.019 242.996 L 339.728 242.996 C 341.114 242.996 342.237 244.119 342.237 245.505 L 342.237 250.52 C 342.237 251.905 341.114 253.028 339.728 253.028 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(250,166,26)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 211.962 248.166 C 211.962 252.099 208.772 255.287 204.837 255.287 C 200.901 255.287 197.712 252.099 197.712 248.166 C 197.712 244.232 200.901 241.044 204.837 241.044 C 208.772 241.044 211.962 244.232 211.962 248.166 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(105,111,117)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 306.337 248.166 C 306.337 249.821 304.994 251.164 303.337 251.164 C 301.68 251.164 300.337 249.821 300.337 248.166 C 300.337 246.51 301.68 245.167 303.337 245.167 C 304.994 245.167 306.337 246.51 306.337 248.166 Z  M 530.418 299.3 L 198.837 299.3 C 198.216 299.3 197.712 298.797 197.712 298.176 C 197.712 297.555 198.216 297.052 198.837 297.052 L 530.418 297.052 C 531.039 297.052 531.543 297.555 531.543 298.176 C 531.543 298.797 531.039 299.3 530.418 299.3 Z  M 267.445 286.011 L 221.986 286.011 C 220.6 286.011 219.476 284.888 219.476 283.503 L 219.476 278.487 C 219.476 277.102 220.6 275.979 221.986 275.979 L 267.445 275.979 C 268.831 275.979 269.954 277.102 269.954 278.487 L 269.954 283.503 C 269.954 284.888 268.831 286.011 267.445 286.011 Z  M 339.728 286.011 L 316.019 286.011 C 314.633 286.011 313.509 284.888 313.509 283.503 L 313.509 278.487 C 313.509 277.102 314.633 275.979 316.019 275.979 L 339.728 275.979 C 341.114 275.979 342.237 277.102 342.237 278.487 L 342.237 283.503 C 342.237 284.888 341.114 286.011 339.728 286.011 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(90,200,250)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 211.962 281.148 C 211.962 285.081 208.772 288.269 204.837 288.269 C 200.901 288.269 197.712 285.081 197.712 281.148 C 197.712 277.215 200.901 274.027 204.837 274.027 C 208.772 274.027 211.962 277.215 211.962 281.148 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(255,204,0)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 306.337 281.148 C 306.337 282.804 304.994 284.146 303.337 284.146 C 301.68 284.146 300.337 282.804 300.337 281.148 C 300.337 279.492 301.68 278.15 303.337 278.15 C 304.994 278.15 306.337 279.492 306.337 281.148 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(85,90,97)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 76.126 49.09 C 76.126 53.023 72.936 56.211 69.001 56.211 C 65.066 56.211 61.876 53.023 61.876 49.09 C 61.876 45.157 65.066 41.969 69.001 41.969 C 72.936 41.969 76.126 45.157 76.126 49.09 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(135,139,151)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 1.732 26.24 L 4.242 26.24 C 5.627 26.24 6.751 27.363 6.751 28.749 L 6.751 42.542 C 6.751 43.927 5.627 45.049 4.242 45.049 L 1.732 45.049 L 1.732 26.24 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(115,139,215)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 33.072 50.692 L 18.017 50.692 C 13.86 50.692 10.489 47.324 10.489 43.169 L 10.489 28.121 C 10.489 23.966 13.86 20.597 18.017 20.597 L 33.072 20.597 C 37.23 20.597 40.6 23.966 40.6 28.121 L 40.6 43.169 C 40.6 47.324 37.23 50.692 33.072 50.692 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(85,90,97)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 124.859 101.318 L 86.15 101.318 C 84.764 101.318 83.641 100.195 83.641 98.809 L 83.641 93.794 C 83.641 92.409 84.764 91.286 86.15 91.286 L 124.859 91.286 C 126.245 91.286 127.369 92.409 127.369 93.794 L 127.369 98.809 C 127.369 100.195 126.245 101.318 124.859 101.318 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(250,166,26)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 76.126 96.455 C 76.126 100.388 72.936 103.576 69.001 103.576 C 65.066 103.576 61.876 100.388 61.876 96.455 C 61.876 92.522 65.066 89.334 69.001 89.334 C 72.936 89.334 76.126 92.522 76.126 96.455 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(67,181,129)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 76.126 101.327 C 76.126 102.569 75.119 103.576 73.876 103.576 C 72.633 103.576 71.626 102.569 71.626 101.327 C 71.626 100.085 72.633 99.078 73.876 99.078 C 75.119 99.078 76.126 100.085 76.126 101.327 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(85,90,97)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 124.859 122.306 L 86.15 122.306 C 84.764 122.306 83.641 121.184 83.641 119.798 L 83.641 114.783 C 83.641 113.397 84.764 112.275 86.15 112.275 L 124.859 112.275 C 126.245 112.275 127.369 113.397 127.369 114.783 L 127.369 119.798 C 127.369 121.184 126.245 122.306 124.859 122.306 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(90,200,250)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 76.126 117.444 C 76.126 121.377 72.936 124.565 69.001 124.565 C 65.066 124.565 61.876 121.377 61.876 117.444 C 61.876 113.511 65.066 110.322 69.001 110.322 C 72.936 110.322 76.126 113.511 76.126 117.444 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "rgb(67,181,129)",
+                "fill-rule": "evenodd",
+                d:
+                  " M 76.126 122.316 C 76.126 123.558 75.119 124.565 73.876 124.565 C 72.633 124.565 71.626 123.558 71.626 122.316 C 71.626 121.074 72.633 120.067 73.876 120.067 C 75.119 120.067 76.126 121.074 76.126 122.316 Z "
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                fill: "none",
+                "fill-rule": "evenodd",
+                stroke: "rgb(26,28,30)",
+                "stroke-linecap": "round",
+                "stroke-linejoin": "round",
+                "stroke-miterlimit": "4",
+                "stroke-width": "3",
+                d:
+                  " M 1.5 308.837 L 546.009 308.837 L 546.009 1.5 L 1.5 1.5 L 1.5 308.837 Z ",
+                "vector-effect": "non-scaling-stroke"
+              }
+            })
+          ])
+        ]
+      )
+    ]
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-85c58062", module.exports)
+  }
+}
+
+/***/ }),
+/* 52 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(4)
+/* script */
+var __vue_script__ = __webpack_require__(74)
+/* template */
+var __vue_template__ = __webpack_require__(53)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/vue/LoadingLogo.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-4b9ff89c", Component.options)
+  } else {
+    hotAPI.reload("data-v-4b9ff89c", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 53 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "svg",
+    {
+      staticClass: "loading-logo",
+      staticStyle: { isolation: "isolate" },
+      attrs: {
+        xmlns: "http://www.w3.org/2000/svg",
+        width: "512",
+        height: "512",
+        viewBox: "0 0 512 512",
+        preserveAspectRatio: "xMidYMid"
+      }
+    },
+    [
+      _c("defs", [
+        _c("clipPath", { attrs: { id: "a" } }, [
+          _c("path", { attrs: { d: "M0 0h512v512H0z" } })
+        ])
+      ]),
+      _vm._v(" "),
+      _c("g", { attrs: { "clip-path": "url(#a)" } }, [
+        _c("g", { staticClass: "logo-edges" }, [
+          _c("rect", {
+            staticClass: "logo-edge-6",
+            attrs: {
+              width: "22",
+              height: "215",
+              x: "338.1",
+              y: "309.754",
+              fill: "rgb(0,0,0)",
+              transform: "matrix(-0.5,-0.866,0.866,-0.5,162.297,928.21)"
+            }
+          }),
+          _vm._v(" "),
+          _c("rect", {
+            staticClass: "logo-edge-5",
+            attrs: {
+              width: "22",
+              height: "215",
+              x: "151.9",
+              y: "309.754",
+              fill: "rgb(0,0,0)",
+              transform: "matrix(0.5,-0.866,0.866,0.5,-279.903,349.703)"
+            }
+          }),
+          _vm._v(" "),
+          _c("rect", {
+            staticClass: "logo-edge-4",
+            attrs: {
+              width: "22",
+              height: "215",
+              x: "58.8",
+              y: "148.5",
+              fill: "rgb(0,0,0)",
+              transform: "matrix(1,0,0,1,0,0)"
+            }
+          }),
+          _vm._v(" "),
+          _c("rect", {
+            staticClass: "logo-edge-3",
+            attrs: {
+              width: "22",
+              height: "215",
+              x: "151.9",
+              y: "-12.754",
+              fill: "rgb(0,0,0)",
+              transform: "matrix(0.5,0.866,-0.866,0.5,163.503,-93.703)"
+            }
+          }),
+          _vm._v(" "),
+          _c("rect", {
+            staticClass: "logo-edge-2",
+            attrs: {
+              width: "22",
+              height: "215",
+              x: "338.1",
+              y: "-12.754",
+              fill: "rgb(0,0,0)",
+              transform: "matrix(-0.5,0.866,-0.866,-0.5,605.703,-160.21)"
+            }
+          }),
+          _vm._v(" "),
+          _c("rect", {
+            staticClass: "logo-edge-1",
+            attrs: {
+              width: "22",
+              height: "215",
+              x: "431.2",
+              y: "148.5",
+              fill: "rgb(0,0,0)",
+              transform: "matrix(-1,0,0,-1,884.4,512)"
+            }
+          }),
+          _vm._v(" "),
+          _c("rect", {
+            staticClass: "logo-edge-long-3",
+            attrs: {
+              width: "22",
+              height: "430",
+              x: "245",
+              y: "41",
+              fill: "rgb(0,0,0)",
+              transform: "matrix(1,0,0,1,0,0)"
+            }
+          }),
+          _vm._v(" "),
+          _c("rect", {
+            staticClass: "logo-edge-long-2",
+            attrs: {
+              width: "22",
+              height: "430",
+              x: "245",
+              y: "41",
+              fill: "rgb(0,0,0)",
+              transform: "matrix(0.5,0.866,-0.866,0.5,349.703,-93.703)"
+            }
+          }),
+          _vm._v(" "),
+          _c("rect", {
+            staticClass: "logo-edge-long-1",
+            attrs: {
+              width: "22",
+              height: "430",
+              x: "245",
+              y: "41",
+              fill: "rgb(0,0,0)",
+              transform: "matrix(-0.5,0.866,-0.866,-0.5,605.703,162.297)"
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _c("g", { staticClass: "logo-circles" }, [
+          _c("circle", {
+            staticClass: "logo-circle-6",
+            attrs: {
+              cx: "256",
+              cy: "471",
+              r: "32",
+              "vector-effect": "non-scaling-stroke"
+            }
+          }),
+          _vm._v(" "),
+          _c("circle", {
+            staticClass: "logo-circle-5",
+            attrs: {
+              cx: "69.8",
+              cy: "363.5",
+              r: "32",
+              "vector-effect": "non-scaling-stroke"
+            }
+          }),
+          _vm._v(" "),
+          _c("circle", {
+            staticClass: "logo-circle-4",
+            attrs: {
+              cx: "69.8",
+              cy: "148.5",
+              r: "32",
+              "vector-effect": "non-scaling-stroke"
+            }
+          }),
+          _vm._v(" "),
+          _c("circle", {
+            staticClass: "logo-circle-3",
+            attrs: {
+              cx: "256",
+              cy: "41",
+              r: "32",
+              "vector-effect": "non-scaling-stroke"
+            }
+          }),
+          _vm._v(" "),
+          _c("circle", {
+            staticClass: "logo-circle-2",
+            attrs: {
+              cx: "442.2",
+              cy: "148.5",
+              r: "32",
+              "vector-effect": "non-scaling-stroke"
+            }
+          }),
+          _vm._v(" "),
+          _c("circle", {
+            staticClass: "logo-circle-1",
+            attrs: {
+              cx: "442.2",
+              cy: "363.5",
+              r: "32",
+              "vector-effect": "non-scaling-stroke"
+            }
+          })
+        ])
+      ])
+    ]
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-4b9ff89c", module.exports)
+  }
+}
+
+/***/ }),
+/* 54 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(4)
+/* script */
+var __vue_script__ = __webpack_require__(55)
+/* template */
+var __vue_template__ = __webpack_require__(56)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/vue/HeaderVideo.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-31c3e203", Component.options)
+  } else {
+    hotAPI.reload("data-v-31c3e203", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 55 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            queue: new EventQueue()
+        };
+    },
+
+    methods: {
+        /**
+         * Cancel the current transition
+         */
+        __cancel: function __cancel() {
+            this.queue.clear();
+            $(this.$el).find("h1, p").stop().clearQueue();
+            $(this.$el).find("video").parent().stop().clearQueue();
+        },
+        __setText: function __setText(title, lead) {
+            var _this = this;
+
+            var elems = $(this.$el).find("h1, p");
+            elems.addClass("text-invisible");
+            this.queue.do(function (queue) {
+                _this.title = title;
+                _this.lead = lead;
+                elems.each(function (index) {
+                    var _this2 = this;
+
+                    queue.do(function () {
+                        $(_this2).removeClass("text-invisible");
+                    }, index * 300);
+                });
+            }, 1000);
+        },
+        __setVideo: function __setVideo(video) {
+            var _this3 = this;
+
+            $(this.$el).find("video").parent().fadeOut(500);
+            this.queue.do(function (queue) {
+                $(_this3.$el).vide(video, {
+                    loop: true,
+                    muted: true,
+                    position: "50% 50%",
+                    posterType: "png",
+                    resizing: true
+                }).find("video").parent().hide();
+                queue.do(function () {
+                    $(_this3.$el).find("video").parent().fadeIn(500);
+                }, 800);
+            }, 300);
+        },
+        setHeader: function setHeader(video, title, lead) {
+            this.__cancel();
+            this.__setVideo(video);
+            this.__setText(title, lead);
+        }
+    },
+    mounted: function mounted() {
+        this.__cancel();
+        $(this.$el).find("#particles_header").fadeIn(3000);
+        this.setHeader(this.video, this.title, this.lead);
+    },
+
+    props: {
+        "title": String,
+        "lead": String,
+        "video": String
+    }
+});
+
+/***/ }),
+/* 56 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "header",
+    { staticClass: "video-header", attrs: { id: "video_header" } },
+    [
+      _c("div", { staticClass: "video-overlay container-fluid" }, [
+        _c("div", { staticClass: "row h-100" }, [
+          _c("div", { staticClass: "col-md-12 my-auto text-center" }, [
+            _c(
+              "h1",
+              {
+                staticClass:
+                  "display-1 align-middle header-brand text-invisible"
+              },
+              [
+                _vm._v(
+                  "\n                    " +
+                    _vm._s(_vm.title) +
+                    "\n                "
+                )
+              ]
+            ),
+            _vm._v(" "),
+            _c("p", { staticClass: "header-motto text-invisible" }, [
+              _vm._v(
+                "\n                    " +
+                  _vm._s(_vm.lead) +
+                  "\n                "
+              )
+            ]),
+            _vm._v(" "),
+            _c("a", { staticClass: "pointer", attrs: { href: "" } })
+          ])
+        ])
+      ]),
+      _vm._v(" "),
+      _c("div", {
+        staticStyle: { display: "none" },
+        attrs: { id: "particles_header" }
+      })
+    ]
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-31c3e203", module.exports)
+  }
+}
+
+/***/ }),
+/* 57 */,
+/* 58 */
+/***/ (function(module, exports) {
+
+// $(".navbar-brand a").mouseover(function () {
+//     loading.once(".loading-logo-nav");
+// });
+
+/**
+ * How far from the top can we be before it is no longer
+ * considered the top
+ */
+var TOP_MARGIN = 100;
+
+/**
+ * Keep track if we're at the top of the page
+ */
+var top = true;
+
+navigate.event.on("scroll", function (pos) {
+  var isTop = pos < TOP_MARGIN;
+  if (top != isTop) {
+    top = isTop;
+    $("nav.navbar").toggleClass("navbar-top", top).toggleClass("navbar-dark", top).toggleClass("navbar-light", !top).toggleClass("navbar-color", !top);
+  }
+});
+
+/***/ }),
+/* 59 */
+/***/ (function(module, exports) {
+
+/**
+ * Keep track of the sections that are hidden
+ */
+var hiddenSections = new Set();
+
+/**
+ * Create a new Vue instance
+ */
+var createVue = function createVue() {
+    page.app = new Vue({
+        el: "#body"
+    });
+};
+
+/**
+ * Display the visible sections
+ */
+var displaySections = function displaySections() {
+    hiddenSections.forEach(function (section) {
+        if ($(section).isInViewport()) {
+            $(section).addClass("visible");
+            hiddenSections.delete(section);
+        }
+    });
+};
+
+/**
+ * Locate any hidden sections and keep track of them
+ */
+var findHiddenSections = function findHiddenSections() {
+    hiddenSections.clear();
+    $("#body").find("section:not(.visible)").each(function () {
+        hiddenSections.add(this);
+    });
+};
+
+/**
+ * Page management
+ */
+window.page = {
+
+    /**
+     * The amount of delay for transitions in miliseconds
+     */
+    TRANSITION_DELAY: 100,
+
+    /**
+     * The Vue app instance
+     */
+    app: null,
+
+    /**
+     * Append content to the page
+     */
+    append: function append(content) {
+        $("#body").append(content);
+        page.render();
+    },
+
+
+    /**
+     * Set the current page content
+     */
+    set: function set(title, content) {
+        document.title = title;
+        $("#body").stop().clearQueue();
+        $("#body").fadeOut(page.TRANSITION_DELAY, function () {
+            $(this).html(content).show();
+            createVue();
+            findHiddenSections();
+            page.render();
+        });
+    },
+
+
+    /**
+     * Render the page
+     */
+    render: function render() {
+        displaySections();
+    },
+
+
+    /**
+     * Initial rendering of the page
+     */
+    init: function init() {
+        createVue();
+        findHiddenSections();
+        particles.render();
+        $(".navbar").fadeIn(1000);
+        setTimeout(function () {
+            page.render();
+        }, 1400);
+    }
+};
+
+/***/ }),
+/* 60 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var CONFIG = __webpack_require__(61);
+
+window.particles = {
+    /**
+     * Render the particles
+     */
+    render: function render() {
+        if (utils.isMobile()) return;
+        for (id in CONFIG) {
+            if ($("#" + id).length) {
+                particlesJS(id, CONFIG[id]);
+            }
+        }
+    }
+};
+
+/***/ }),
+/* 61 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * Export the particle configurations
+ *
+ * Format: <id>: require("config")
+ */
+module.exports = {
+  "particles_header": __webpack_require__(62)
+};
+
+/***/ }),
+/* 62 */
+/***/ (function(module, exports) {
+
+module.exports = {"particles":{"number":{"value":25,"density":{"enable":true,"value_area":800}},"color":{"value":"#ffffff"},"shape":{"type":"circle","stroke":{"width":0,"color":"#000000"},"polygon":{"nb_sides":5},"image":{"src":"img/github.svg","width":100,"height":100}},"opacity":{"value":0.5,"random":false,"anim":{"enable":false,"speed":1,"opacity_min":0.1,"sync":false}},"size":{"value":5,"random":true,"anim":{"enable":false,"speed":20,"size_min":0.3,"sync":false}},"line_linked":{"enable":true,"distance":150,"color":"#ffffff","opacity":0.4,"width":1},"move":{"enable":true,"speed":2,"direction":"none","random":false,"straight":false,"out_mode":"out","attract":{"enable":false,"rotateX":600,"rotateY":1200}}},"interactivity":{"detect_on":"canvas","events":{"onhover":{"enable":false,"mode":"repulse"},"onclick":{"enable":false,"mode":"push"},"resize":true},"modes":{"grab":{"distance":400,"line_linked":{"opacity":1}},"bubble":{"distance":400,"size":40,"duration":2,"opacity":8,"speed":3},"repulse":{"distance":200},"push":{"particles_nb":4},"remove":{"particles_nb":2}}},"retina_detect":true,"config_demo":{"hide_card":false,"background_color":"#b61924","background_image":"","background_position":"50% 50%","background_repeat":"no-repeat","background_size":"cover"}}
+
+/***/ }),
+/* 63 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 64 */,
+/* 65 */,
+/* 66 */,
+/* 67 */,
+/* 68 */,
+/* 69 */,
+/* 70 */,
+/* 71 */,
+/* 72 */,
+/* 73 */,
+/* 74 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            active: false,
+            step: false
+        };
+    },
+
+
+    methods: {
+        onFinished: function onFinished() {
+            if (!this.active && this.step) {
+                $(this.$el).removeClass("active");
+                $(this.$el).find("circle").first().off("animationiteration", this.onFinished);
+            }
+            this.step = !this.step;
+        },
+        cycle: function cycle() {
+            if (this.start()) this.stop();
+        },
+        start: function start() {
+            if (this.active) return false;
+            this.active = true;
+            $(this.$el).addClass("active").find("circle").first().on("animationiteration", this.onFinished);
+            return true;
+        },
+        stop: function stop() {
+            this.active = false;
+        }
+    }
+});
 
 /***/ })
 /******/ ]);

@@ -21,6 +21,5 @@ navigate.event.on("scroll", function (pos) {
                        .toggleClass("navbar-dark", top)
                        .toggleClass("navbar-light", !top)
                        .toggleClass("navbar-color", !top);
-        console.log("Navbar changed state");
     }
 });

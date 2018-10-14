@@ -28,3 +28,40 @@
         </g>
     </svg>
 </template>
+<script>
+export default {
+    data () {
+        return {
+            active: false,
+            step  : false
+        }
+    },
+
+    methods: {
+        onFinished () {
+            if (!this.active && this.step) {
+                $(this.$el).removeClass("active");
+                $(this.$el).find("circle").first().off("animationiteration", this.onFinished);
+            }
+            this.step = !this.step;
+        },
+
+        cycle () {
+            if (this.start())
+                this.stop();
+        },
+
+        start () {
+            if (this.active)
+                return false;
+            this.active = true;
+            $(this.$el).addClass("active").find("circle").first().on("animationiteration", this.onFinished);
+            return true;
+        },
+
+        stop () {
+            this.active = false;
+        }
+    },
+}
+</script>

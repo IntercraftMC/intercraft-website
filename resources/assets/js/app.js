@@ -8,11 +8,11 @@
 require("./bootstrap");
 
 require("./event_queue");
+require("./form");
 require("./navigation");
 require("./utils");
 
 require("./components");
-require("./loading");
 require("./navbar");
 require("./page");
 require("./particles");
@@ -22,11 +22,11 @@ const prebody = new Vue({
 });
 
 var onBeforeLoad = function () {
-    loading.activate($("#loading-logo"));
+    prebody.$refs.nav_logo.start();
 };
 
 var onLoad = function () {
-    loading.deactivate($("#loading-logo"));
+    prebody.$refs.nav_logo.stop();
 };
 
 /**
