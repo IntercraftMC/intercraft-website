@@ -8,6 +8,6 @@ class AboutController extends Controller
 {
     public function index ()
     {
-        return ajaxView("about", "title.about");
+        return ajax_view("about", "title.about");
     }
 }

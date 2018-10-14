@@ -39,7 +39,8 @@ $section-fade-duration: 0.5s;
 $loading-duration: 0.4s;
 
 // Video Header
-$header-video-height: 70vh;
+$header-video-height-normal: 30vh;
+$header-video-height-large: 70vh;
 $header-video-overlay-color: rgba(0, 0, 0, 0.4);
 $header-video-shadow-brand: 0 0 30px rgba(0, 0, 0, 0.8);
 $header-video-shadow-motto: 0 0 15px rgba(0, 0, 0, 0.8);

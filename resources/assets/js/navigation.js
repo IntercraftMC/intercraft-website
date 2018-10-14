@@ -154,7 +154,7 @@ var onAjaxLoad = function (response, url, pushState) {
     if (pushState) {
         history.pushState(pageInfo, response.data.title, url);
     }
-    page.set(response.data.title, response.data.view);
+    page.set(response.data.title, response.data.header, response.data.view);
 };
 
 /**

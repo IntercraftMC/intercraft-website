@@ -3,7 +3,7 @@
 /**
  * Get the view to render depending on if the request is Ajax or not
  */
-function ajaxView (string $page, $title, $args = [])
+function ajax_view (string $page, $title, $args = [])
 {
     if (Request::ajax()) {
         return response()->json([
@@ -18,6 +18,21 @@ function ajaxView (string $page, $title, $args = [])
         "title"  => __($title),
         "vars"   => $args
     ]);
+}
+
+function header_attributes($header)
+{
+    $header = $header ?? [];
+    $result = [];
+    if (isset($header["title"]))
+        $result[] = 'title="' . $header["title"] . '"';
+    if (isset($header["lead"]))
+        $result[] = 'lead="' . $header["lead"] . '"';
+    if (isset($header["video"]))
+        $result[] = 'video="' . $header["video"] . '"';
+    if (isset($header["size"]))
+        $result[] = 'size="' . $header["size"] . '"';
+    return implode(' ', $result);
 }
 
 function discord_invitation ()

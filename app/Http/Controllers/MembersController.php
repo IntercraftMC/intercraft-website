@@ -8,6 +8,6 @@ class MembersController extends Controller
 {
     public function index ()
     {
-        return ajaxView("members", "title.members");
+        return ajax_view("members", "title.members");
     }
 }

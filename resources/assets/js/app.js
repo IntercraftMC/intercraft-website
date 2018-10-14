@@ -17,16 +17,18 @@ require("./navbar");
 require("./page");
 require("./particles");
 
-const prebody = new Vue({
-    el: "#prebody"
-});
-
+/**
+ * Invoked when the browser starts loading a new page
+ */
 var onBeforeLoad = function () {
-    prebody.$refs.nav_logo.start();
+    page.prebody.$refs.nav_logo.start();
 };
 
+/**
+ * Invoked when a page has finished loading
+ */
 var onLoad = function () {
-    prebody.$refs.nav_logo.stop();
+    page.prebody.$refs.nav_logo.stop();
 };
 
 /**

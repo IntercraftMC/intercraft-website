@@ -35,6 +35,19 @@ var findHiddenSections = function () {
 };
 
 /**
+ * Set the content of the body
+ */
+var setBody = function (content) {
+    $("#body").stop().clearQueue();
+    $("#body").fadeOut(page.TRANSITION_DELAY, function () {
+        $(this).html(content).show();
+        createVue();
+        findHiddenSections();
+        page.render();
+    });
+};
+
+/**
  * Page management
  */
 window.page = {
@@ -50,6 +63,13 @@ window.page = {
     app: null,
 
     /**
+     * The Vue instance of header components
+     */
+    prebody: new Vue({
+        el: "#prebody"
+    }),
+
+    /**
      * Append content to the page
      */
     append (content) {
@@ -60,15 +80,10 @@ window.page = {
     /**
      * Set the current page content
      */
-    set (title, content) {
+    set (title, header, content) {
         document.title = title;
-        $("#body").stop().clearQueue();
-        $("#body").fadeOut(page.TRANSITION_DELAY, function () {
-            $(this).html(content).show();
-            createVue();
-            findHiddenSections();
-            page.render();
-        });
+        page.prebody.$refs.header.setHeader(header);
+        setBody(content);
     },
 
     /**

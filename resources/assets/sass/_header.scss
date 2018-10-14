@@ -2,7 +2,6 @@
     background: black;
     margin-top: 0;
     box-sizing: border-box;
-    min-height: $header-video-height;
 }
 header {
     color: white;
@@ -10,24 +9,31 @@ header {
     z-index: 50;
 
     &.video-header {
-        min-height: $header-video-height;
+        height: 58px;
         width: 100%;
+        overflow: hidden;
+        transition: height 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
 
         #particles_header {
             position: absolute;
             width: 100%;
-            height: $header-video-height;
+            height: 100%;
             z-index: 300;
         }
         .video-overlay {
             background: $header-video-overlay-color;
             position: absolute;
             width: 100%;
-            height: $header-video-height;
+            height: 100%;
             z-index: 300;
 
-            h1, p {
+            .header-title-container, .header-motto-container {
                 transition: opacity 0.5s ease-in-out;
+            }
+
+            h1, p {
+                transition: font-size 0.5s ease-in-out;
+                transition-delay: 0.0s;
             }
             h1 {
                 text-shadow: $header-video-shadow-brand;
@@ -36,6 +42,25 @@ header {
             }
             p.header-motto {
                 text-shadow: $header-video-shadow-motto;
+            }
+        }
+
+        &.video-header-normal {
+            height: $header-video-height-normal;
+
+            h1 {
+                font-size: 2.8rem;
+            }
+
+            p.header-motto {
+                font-size: 1.2rem;
+            }
+        }
+
+        &.video-header-large {
+            height: $header-video-height-large;
+
+            p.header-motto {
                 font-size: 1.6rem;
             }
         }

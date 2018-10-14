@@ -3,7 +3,7 @@
 {{-- Navbar and header--}}
 @push("prebody")
     @include("component.navbar")
-    <header-video title="Intercraft" lead="Minecraft 1.12 Survival Server" video="/video/header">
+    <header-video ref="header" {!! header_attributes($header) !!}>
     </header-video>
 @endpush
 

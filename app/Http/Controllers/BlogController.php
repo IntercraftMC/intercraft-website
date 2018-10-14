@@ -8,6 +8,6 @@ class BlogController extends Controller
 {
     public function index ()
     {
-        return ajaxView("blog", "title.blog");
+        return ajax_view("blog", "title.blog");
     }
 }

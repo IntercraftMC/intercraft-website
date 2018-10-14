@@ -8,6 +8,6 @@ class MapController extends Controller
 {
     public function index ()
     {
-        return ajaxView("map", "title.map");
+        return ajax_view("map", "title.map");
     }
 }
