@@ -1,4 +1,9 @@
 /**
+ * The distance a hidden section slides when revealed
+ */
+const SECTION_INTRO_SLIDE = 70; // From Sass variable
+
+/**
  * Extend jQuery to allow checking if an element is inside the viewport
  *
  * https: //medium.com/talk-like/detecting-if-an-element-is-in-the-viewport-jquery-a6a4405a3ea2
@@ -8,6 +13,8 @@ $.fn.isInViewport = function () {
     var elementBottom = elementTop + $(this).outerHeight();
     var viewportTop = $(window).scrollTop();
     var viewportBottom = viewportTop + $(window).height();
+    if (elementBottom - SECTION_INTRO_SLIDE < viewportBottom)
+        return true;
     var padding = $(window).height() * 0.2;
     return elementBottom > viewportTop + padding && elementTop < viewportBottom - padding;
 };

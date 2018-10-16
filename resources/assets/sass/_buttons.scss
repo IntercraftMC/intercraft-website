@@ -2,7 +2,12 @@
     border-radius: 0 !important;
 }
 
+.btn-md {
+    padding: 0.45rem 1rem;
+}
+
 .btn-round {
+    @include rounding(37px);
     &.btn-lg {
         @include rounding(45px);
     }

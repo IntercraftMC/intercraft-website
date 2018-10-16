@@ -35,6 +35,15 @@ function header_attributes($header)
     return implode(' ', $result);
 }
 
+function config_options ($config)
+{
+    $results = [];
+    foreach (config($config) as $key => $value) {
+        $results[] = "<option value=\"$key\">$value</option>";
+    }
+    return implode("\n", $results);
+}
+
 function discord_invitation ()
 {
     return "https://discord.gg/" . config("discord.invite_code");

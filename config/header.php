@@ -30,5 +30,11 @@ return [
         "lead"  => "",
         "size"  => "normal",
         "video" => "video/header"
+    ],
+    "join" => [
+        "title" => "Join Intercraft",
+        "lead"  => "Become a member by filling out the application below",
+        "size"  => "normal",
+        "video" => "video/header"
     ]
 ];

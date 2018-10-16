@@ -6,5 +6,6 @@ return [
     "blog"     => "Blog",
     "showcase" => "Showcase",
     "members"  => "Members",
-    "map"      => "Live Map"
+    "map"      => "Live Map",
+    "join"     => "Apply to Join"
 ];

@@ -2,11 +2,14 @@ section, footer {
     transition: transform $section-fade-duration,
                 opacity $section-fade-duration;
     transition-timing-function: cubic-bezier(0.0, 0.0, 0.2, 1);
-    transform: translateY(70px);
+    transform: translateY($section-intro-slide);
 }
 section {
     opacity: 0;
     padding-top: 60px;
+    &.no-margin {
+        padding-top: 0px;
+    }
     .section-heading {
         margin-bottom: 40px;
         color: rgb(51, 51, 51);

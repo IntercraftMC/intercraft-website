@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 12);
+/******/ 	return __webpack_require__(__webpack_require__.s = 13);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -71,7 +71,7 @@
 
 
 var bind = __webpack_require__(7);
-var isBuffer = __webpack_require__(23);
+var isBuffer = __webpack_require__(24);
 
 /*global toString:true*/
 
@@ -402,6 +402,115 @@ module.exports = g;
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports) {
+
+/* globals __VUE_SSR_CONTEXT__ */
+
+// IMPORTANT: Do NOT use ES2015 features in this file.
+// This module is a runtime utility for cleaner component module output and will
+// be included in the final webpack user bundle.
+
+module.exports = function normalizeComponent (
+  rawScriptExports,
+  compiledTemplate,
+  functionalTemplate,
+  injectStyles,
+  scopeId,
+  moduleIdentifier /* server only */
+) {
+  var esModule
+  var scriptExports = rawScriptExports = rawScriptExports || {}
+
+  // ES6 modules interop
+  var type = typeof rawScriptExports.default
+  if (type === 'object' || type === 'function') {
+    esModule = rawScriptExports
+    scriptExports = rawScriptExports.default
+  }
+
+  // Vue.extend constructor export interop
+  var options = typeof scriptExports === 'function'
+    ? scriptExports.options
+    : scriptExports
+
+  // render functions
+  if (compiledTemplate) {
+    options.render = compiledTemplate.render
+    options.staticRenderFns = compiledTemplate.staticRenderFns
+    options._compiled = true
+  }
+
+  // functional template
+  if (functionalTemplate) {
+    options.functional = true
+  }
+
+  // scopedId
+  if (scopeId) {
+    options._scopeId = scopeId
+  }
+
+  var hook
+  if (moduleIdentifier) { // server build
+    hook = function (context) {
+      // 2.3 injection
+      context =
+        context || // cached call
+        (this.$vnode && this.$vnode.ssrContext) || // stateful
+        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
+      // 2.2 with runInNewContext: true
+      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
+        context = __VUE_SSR_CONTEXT__
+      }
+      // inject component styles
+      if (injectStyles) {
+        injectStyles.call(this, context)
+      }
+      // register component module identifier for async chunk inferrence
+      if (context && context._registeredComponents) {
+        context._registeredComponents.add(moduleIdentifier)
+      }
+    }
+    // used by ssr in case component is cached and beforeCreate
+    // never gets called
+    options._ssrRegister = hook
+  } else if (injectStyles) {
+    hook = injectStyles
+  }
+
+  if (hook) {
+    var functional = options.functional
+    var existing = functional
+      ? options.render
+      : options.beforeCreate
+
+    if (!functional) {
+      // inject component registration as beforeCreate hook
+      options.beforeCreate = existing
+        ? [].concat(existing, hook)
+        : [hook]
+    } else {
+      // for template-only hot-reload because in that case the render fn doesn't
+      // go through the normalizer
+      options._injectStyles = hook
+      // register for functioal component in vue file
+      options.render = function renderWithStyleInjection (h, context) {
+        hook.call(context)
+        return existing(h, context)
+      }
+    }
+  }
+
+  return {
+    esModule: esModule,
+    exports: scriptExports,
+    options: options
+  }
+}
+
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -10772,14 +10881,14 @@ return jQuery;
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(0);
-var normalizeHeaderName = __webpack_require__(25);
+var normalizeHeaderName = __webpack_require__(26);
 
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -10874,115 +10983,6 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 module.exports = defaults;
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-/* globals __VUE_SSR_CONTEXT__ */
-
-// IMPORTANT: Do NOT use ES2015 features in this file.
-// This module is a runtime utility for cleaner component module output and will
-// be included in the final webpack user bundle.
-
-module.exports = function normalizeComponent (
-  rawScriptExports,
-  compiledTemplate,
-  functionalTemplate,
-  injectStyles,
-  scopeId,
-  moduleIdentifier /* server only */
-) {
-  var esModule
-  var scriptExports = rawScriptExports = rawScriptExports || {}
-
-  // ES6 modules interop
-  var type = typeof rawScriptExports.default
-  if (type === 'object' || type === 'function') {
-    esModule = rawScriptExports
-    scriptExports = rawScriptExports.default
-  }
-
-  // Vue.extend constructor export interop
-  var options = typeof scriptExports === 'function'
-    ? scriptExports.options
-    : scriptExports
-
-  // render functions
-  if (compiledTemplate) {
-    options.render = compiledTemplate.render
-    options.staticRenderFns = compiledTemplate.staticRenderFns
-    options._compiled = true
-  }
-
-  // functional template
-  if (functionalTemplate) {
-    options.functional = true
-  }
-
-  // scopedId
-  if (scopeId) {
-    options._scopeId = scopeId
-  }
-
-  var hook
-  if (moduleIdentifier) { // server build
-    hook = function (context) {
-      // 2.3 injection
-      context =
-        context || // cached call
-        (this.$vnode && this.$vnode.ssrContext) || // stateful
-        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
-      // 2.2 with runInNewContext: true
-      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
-        context = __VUE_SSR_CONTEXT__
-      }
-      // inject component styles
-      if (injectStyles) {
-        injectStyles.call(this, context)
-      }
-      // register component module identifier for async chunk inferrence
-      if (context && context._registeredComponents) {
-        context._registeredComponents.add(moduleIdentifier)
-      }
-    }
-    // used by ssr in case component is cached and beforeCreate
-    // never gets called
-    options._ssrRegister = hook
-  } else if (injectStyles) {
-    hook = injectStyles
-  }
-
-  if (hook) {
-    var functional = options.functional
-    var existing = functional
-      ? options.render
-      : options.beforeCreate
-
-    if (!functional) {
-      // inject component registration as beforeCreate hook
-      options.beforeCreate = existing
-        ? [].concat(existing, hook)
-        : [hook]
-    } else {
-      // for template-only hot-reload because in that case the render fn doesn't
-      // go through the normalizer
-      options._injectStyles = hook
-      // register for functioal component in vue file
-      options.render = function renderWithStyleInjection (h, context) {
-        hook.call(context)
-        return existing(h, context)
-      }
-    }
-  }
-
-  return {
-    esModule: esModule,
-    exports: scriptExports,
-    options: options
-  }
-}
-
 
 /***/ }),
 /* 5 */
@@ -13741,12 +13741,12 @@ module.exports = function bind(fn, thisArg) {
 
 
 var utils = __webpack_require__(0);
-var settle = __webpack_require__(26);
-var buildURL = __webpack_require__(28);
-var parseHeaders = __webpack_require__(29);
-var isURLSameOrigin = __webpack_require__(30);
+var settle = __webpack_require__(27);
+var buildURL = __webpack_require__(29);
+var parseHeaders = __webpack_require__(30);
+var isURLSameOrigin = __webpack_require__(31);
 var createError = __webpack_require__(9);
-var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(31);
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(32);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -13843,7 +13843,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(32);
+      var cookies = __webpack_require__(33);
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -13927,7 +13927,7 @@ module.exports = function xhrAdapter(config) {
 "use strict";
 
 
-var enhanceError = __webpack_require__(27);
+var enhanceError = __webpack_require__(28);
 
 /**
  * Create an Error with the specified message, config, error code, request and response.
@@ -13987,12 +13987,286 @@ module.exports = Cancel;
 /* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(13);
-module.exports = __webpack_require__(63);
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/**
+ * Copyright Marc J. Schmidt. See the LICENSE file at the top-level
+ * directory of this distribution and at
+ * https://github.com/marcj/css-element-queries/blob/master/LICENSE.
+ */
+(function (root, factory) {
+    if (true) {
+        !(__WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) :
+				__WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+    } else if (typeof exports === "object") {
+        module.exports = factory();
+    } else {
+        root.ResizeSensor = factory();
+    }
+}(typeof window !== 'undefined' ? window : this, function () {
+
+    // Make sure it does not throw in a SSR (Server Side Rendering) situation
+    if (typeof window === "undefined") {
+        return null;
+    }
+    // Only used for the dirty checking, so the event callback count is limited to max 1 call per fps per sensor.
+    // In combination with the event based resize sensor this saves cpu time, because the sensor is too fast and
+    // would generate too many unnecessary events.
+    var requestAnimationFrame = window.requestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        function (fn) {
+            return window.setTimeout(fn, 20);
+        };
+
+    /**
+     * Iterate over each of the provided element(s).
+     *
+     * @param {HTMLElement|HTMLElement[]} elements
+     * @param {Function}                  callback
+     */
+    function forEachElement(elements, callback){
+        var elementsType = Object.prototype.toString.call(elements);
+        var isCollectionTyped = ('[object Array]' === elementsType
+            || ('[object NodeList]' === elementsType)
+            || ('[object HTMLCollection]' === elementsType)
+            || ('[object Object]' === elementsType)
+            || ('undefined' !== typeof jQuery && elements instanceof jQuery) //jquery
+            || ('undefined' !== typeof Elements && elements instanceof Elements) //mootools
+        );
+        var i = 0, j = elements.length;
+        if (isCollectionTyped) {
+            for (; i < j; i++) {
+                callback(elements[i]);
+            }
+        } else {
+            callback(elements);
+        }
+    }
+
+    /**
+    * Get element size
+    * @param {HTMLElement} element
+    * @returns {Object} {width, height}
+    */
+    function getElementSize(element) {
+        if (!element.getBoundingClientRect) {
+            return {
+                width: element.offsetWidth,
+                height: element.offsetHeight
+            }
+        }
+
+        var rect = element.getBoundingClientRect();
+        return {
+            width: Math.round(rect.width),
+            height: Math.round(rect.height)
+        }
+    }
+
+    /**
+     * Class for dimension change detection.
+     *
+     * @param {Element|Element[]|Elements|jQuery} element
+     * @param {Function} callback
+     *
+     * @constructor
+     */
+    var ResizeSensor = function(element, callback) {
+        /**
+         *
+         * @constructor
+         */
+        function EventQueue() {
+            var q = [];
+            this.add = function(ev) {
+                q.push(ev);
+            };
+
+            var i, j;
+            this.call = function() {
+                for (i = 0, j = q.length; i < j; i++) {
+                    q[i].call();
+                }
+            };
+
+            this.remove = function(ev) {
+                var newQueue = [];
+                for(i = 0, j = q.length; i < j; i++) {
+                    if(q[i] !== ev) newQueue.push(q[i]);
+                }
+                q = newQueue;
+            };
+
+            this.length = function() {
+                return q.length;
+            }
+        }
+
+        /**
+         *
+         * @param {HTMLElement} element
+         * @param {Function}    resized
+         */
+        function attachResizeEvent(element, resized) {
+            if (!element) return;
+            if (element.resizedAttached) {
+                element.resizedAttached.add(resized);
+                return;
+            }
+
+            element.resizedAttached = new EventQueue();
+            element.resizedAttached.add(resized);
+
+            element.resizeSensor = document.createElement('div');
+            element.resizeSensor.dir = 'ltr';
+            element.resizeSensor.className = 'resize-sensor';
+            var style = 'position: absolute; left: -10px; top: -10px; right: 0; bottom: 0; overflow: hidden; z-index: -1; visibility: hidden;';
+            var styleChild = 'position: absolute; left: 0; top: 0; transition: 0s;';
+
+            element.resizeSensor.style.cssText = style;
+            element.resizeSensor.innerHTML =
+                '<div class="resize-sensor-expand" style="' + style + '">' +
+                    '<div style="' + styleChild + '"></div>' +
+                '</div>' +
+                '<div class="resize-sensor-shrink" style="' + style + '">' +
+                    '<div style="' + styleChild + ' width: 200%; height: 200%"></div>' +
+                '</div>';
+            element.appendChild(element.resizeSensor);
+
+            var position = window.getComputedStyle(element).getPropertyValue('position');
+            if ('absolute' !== position && 'relative' !== position && 'fixed' !== position) {
+                element.style.position = 'relative';
+            }
+
+            var expand = element.resizeSensor.childNodes[0];
+            var expandChild = expand.childNodes[0];
+            var shrink = element.resizeSensor.childNodes[1];
+            var dirty, rafId, newWidth, newHeight;
+            var size = getElementSize(element);
+            var lastWidth = size.width;
+            var lastHeight = size.height;
+
+            var reset = function() {
+                //set display to block, necessary otherwise hidden elements won't ever work
+                var invisible = element.offsetWidth === 0 && element.offsetHeight === 0;
+
+                if (invisible) {
+                    var saveDisplay = element.style.display;
+                    element.style.display = 'block';
+                }
+
+                expandChild.style.width = '100000px';
+                expandChild.style.height = '100000px';
+
+                expand.scrollLeft = 100000;
+                expand.scrollTop = 100000;
+
+                shrink.scrollLeft = 100000;
+                shrink.scrollTop = 100000;
+
+                if (invisible) {
+                    element.style.display = saveDisplay;
+                }
+            };
+            element.resizeSensor.resetSensor = reset;
+
+            var onResized = function() {
+                rafId = 0;
+
+                if (!dirty) return;
+
+                lastWidth = newWidth;
+                lastHeight = newHeight;
+
+                if (element.resizedAttached) {
+                    element.resizedAttached.call();
+                }
+            };
+
+            var onScroll = function() {
+                var size = getElementSize(element);
+                var newWidth = size.width;
+                var newHeight = size.height;
+                dirty = newWidth != lastWidth || newHeight != lastHeight;
+
+                if (dirty && !rafId) {
+                    rafId = requestAnimationFrame(onResized);
+                }
+
+                reset();
+            };
+
+            var addEvent = function(el, name, cb) {
+                if (el.attachEvent) {
+                    el.attachEvent('on' + name, cb);
+                } else {
+                    el.addEventListener(name, cb);
+                }
+            };
+
+            addEvent(expand, 'scroll', onScroll);
+            addEvent(shrink, 'scroll', onScroll);
+            
+			// Fix for custom Elements
+			requestAnimationFrame(reset);
+        }
+
+        forEachElement(element, function(elem){
+            attachResizeEvent(elem, callback);
+        });
+
+        this.detach = function(ev) {
+            ResizeSensor.detach(element, ev);
+        };
+
+        this.reset = function() {
+            element.resizeSensor.resetSensor();
+        };
+    };
+
+    ResizeSensor.reset = function(element, ev) {
+        forEachElement(element, function(elem){
+            elem.resizeSensor.resetSensor();
+        });
+    };
+
+    ResizeSensor.detach = function(element, ev) {
+        forEachElement(element, function(elem){
+            if (!elem) return;
+            if(elem.resizedAttached && typeof ev === "function"){
+                elem.resizedAttached.remove(ev);
+                if(elem.resizedAttached.length()) return;
+            }
+            if (elem.resizeSensor) {
+                if (elem.contains(elem.resizeSensor)) {
+                    elem.removeChild(elem.resizeSensor);
+                }
+                delete elem.resizeSensor;
+                delete elem.resizedAttached;
+            }
+        });
+    };
+
+    return ResizeSensor;
+
+}));
 
 
 /***/ }),
 /* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(14);
+module.exports = __webpack_require__(69);
+
+
+/***/ }),
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -14002,17 +14276,17 @@ module.exports = __webpack_require__(63);
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-__webpack_require__(14);
+__webpack_require__(15);
 
-__webpack_require__(44);
-__webpack_require__(45);
-__webpack_require__(46);
+__webpack_require__(47);
 __webpack_require__(48);
-
 __webpack_require__(49);
-__webpack_require__(58);
-__webpack_require__(59);
-__webpack_require__(60);
+__webpack_require__(51);
+
+__webpack_require__(52);
+__webpack_require__(64);
+__webpack_require__(65);
+__webpack_require__(66);
 
 /**
  * Invoked when the browser starts loading a new page
@@ -14040,11 +14314,11 @@ $(document).ready(function () {
 });
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-window._ = __webpack_require__(15);
+window._ = __webpack_require__(16);
 window.Popper = __webpack_require__(5).default;
 
 /**
@@ -14054,9 +14328,9 @@ window.Popper = __webpack_require__(5).default;
  */
 
 try {
-  window.$ = window.jQuery = __webpack_require__(2);
+  window.$ = window.jQuery = __webpack_require__(3);
 
-  __webpack_require__(17);
+  __webpack_require__(18);
 } catch (e) {}
 
 /**
@@ -14064,7 +14338,7 @@ try {
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
-window.Vue = __webpack_require__(18);
+window.Vue = __webpack_require__(19);
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
@@ -14072,7 +14346,7 @@ window.Vue = __webpack_require__(18);
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-window.axios = __webpack_require__(21);
+window.axios = __webpack_require__(22);
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
@@ -14093,15 +14367,15 @@ if (token) {
 /**
  * Include Photoswipe for the gallery/showcase
  */
-window.PhotoSwipe = __webpack_require__(40);
-window.PhotoSwipeUI = __webpack_require__(41);
+window.PhotoSwipe = __webpack_require__(41);
+window.PhotoSwipeUI = __webpack_require__(42);
 
 /**
  * Other features
  */
-window.ElementQueries = __webpack_require__(76);
-__webpack_require__(42);
-__webpack_require__(43);
+window.ElementQueries = __webpack_require__(43);
+__webpack_require__(45);
+__webpack_require__(46);
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
@@ -14121,7 +14395,7 @@ __webpack_require__(43);
 // });
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -31231,10 +31505,10 @@ __webpack_require__(43);
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(16)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(17)(module)))
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -31262,7 +31536,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*!
@@ -31271,7 +31545,7 @@ module.exports = function(module) {
   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
   */
 (function (global, factory) {
-   true ? factory(exports, __webpack_require__(2), __webpack_require__(5)) :
+   true ? factory(exports, __webpack_require__(3), __webpack_require__(5)) :
   typeof define === 'function' && define.amd ? define(['exports', 'jquery', 'popper.js'], factory) :
   (factory((global.bootstrap = {}),global.jQuery,global.Popper));
 }(this, (function (exports,$,Popper) { 'use strict';
@@ -35212,7 +35486,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46175,10 +46449,10 @@ Vue.compile = compileToFunctions;
 
 module.exports = Vue;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(19).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(20).setImmediate))
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {var scope = (typeof global !== "undefined" && global) ||
@@ -46234,7 +46508,7 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(20);
+__webpack_require__(21);
 // On some exotic environments, it's not clear which object `setimmediate` was
 // able to install onto.  Search each possibility in the same order as the
 // `setimmediate` library.
@@ -46248,7 +46522,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -46441,13 +46715,13 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(6)))
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(22);
+module.exports = __webpack_require__(23);
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46455,8 +46729,8 @@ module.exports = __webpack_require__(22);
 
 var utils = __webpack_require__(0);
 var bind = __webpack_require__(7);
-var Axios = __webpack_require__(24);
-var defaults = __webpack_require__(3);
+var Axios = __webpack_require__(25);
+var defaults = __webpack_require__(4);
 
 /**
  * Create an instance of Axios
@@ -46490,14 +46764,14 @@ axios.create = function create(instanceConfig) {
 
 // Expose Cancel & CancelToken
 axios.Cancel = __webpack_require__(11);
-axios.CancelToken = __webpack_require__(38);
+axios.CancelToken = __webpack_require__(39);
 axios.isCancel = __webpack_require__(10);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(39);
+axios.spread = __webpack_require__(40);
 
 module.exports = axios;
 
@@ -46506,7 +46780,7 @@ module.exports.default = axios;
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports) {
 
 /*!
@@ -46533,16 +46807,16 @@ function isSlowBuffer (obj) {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var defaults = __webpack_require__(3);
+var defaults = __webpack_require__(4);
 var utils = __webpack_require__(0);
-var InterceptorManager = __webpack_require__(33);
-var dispatchRequest = __webpack_require__(34);
+var InterceptorManager = __webpack_require__(34);
+var dispatchRequest = __webpack_require__(35);
 
 /**
  * Create a new instance of Axios
@@ -46619,7 +46893,7 @@ module.exports = Axios;
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46638,7 +46912,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46671,7 +46945,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46699,7 +46973,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46772,7 +47046,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46832,7 +47106,7 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46907,7 +47181,7 @@ module.exports = (
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46950,7 +47224,7 @@ module.exports = btoa;
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47010,7 +47284,7 @@ module.exports = (
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47069,18 +47343,18 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var transformData = __webpack_require__(35);
+var transformData = __webpack_require__(36);
 var isCancel = __webpack_require__(10);
-var defaults = __webpack_require__(3);
-var isAbsoluteURL = __webpack_require__(36);
-var combineURLs = __webpack_require__(37);
+var defaults = __webpack_require__(4);
+var isAbsoluteURL = __webpack_require__(37);
+var combineURLs = __webpack_require__(38);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -47162,7 +47436,7 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47189,7 +47463,7 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47210,7 +47484,7 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47231,7 +47505,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47295,7 +47569,7 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47329,7 +47603,7 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! PhotoSwipe - v4.1.2 - 2017-04-05
@@ -51072,7 +51346,7 @@ _registerModule('History', {
 });
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! PhotoSwipe Default UI - 4.1.2 - 2017-04-05
@@ -51943,7 +52217,556 @@ return PhotoSwipeUI_Default;
 
 
 /***/ }),
-/* 42 */
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = {
+    ResizeSensor: __webpack_require__(12),
+    ElementQueries: __webpack_require__(44)
+};
+
+
+/***/ }),
+/* 44 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/**
+ * Copyright Marc J. Schmidt. See the LICENSE file at the top-level
+ * directory of this distribution and at
+ * https://github.com/marcj/css-element-queries/blob/master/LICENSE.
+ */
+(function (root, factory) {
+    if (true) {
+        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(12)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+    } else if (typeof exports === "object") {
+        module.exports = factory(require('./ResizeSensor.js'));
+    } else {
+        root.ElementQueries = factory(root.ResizeSensor);
+        root.ElementQueries.listen();
+    }
+}(typeof window !== 'undefined' ? window : this, function (ResizeSensor) {
+
+    /**
+     *
+     * @type {Function}
+     * @constructor
+     */
+    var ElementQueries = function () {
+        //<style> element with our dynamically created styles
+        var cssStyleElement;
+
+        //all rules found for element queries
+        var allQueries = {};
+
+        //association map to identify which selector belongs to a element from the animationstart event.
+        var idToSelectorMapping = [];
+
+        /**
+         *
+         * @param element
+         * @returns {Number}
+         */
+        function getEmSize(element) {
+            if (!element) {
+                element = document.documentElement;
+            }
+            var fontSize = window.getComputedStyle(element, null).fontSize;
+            return parseFloat(fontSize) || 16;
+        }
+
+        /**
+         * Get element size
+         * @param {HTMLElement} element
+         * @returns {Object} {width, height}
+         */
+        function getElementSize(element) {
+            if (!element.getBoundingClientRect) {
+                return {
+                    width: element.offsetWidth,
+                    height: element.offsetHeight
+                }
+            }
+
+            var rect = element.getBoundingClientRect();
+            return {
+                width: Math.round(rect.width),
+                height: Math.round(rect.height)
+            }
+        }
+
+        /**
+         *
+         * @copyright https://github.com/Mr0grog/element-query/blob/master/LICENSE
+         *
+         * @param {HTMLElement} element
+         * @param {*} value
+         * @returns {*}
+         */
+        function convertToPx(element, value) {
+            var numbers = value.split(/\d/);
+            var units = numbers[numbers.length - 1];
+            value = parseFloat(value);
+            switch (units) {
+                case "px":
+                    return value;
+                case "em":
+                    return value * getEmSize(element);
+                case "rem":
+                    return value * getEmSize();
+                // Viewport units!
+                // According to http://quirksmode.org/mobile/tableViewport.html
+                // documentElement.clientWidth/Height gets us the most reliable info
+                case "vw":
+                    return value * document.documentElement.clientWidth / 100;
+                case "vh":
+                    return value * document.documentElement.clientHeight / 100;
+                case "vmin":
+                case "vmax":
+                    var vw = document.documentElement.clientWidth / 100;
+                    var vh = document.documentElement.clientHeight / 100;
+                    var chooser = Math[units === "vmin" ? "min" : "max"];
+                    return value * chooser(vw, vh);
+                default:
+                    return value;
+                // for now, not supporting physical units (since they are just a set number of px)
+                // or ex/ch (getting accurate measurements is hard)
+            }
+        }
+
+        /**
+         *
+         * @param {HTMLElement} element
+         * @param {String} id
+         * @constructor
+         */
+        function SetupInformation(element, id) {
+            this.element = element;
+            var key, option, elementSize, value, actualValue, attrValues, attrValue, attrName;
+
+            var attributes = ['min-width', 'min-height', 'max-width', 'max-height'];
+
+            /**
+             * Extracts the computed width/height and sets to min/max- attribute.
+             */
+            this.call = function () {
+                // extract current dimensions
+                elementSize = getElementSize(this.element);
+
+                attrValues = {};
+
+                for (key in allQueries[id]) {
+                    if (!allQueries[id].hasOwnProperty(key)) {
+                        continue;
+                    }
+                    option = allQueries[id][key];
+
+                    value = convertToPx(this.element, option.value);
+
+                    actualValue = option.property === 'width' ? elementSize.width : elementSize.height;
+                    attrName = option.mode + '-' + option.property;
+                    attrValue = '';
+
+                    if (option.mode === 'min' && actualValue >= value) {
+                        attrValue += option.value;
+                    }
+
+                    if (option.mode === 'max' && actualValue <= value) {
+                        attrValue += option.value;
+                    }
+
+                    if (!attrValues[attrName]) attrValues[attrName] = '';
+                    if (attrValue && -1 === (' ' + attrValues[attrName] + ' ').indexOf(' ' + attrValue + ' ')) {
+                        attrValues[attrName] += ' ' + attrValue;
+                    }
+                }
+
+                for (var k in attributes) {
+                    if (!attributes.hasOwnProperty(k)) continue;
+
+                    if (attrValues[attributes[k]]) {
+                        this.element.setAttribute(attributes[k], attrValues[attributes[k]].substr(1));
+                    } else {
+                        this.element.removeAttribute(attributes[k]);
+                    }
+                }
+            };
+        }
+
+        /**
+         * @param {HTMLElement} element
+         * @param {Object}      id
+         */
+        function setupElement(element, id) {
+            if (!element.elementQueriesSetupInformation) {
+                element.elementQueriesSetupInformation = new SetupInformation(element, id);
+            }
+            if (!element.elementQueriesSensor) {
+                element.elementQueriesSensor = new ResizeSensor(element, function () {
+                    element.elementQueriesSetupInformation.call();
+                });
+            }
+
+            element.elementQueriesSetupInformation.call();
+        }
+
+        /**
+         * Stores rules to the selector that should be applied once resized.
+         *
+         * @param {String} selector
+         * @param {String} mode min|max
+         * @param {String} property width|height
+         * @param {String} value
+         */
+        function queueQuery(selector, mode, property, value) {
+            if (typeof(allQueries[selector]) === 'undefined') {
+                allQueries[selector] = [];
+                // add animation to trigger animationstart event, so we know exactly when a element appears in the DOM
+
+                var id = idToSelectorMapping.length;
+                cssStyleElement.innerHTML += '\n' + selector + ' {animation: 0.1s element-queries;}';
+                cssStyleElement.innerHTML += '\n' + selector + ' > .resize-sensor {min-width: '+id+'px;}';
+                idToSelectorMapping.push(selector);
+            }
+
+            allQueries[selector].push({
+                mode: mode,
+                property: property,
+                value: value
+            });
+        }
+
+        function getQuery(container) {
+            var query;
+            if (document.querySelectorAll) query = (container) ? container.querySelectorAll.bind(container) : document.querySelectorAll.bind(document);
+            if (!query && 'undefined' !== typeof $$) query = $$;
+            if (!query && 'undefined' !== typeof jQuery) query = jQuery;
+
+            if (!query) {
+                throw 'No document.querySelectorAll, jQuery or Mootools\'s $$ found.';
+            }
+
+            return query;
+        }
+
+        /**
+         * If animationStart didn't catch a new element in the DOM, we can manually search for it
+         */
+        function findElementQueriesElements(container) {
+            var query = getQuery(container);
+
+            for (var selector in allQueries) if (allQueries.hasOwnProperty(selector)) {
+                // find all elements based on the extract query selector from the element query rule
+                var elements = query(selector, container);
+
+                for (var i = 0, j = elements.length; i < j; i++) {
+                    setupElement(elements[i], selector);
+                }
+            }
+        }
+
+        /**
+         *
+         * @param {HTMLElement} element
+         */
+        function attachResponsiveImage(element) {
+            var children = [];
+            var rules = [];
+            var sources = [];
+            var defaultImageId = 0;
+            var lastActiveImage = -1;
+            var loadedImages = [];
+
+            for (var i in element.children) {
+                if (!element.children.hasOwnProperty(i)) continue;
+
+                if (element.children[i].tagName && element.children[i].tagName.toLowerCase() === 'img') {
+                    children.push(element.children[i]);
+
+                    var minWidth = element.children[i].getAttribute('min-width') || element.children[i].getAttribute('data-min-width');
+                    //var minHeight = element.children[i].getAttribute('min-height') || element.children[i].getAttribute('data-min-height');
+                    var src = element.children[i].getAttribute('data-src') || element.children[i].getAttribute('url');
+
+                    sources.push(src);
+
+                    var rule = {
+                        minWidth: minWidth
+                    };
+
+                    rules.push(rule);
+
+                    if (!minWidth) {
+                        defaultImageId = children.length - 1;
+                        element.children[i].style.display = 'block';
+                    } else {
+                        element.children[i].style.display = 'none';
+                    }
+                }
+            }
+
+            lastActiveImage = defaultImageId;
+
+            function check() {
+                var imageToDisplay = false, i;
+
+                for (i in children) {
+                    if (!children.hasOwnProperty(i)) continue;
+
+                    if (rules[i].minWidth) {
+                        if (element.offsetWidth > rules[i].minWidth) {
+                            imageToDisplay = i;
+                        }
+                    }
+                }
+
+                if (!imageToDisplay) {
+                    //no rule matched, show default
+                    imageToDisplay = defaultImageId;
+                }
+
+                if (lastActiveImage !== imageToDisplay) {
+                    //image change
+
+                    if (!loadedImages[imageToDisplay]) {
+                        //image has not been loaded yet, we need to load the image first in memory to prevent flash of
+                        //no content
+
+                        var image = new Image();
+                        image.onload = function () {
+                            children[imageToDisplay].src = sources[imageToDisplay];
+
+                            children[lastActiveImage].style.display = 'none';
+                            children[imageToDisplay].style.display = 'block';
+
+                            loadedImages[imageToDisplay] = true;
+
+                            lastActiveImage = imageToDisplay;
+                        };
+
+                        image.src = sources[imageToDisplay];
+                    } else {
+                        children[lastActiveImage].style.display = 'none';
+                        children[imageToDisplay].style.display = 'block';
+                        lastActiveImage = imageToDisplay;
+                    }
+                } else {
+                    //make sure for initial check call the .src is set correctly
+                    children[imageToDisplay].src = sources[imageToDisplay];
+                }
+            }
+
+            element.resizeSensor = new ResizeSensor(element, check);
+            check();
+        }
+
+        function findResponsiveImages() {
+            var query = getQuery();
+
+            var elements = query('[data-responsive-image],[responsive-image]');
+            for (var i = 0, j = elements.length; i < j; i++) {
+                attachResponsiveImage(elements[i]);
+            }
+        }
+
+        var regex = /,?[\s\t]*([^,\n]*?)((?:\[[\s\t]*?(?:min|max)-(?:width|height)[\s\t]*?[~$\^]?=[\s\t]*?"[^"]*?"[\s\t]*?])+)([^,\n\s\{]*)/mgi;
+        var attrRegex = /\[[\s\t]*?(min|max)-(width|height)[\s\t]*?[~$\^]?=[\s\t]*?"([^"]*?)"[\s\t]*?]/mgi;
+
+        /**
+         * @param {String} css
+         */
+        function extractQuery(css) {
+            var match, smatch, attrs, attrMatch;
+
+            css = css.replace(/'/g, '"');
+            while (null !== (match = regex.exec(css))) {
+                smatch = match[1] + match[3];
+                attrs = match[2];
+
+                while (null !== (attrMatch = attrRegex.exec(attrs))) {
+                    queueQuery(smatch, attrMatch[1], attrMatch[2], attrMatch[3]);
+                }
+            }
+        }
+
+        /**
+         * @param {CssRule[]|String} rules
+         */
+        function readRules(rules) {
+            var selector = '';
+
+            if (!rules) {
+                return;
+            }
+
+            if ('string' === typeof rules) {
+                rules = rules.toLowerCase();
+                if (-1 !== rules.indexOf('min-width') || -1 !== rules.indexOf('max-width')) {
+                    extractQuery(rules);
+                }
+            } else {
+                for (var i = 0, j = rules.length; i < j; i++) {
+                    if (1 === rules[i].type) {
+                        selector = rules[i].selectorText || rules[i].cssText;
+                        if (-1 !== selector.indexOf('min-height') || -1 !== selector.indexOf('max-height')) {
+                            extractQuery(selector);
+                        } else if (-1 !== selector.indexOf('min-width') || -1 !== selector.indexOf('max-width')) {
+                            extractQuery(selector);
+                        }
+                    } else if (4 === rules[i].type) {
+                        readRules(rules[i].cssRules || rules[i].rules);
+                    } else if (3 === rules[i].type) {
+                        if(rules[i].styleSheet.hasOwnProperty("cssRules")) {
+                            readRules(rules[i].styleSheet.cssRules);
+                        }
+                    }
+                }
+            }
+        }
+
+        var defaultCssInjected = false;
+
+        /**
+         * Searches all css rules and setups the event listener to all elements with element query rules..
+         */
+        this.init = function () {
+            var animationStart = 'animationstart';
+            if (typeof document.documentElement.style['webkitAnimationName'] !== 'undefined') {
+                animationStart = 'webkitAnimationStart';
+            } else if (typeof document.documentElement.style['MozAnimationName'] !== 'undefined') {
+                animationStart = 'mozanimationstart';
+            } else if (typeof document.documentElement.style['OAnimationName'] !== 'undefined') {
+                animationStart = 'oanimationstart';
+            }
+
+            document.body.addEventListener(animationStart, function (e) {
+                var element = e.target;
+                var styles = window.getComputedStyle(element, null);
+
+                if (-1 !== styles.getPropertyValue('animation-name').indexOf('element-queries')) {
+                    element.elementQueriesSensor = new ResizeSensor(element, function () {
+                        if (element.elementQueriesSetupInformation) {
+                            element.elementQueriesSetupInformation.call();
+                        }
+                    });
+
+                    var sensorStyles = window.getComputedStyle(element.resizeSensor, null);
+                    var id = sensorStyles.getPropertyValue('min-width');
+                    id = parseInt(id.replace('px', ''));
+                    setupElement(e.target, idToSelectorMapping[id]);
+                }
+            });
+
+            if (!defaultCssInjected) {
+                cssStyleElement = document.createElement('style');
+                cssStyleElement.type = 'text/css';
+                cssStyleElement.innerHTML = '[responsive-image] > img, [data-responsive-image] {overflow: hidden; padding: 0; } [responsive-image] > img, [data-responsive-image] > img {width: 100%;}';
+
+                //safari wants at least one rule in keyframes to start working
+                cssStyleElement.innerHTML += '\n@keyframes element-queries { 0% { visibility: inherit; } }';
+                document.getElementsByTagName('head')[0].appendChild(cssStyleElement);
+                defaultCssInjected = true;
+            }
+
+            for (var i = 0, j = document.styleSheets.length; i < j; i++) {
+                try {
+                    if (document.styleSheets[i].href && 0 === document.styleSheets[i].href.indexOf('file://')) {
+                        console.log("CssElementQueries: unable to parse local css files, " + document.styleSheets[i].href);
+                    }
+
+                    readRules(document.styleSheets[i].cssRules || document.styleSheets[i].rules || document.styleSheets[i].cssText);
+                } catch (e) {
+                }
+            }
+
+            findResponsiveImages();
+        };
+
+        /**
+         * Go through all collected rules (readRules()) and attach the resize-listener.
+         * Not necessary to call it manually, since we detect automatically when new elements
+         * are available in the DOM. However, sometimes handy for dirty DOM modifications.
+         *
+         * @param {HTMLElement} container only elements of the container are considered (document.body if not set)
+         */
+        this.findElementQueriesElements = function (container) {
+            findElementQueriesElements(container);
+        };
+
+        this.update = function () {
+            this.init();
+        };
+    };
+
+    ElementQueries.update = function () {
+        ElementQueries.instance.update();
+    };
+
+    /**
+     * Removes all sensor and elementquery information from the element.
+     *
+     * @param {HTMLElement} element
+     */
+    ElementQueries.detach = function (element) {
+        if (element.elementQueriesSetupInformation) {
+            //element queries
+            element.elementQueriesSensor.detach();
+            delete element.elementQueriesSetupInformation;
+            delete element.elementQueriesSensor;
+
+        } else if (element.resizeSensor) {
+            //responsive image
+
+            element.resizeSensor.detach();
+            delete element.resizeSensor;
+        }
+    };
+
+    ElementQueries.init = function () {
+        if (!ElementQueries.instance) {
+            ElementQueries.instance = new ElementQueries();
+        }
+
+        ElementQueries.instance.init();
+    };
+
+    var domLoaded = function (callback) {
+        /* Mozilla, Chrome, Opera */
+        if (document.addEventListener) {
+            document.addEventListener('DOMContentLoaded', callback, false);
+        }
+        /* Safari, iCab, Konqueror */
+        else if (/KHTML|WebKit|iCab/i.test(navigator.userAgent)) {
+            var DOMLoadTimer = setInterval(function () {
+                if (/loaded|complete/i.test(document.readyState)) {
+                    callback();
+                    clearInterval(DOMLoadTimer);
+                }
+            }, 10);
+        }
+        /* Other web browsers */
+        else window.onload = callback;
+    };
+
+    ElementQueries.findElementQueriesElements = function (container) {
+        ElementQueries.instance.findElementQueriesElements(container);
+    };
+
+    ElementQueries.listen = function () {
+        domLoaded(ElementQueries.init);
+    };
+
+    return ElementQueries;
+
+}));
+
+
+/***/ }),
+/* 45 */
 /***/ (function(module, exports) {
 
 /* -----------------------------------------------
@@ -53489,7 +54312,7 @@ window.particlesJS.load = function(tag_id, path_config_json, callback){
 };
 
 /***/ }),
-/* 43 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -53502,7 +54325,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
  */
 !(function(root, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -53999,7 +54822,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
 /***/ }),
-/* 44 */
+/* 47 */
 /***/ (function(module, exports) {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -54074,16 +54897,16 @@ var EventQueue = function () {
 window.EventQueue = EventQueue;
 
 /***/ }),
-/* 45 */
+/* 48 */
 /***/ (function(module, exports) {
 
 window.form = {};
 
 /***/ }),
-/* 46 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var EventEmitter = __webpack_require__(47);
+var EventEmitter = __webpack_require__(50);
 
 /**
  * HTTP status codes
@@ -54305,7 +55128,7 @@ window.navigate = {
 };
 
 /***/ }),
-/* 47 */
+/* 50 */
 /***/ (function(module, exports) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -54613,8 +55436,13 @@ function isUndefined(arg) {
 
 
 /***/ }),
-/* 48 */
+/* 51 */
 /***/ (function(module, exports) {
+
+/**
+ * The distance a hidden section slides when revealed
+ */
+var SECTION_INTRO_SLIDE = 70; // From Sass variable
 
 /**
  * Extend jQuery to allow checking if an element is inside the viewport
@@ -54626,6 +55454,7 @@ $.fn.isInViewport = function () {
     var elementBottom = elementTop + $(this).outerHeight();
     var viewportTop = $(window).scrollTop();
     var viewportBottom = viewportTop + $(window).height();
+    if (elementBottom - SECTION_INTRO_SLIDE < viewportBottom) return true;
     var padding = $(window).height() * 0.2;
     return elementBottom > viewportTop + padding && elementTop < viewportBottom - padding;
 };
@@ -54641,12 +55470,13 @@ window.utils = {
 };
 
 /***/ }),
-/* 49 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
-Vue.component('discord-background', __webpack_require__(50));
-Vue.component('loading-logo', __webpack_require__(52));
-Vue.component('header-video', __webpack_require__(54));
+Vue.component('discord-background', __webpack_require__(53));
+Vue.component('loading-logo', __webpack_require__(55));
+Vue.component('header-video', __webpack_require__(58));
+Vue.component('paginated-form', __webpack_require__(61));
 
 // const COMPONENTS = [
 //     "example_component",
@@ -54660,15 +55490,15 @@ Vue.component('header-video', __webpack_require__(54));
 // });
 
 /***/ }),
-/* 50 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(2)
 /* script */
 var __vue_script__ = null
 /* template */
-var __vue_template__ = __webpack_require__(51)
+var __vue_template__ = __webpack_require__(54)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -54707,7 +55537,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 51 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -55199,15 +56029,15 @@ if (false) {
 }
 
 /***/ }),
-/* 52 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(2)
 /* script */
-var __vue_script__ = __webpack_require__(74)
+var __vue_script__ = __webpack_require__(56)
 /* template */
-var __vue_template__ = __webpack_require__(53)
+var __vue_template__ = __webpack_require__(57)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -55246,7 +56076,76 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 53 */
+/* 56 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            active: false,
+            step: false
+        };
+    },
+
+
+    methods: {
+        onFinished: function onFinished() {
+            if (!this.active && this.step) {
+                $(this.$el).removeClass("active");
+                $(this.$el).find("circle").first().off("animationiteration", this.onFinished);
+            }
+            this.step = !this.step;
+        },
+        cycle: function cycle() {
+            if (this.start()) this.stop();
+        },
+        start: function start() {
+            if (this.active) return false;
+            this.active = true;
+            $(this.$el).addClass("active").find("circle").first().on("animationiteration", this.onFinished);
+            return true;
+        },
+        stop: function stop() {
+            this.active = false;
+        }
+    }
+});
+
+/***/ }),
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -55460,15 +56359,15 @@ if (false) {
 }
 
 /***/ }),
-/* 54 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(4)
+var normalizeComponent = __webpack_require__(2)
 /* script */
-var __vue_script__ = __webpack_require__(55)
+var __vue_script__ = __webpack_require__(59)
 /* template */
-var __vue_template__ = __webpack_require__(56)
+var __vue_template__ = __webpack_require__(60)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -55507,7 +56406,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 55 */
+/* 59 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -55642,7 +56541,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 56 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -55711,8 +56610,218 @@ if (false) {
 }
 
 /***/ }),
-/* 57 */,
-/* 58 */
+/* 61 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(2)
+/* script */
+var __vue_script__ = __webpack_require__(62)
+/* template */
+var __vue_template__ = __webpack_require__(63)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/vue/PaginatedForm.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-971ddef4", Component.options)
+  } else {
+    hotAPI.reload("data-v-971ddef4", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 62 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            page: -1,
+            pages: null
+        };
+    },
+
+    methods: {
+        changePage: function changePage(event) {
+            this.setPage($(event.target).parents("li").prevAll().length);
+        },
+        setPage: function setPage(page) {
+            page = Math.min(this.pages.length - 1, Math.max(page, 0));
+            if (page == this.page) return;
+            $(this.$el).find(".container-breadcrumbs .active").removeClass("active");
+            $(this.$el).find(".container-breadcrumbs li[data-page=\"" + page + "\"]").addClass("active");
+            $(this.pages[page]).removeClass().addClass("active").height();
+            $(this.pages[page]).prevAll().removeClass().addClass("left");
+            $(this.pages[page]).nextAll().removeClass().addClass("right");
+            $(".container-pages").css("height", $(this.pages[page]).outerHeight() + "px");
+            this.page = page;
+        },
+        next: function next() {
+            this.setPage(this.page + 1);
+        },
+        previous: function previous() {
+            this.setPage(this.page - 1);
+        }
+    },
+    mounted: function mounted() {
+        var pages = $(this.$el).find(".container-pages").children();
+        this.pages = pages.toArray();
+        this.setPage(0);
+    }
+});
+
+/***/ }),
+/* 63 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "paginated-form" }, [
+    _c("section", { staticClass: "container-breadcrumbs" }, [
+      _c("div", { staticClass: "container" }, [
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-12" }, [
+            _c("hr"),
+            _vm._v(" "),
+            _c(
+              "ul",
+              _vm._l(_vm.pages, function(page, i) {
+                return _c(
+                  "li",
+                  { class: i == 0 ? "active" : "", attrs: { "data-page": i } },
+                  [
+                    _c(
+                      "div",
+                      {
+                        class: "bg-" + page.getAttribute("icon-color"),
+                        on: { click: _vm.changePage }
+                      },
+                      [_c("i", { class: page.getAttribute("icon") })]
+                    ),
+                    _vm._v(" "),
+                    _c("span", [_vm._v(_vm._s(page.getAttribute("label")))])
+                  ]
+                )
+              })
+            )
+          ])
+        ])
+      ])
+    ]),
+    _vm._v(" "),
+    _c("section", { staticClass: "container-pages" }, [_vm._t("default")], 2),
+    _vm._v(" "),
+    _c("section", { staticClass: "container-page-buttons" }, [
+      _c("div", { staticClass: "container" }, [
+        _c("div", { staticClass: "row" }, [
+          _c("div", { staticClass: "col-6 text-left" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-md btn-danger btn-round",
+                attrs: { type: "button" },
+                on: { click: _vm.previous }
+              },
+              [_vm._v("Back")]
+            )
+          ]),
+          _vm._v(" "),
+          _c("div", { staticClass: "col-6 text-right" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-md btn-primary btn-round",
+                attrs: { type: "button" },
+                on: { click: _vm.next }
+              },
+              [_vm._v("Next")]
+            )
+          ])
+        ])
+      ])
+    ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-971ddef4", module.exports)
+  }
+}
+
+/***/ }),
+/* 64 */
 /***/ (function(module, exports) {
 
 // $(".navbar-brand a").mouseover(function () {
@@ -55739,7 +56848,7 @@ navigate.event.on("scroll", function (pos) {
 });
 
 /***/ }),
-/* 59 */
+/* 65 */
 /***/ (function(module, exports) {
 
 /**
@@ -55855,10 +56964,10 @@ window.page = {
 };
 
 /***/ }),
-/* 60 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var CONFIG = __webpack_require__(61);
+var CONFIG = __webpack_require__(67);
 
 window.particles = {
     /**
@@ -55875,7 +56984,7 @@ window.particles = {
 };
 
 /***/ }),
-/* 61 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -55884,922 +56993,20 @@ window.particles = {
  * Format: <id>: require("config")
  */
 module.exports = {
-  "particles_header": __webpack_require__(62)
+  "particles_header": __webpack_require__(68)
 };
 
 /***/ }),
-/* 62 */
+/* 68 */
 /***/ (function(module, exports) {
 
 module.exports = {"particles":{"number":{"value":25,"density":{"enable":true,"value_area":800}},"color":{"value":"#ffffff"},"shape":{"type":"circle","stroke":{"width":0,"color":"#000000"},"polygon":{"nb_sides":5},"image":{"src":"img/github.svg","width":100,"height":100}},"opacity":{"value":0.5,"random":false,"anim":{"enable":false,"speed":1,"opacity_min":0.1,"sync":false}},"size":{"value":5,"random":true,"anim":{"enable":false,"speed":20,"size_min":0.3,"sync":false}},"line_linked":{"enable":true,"distance":150,"color":"#ffffff","opacity":0.4,"width":1},"move":{"enable":true,"speed":2,"direction":"none","random":false,"straight":false,"out_mode":"out","attract":{"enable":false,"rotateX":600,"rotateY":1200}}},"interactivity":{"detect_on":"canvas","events":{"onhover":{"enable":false,"mode":"repulse"},"onclick":{"enable":false,"mode":"push"},"resize":true},"modes":{"grab":{"distance":400,"line_linked":{"opacity":1}},"bubble":{"distance":400,"size":40,"duration":2,"opacity":8,"speed":3},"repulse":{"distance":200},"push":{"particles_nb":4},"remove":{"particles_nb":2}}},"retina_detect":true,"config_demo":{"hide_card":false,"background_color":"#b61924","background_image":"","background_position":"50% 50%","background_repeat":"no-repeat","background_size":"cover"}}
 
 /***/ }),
-/* 63 */
+/* 69 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 64 */,
-/* 65 */,
-/* 66 */,
-/* 67 */,
-/* 68 */,
-/* 69 */,
-/* 70 */,
-/* 71 */,
-/* 72 */,
-/* 73 */,
-/* 74 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    data: function data() {
-        return {
-            active: false,
-            step: false
-        };
-    },
-
-
-    methods: {
-        onFinished: function onFinished() {
-            if (!this.active && this.step) {
-                $(this.$el).removeClass("active");
-                $(this.$el).find("circle").first().off("animationiteration", this.onFinished);
-            }
-            this.step = !this.step;
-        },
-        cycle: function cycle() {
-            if (this.start()) this.stop();
-        },
-        start: function start() {
-            if (this.active) return false;
-            this.active = true;
-            $(this.$el).addClass("active").find("circle").first().on("animationiteration", this.onFinished);
-            return true;
-        },
-        stop: function stop() {
-            this.active = false;
-        }
-    }
-});
-
-/***/ }),
-/* 75 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/**
- * Copyright Marc J. Schmidt. See the LICENSE file at the top-level
- * directory of this distribution and at
- * https://github.com/marcj/css-element-queries/blob/master/LICENSE.
- */
-(function (root, factory) {
-    if (true) {
-        !(__WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) :
-				__WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-    } else if (typeof exports === "object") {
-        module.exports = factory();
-    } else {
-        root.ResizeSensor = factory();
-    }
-}(typeof window !== 'undefined' ? window : this, function () {
-
-    // Make sure it does not throw in a SSR (Server Side Rendering) situation
-    if (typeof window === "undefined") {
-        return null;
-    }
-    // Only used for the dirty checking, so the event callback count is limited to max 1 call per fps per sensor.
-    // In combination with the event based resize sensor this saves cpu time, because the sensor is too fast and
-    // would generate too many unnecessary events.
-    var requestAnimationFrame = window.requestAnimationFrame ||
-        window.mozRequestAnimationFrame ||
-        window.webkitRequestAnimationFrame ||
-        function (fn) {
-            return window.setTimeout(fn, 20);
-        };
-
-    /**
-     * Iterate over each of the provided element(s).
-     *
-     * @param {HTMLElement|HTMLElement[]} elements
-     * @param {Function}                  callback
-     */
-    function forEachElement(elements, callback){
-        var elementsType = Object.prototype.toString.call(elements);
-        var isCollectionTyped = ('[object Array]' === elementsType
-            || ('[object NodeList]' === elementsType)
-            || ('[object HTMLCollection]' === elementsType)
-            || ('[object Object]' === elementsType)
-            || ('undefined' !== typeof jQuery && elements instanceof jQuery) //jquery
-            || ('undefined' !== typeof Elements && elements instanceof Elements) //mootools
-        );
-        var i = 0, j = elements.length;
-        if (isCollectionTyped) {
-            for (; i < j; i++) {
-                callback(elements[i]);
-            }
-        } else {
-            callback(elements);
-        }
-    }
-
-    /**
-    * Get element size
-    * @param {HTMLElement} element
-    * @returns {Object} {width, height}
-    */
-    function getElementSize(element) {
-        if (!element.getBoundingClientRect) {
-            return {
-                width: element.offsetWidth,
-                height: element.offsetHeight
-            }
-        }
-
-        var rect = element.getBoundingClientRect();
-        return {
-            width: Math.round(rect.width),
-            height: Math.round(rect.height)
-        }
-    }
-
-    /**
-     * Class for dimension change detection.
-     *
-     * @param {Element|Element[]|Elements|jQuery} element
-     * @param {Function} callback
-     *
-     * @constructor
-     */
-    var ResizeSensor = function(element, callback) {
-        /**
-         *
-         * @constructor
-         */
-        function EventQueue() {
-            var q = [];
-            this.add = function(ev) {
-                q.push(ev);
-            };
-
-            var i, j;
-            this.call = function() {
-                for (i = 0, j = q.length; i < j; i++) {
-                    q[i].call();
-                }
-            };
-
-            this.remove = function(ev) {
-                var newQueue = [];
-                for(i = 0, j = q.length; i < j; i++) {
-                    if(q[i] !== ev) newQueue.push(q[i]);
-                }
-                q = newQueue;
-            };
-
-            this.length = function() {
-                return q.length;
-            }
-        }
-
-        /**
-         *
-         * @param {HTMLElement} element
-         * @param {Function}    resized
-         */
-        function attachResizeEvent(element, resized) {
-            if (!element) return;
-            if (element.resizedAttached) {
-                element.resizedAttached.add(resized);
-                return;
-            }
-
-            element.resizedAttached = new EventQueue();
-            element.resizedAttached.add(resized);
-
-            element.resizeSensor = document.createElement('div');
-            element.resizeSensor.dir = 'ltr';
-            element.resizeSensor.className = 'resize-sensor';
-            var style = 'position: absolute; left: -10px; top: -10px; right: 0; bottom: 0; overflow: hidden; z-index: -1; visibility: hidden;';
-            var styleChild = 'position: absolute; left: 0; top: 0; transition: 0s;';
-
-            element.resizeSensor.style.cssText = style;
-            element.resizeSensor.innerHTML =
-                '<div class="resize-sensor-expand" style="' + style + '">' +
-                    '<div style="' + styleChild + '"></div>' +
-                '</div>' +
-                '<div class="resize-sensor-shrink" style="' + style + '">' +
-                    '<div style="' + styleChild + ' width: 200%; height: 200%"></div>' +
-                '</div>';
-            element.appendChild(element.resizeSensor);
-
-            var position = window.getComputedStyle(element).getPropertyValue('position');
-            if ('absolute' !== position && 'relative' !== position && 'fixed' !== position) {
-                element.style.position = 'relative';
-            }
-
-            var expand = element.resizeSensor.childNodes[0];
-            var expandChild = expand.childNodes[0];
-            var shrink = element.resizeSensor.childNodes[1];
-            var dirty, rafId, newWidth, newHeight;
-            var size = getElementSize(element);
-            var lastWidth = size.width;
-            var lastHeight = size.height;
-
-            var reset = function() {
-                //set display to block, necessary otherwise hidden elements won't ever work
-                var invisible = element.offsetWidth === 0 && element.offsetHeight === 0;
-
-                if (invisible) {
-                    var saveDisplay = element.style.display;
-                    element.style.display = 'block';
-                }
-
-                expandChild.style.width = '100000px';
-                expandChild.style.height = '100000px';
-
-                expand.scrollLeft = 100000;
-                expand.scrollTop = 100000;
-
-                shrink.scrollLeft = 100000;
-                shrink.scrollTop = 100000;
-
-                if (invisible) {
-                    element.style.display = saveDisplay;
-                }
-            };
-            element.resizeSensor.resetSensor = reset;
-
-            var onResized = function() {
-                rafId = 0;
-
-                if (!dirty) return;
-
-                lastWidth = newWidth;
-                lastHeight = newHeight;
-
-                if (element.resizedAttached) {
-                    element.resizedAttached.call();
-                }
-            };
-
-            var onScroll = function() {
-                var size = getElementSize(element);
-                var newWidth = size.width;
-                var newHeight = size.height;
-                dirty = newWidth != lastWidth || newHeight != lastHeight;
-
-                if (dirty && !rafId) {
-                    rafId = requestAnimationFrame(onResized);
-                }
-
-                reset();
-            };
-
-            var addEvent = function(el, name, cb) {
-                if (el.attachEvent) {
-                    el.attachEvent('on' + name, cb);
-                } else {
-                    el.addEventListener(name, cb);
-                }
-            };
-
-            addEvent(expand, 'scroll', onScroll);
-            addEvent(shrink, 'scroll', onScroll);
-            
-			// Fix for custom Elements
-			requestAnimationFrame(reset);
-        }
-
-        forEachElement(element, function(elem){
-            attachResizeEvent(elem, callback);
-        });
-
-        this.detach = function(ev) {
-            ResizeSensor.detach(element, ev);
-        };
-
-        this.reset = function() {
-            element.resizeSensor.resetSensor();
-        };
-    };
-
-    ResizeSensor.reset = function(element, ev) {
-        forEachElement(element, function(elem){
-            elem.resizeSensor.resetSensor();
-        });
-    };
-
-    ResizeSensor.detach = function(element, ev) {
-        forEachElement(element, function(elem){
-            if (!elem) return;
-            if(elem.resizedAttached && typeof ev === "function"){
-                elem.resizedAttached.remove(ev);
-                if(elem.resizedAttached.length()) return;
-            }
-            if (elem.resizeSensor) {
-                if (elem.contains(elem.resizeSensor)) {
-                    elem.removeChild(elem.resizeSensor);
-                }
-                delete elem.resizeSensor;
-                delete elem.resizedAttached;
-            }
-        });
-    };
-
-    return ResizeSensor;
-
-}));
-
-
-/***/ }),
-/* 76 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = {
-    ResizeSensor: __webpack_require__(75),
-    ElementQueries: __webpack_require__(77)
-};
-
-
-/***/ }),
-/* 77 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/**
- * Copyright Marc J. Schmidt. See the LICENSE file at the top-level
- * directory of this distribution and at
- * https://github.com/marcj/css-element-queries/blob/master/LICENSE.
- */
-(function (root, factory) {
-    if (true) {
-        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(75)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-    } else if (typeof exports === "object") {
-        module.exports = factory(require('./ResizeSensor.js'));
-    } else {
-        root.ElementQueries = factory(root.ResizeSensor);
-        root.ElementQueries.listen();
-    }
-}(typeof window !== 'undefined' ? window : this, function (ResizeSensor) {
-
-    /**
-     *
-     * @type {Function}
-     * @constructor
-     */
-    var ElementQueries = function () {
-        //<style> element with our dynamically created styles
-        var cssStyleElement;
-
-        //all rules found for element queries
-        var allQueries = {};
-
-        //association map to identify which selector belongs to a element from the animationstart event.
-        var idToSelectorMapping = [];
-
-        /**
-         *
-         * @param element
-         * @returns {Number}
-         */
-        function getEmSize(element) {
-            if (!element) {
-                element = document.documentElement;
-            }
-            var fontSize = window.getComputedStyle(element, null).fontSize;
-            return parseFloat(fontSize) || 16;
-        }
-
-        /**
-         * Get element size
-         * @param {HTMLElement} element
-         * @returns {Object} {width, height}
-         */
-        function getElementSize(element) {
-            if (!element.getBoundingClientRect) {
-                return {
-                    width: element.offsetWidth,
-                    height: element.offsetHeight
-                }
-            }
-
-            var rect = element.getBoundingClientRect();
-            return {
-                width: Math.round(rect.width),
-                height: Math.round(rect.height)
-            }
-        }
-
-        /**
-         *
-         * @copyright https://github.com/Mr0grog/element-query/blob/master/LICENSE
-         *
-         * @param {HTMLElement} element
-         * @param {*} value
-         * @returns {*}
-         */
-        function convertToPx(element, value) {
-            var numbers = value.split(/\d/);
-            var units = numbers[numbers.length - 1];
-            value = parseFloat(value);
-            switch (units) {
-                case "px":
-                    return value;
-                case "em":
-                    return value * getEmSize(element);
-                case "rem":
-                    return value * getEmSize();
-                // Viewport units!
-                // According to http://quirksmode.org/mobile/tableViewport.html
-                // documentElement.clientWidth/Height gets us the most reliable info
-                case "vw":
-                    return value * document.documentElement.clientWidth / 100;
-                case "vh":
-                    return value * document.documentElement.clientHeight / 100;
-                case "vmin":
-                case "vmax":
-                    var vw = document.documentElement.clientWidth / 100;
-                    var vh = document.documentElement.clientHeight / 100;
-                    var chooser = Math[units === "vmin" ? "min" : "max"];
-                    return value * chooser(vw, vh);
-                default:
-                    return value;
-                // for now, not supporting physical units (since they are just a set number of px)
-                // or ex/ch (getting accurate measurements is hard)
-            }
-        }
-
-        /**
-         *
-         * @param {HTMLElement} element
-         * @param {String} id
-         * @constructor
-         */
-        function SetupInformation(element, id) {
-            this.element = element;
-            var key, option, elementSize, value, actualValue, attrValues, attrValue, attrName;
-
-            var attributes = ['min-width', 'min-height', 'max-width', 'max-height'];
-
-            /**
-             * Extracts the computed width/height and sets to min/max- attribute.
-             */
-            this.call = function () {
-                // extract current dimensions
-                elementSize = getElementSize(this.element);
-
-                attrValues = {};
-
-                for (key in allQueries[id]) {
-                    if (!allQueries[id].hasOwnProperty(key)) {
-                        continue;
-                    }
-                    option = allQueries[id][key];
-
-                    value = convertToPx(this.element, option.value);
-
-                    actualValue = option.property === 'width' ? elementSize.width : elementSize.height;
-                    attrName = option.mode + '-' + option.property;
-                    attrValue = '';
-
-                    if (option.mode === 'min' && actualValue >= value) {
-                        attrValue += option.value;
-                    }
-
-                    if (option.mode === 'max' && actualValue <= value) {
-                        attrValue += option.value;
-                    }
-
-                    if (!attrValues[attrName]) attrValues[attrName] = '';
-                    if (attrValue && -1 === (' ' + attrValues[attrName] + ' ').indexOf(' ' + attrValue + ' ')) {
-                        attrValues[attrName] += ' ' + attrValue;
-                    }
-                }
-
-                for (var k in attributes) {
-                    if (!attributes.hasOwnProperty(k)) continue;
-
-                    if (attrValues[attributes[k]]) {
-                        this.element.setAttribute(attributes[k], attrValues[attributes[k]].substr(1));
-                    } else {
-                        this.element.removeAttribute(attributes[k]);
-                    }
-                }
-            };
-        }
-
-        /**
-         * @param {HTMLElement} element
-         * @param {Object}      id
-         */
-        function setupElement(element, id) {
-            if (!element.elementQueriesSetupInformation) {
-                element.elementQueriesSetupInformation = new SetupInformation(element, id);
-            }
-            if (!element.elementQueriesSensor) {
-                element.elementQueriesSensor = new ResizeSensor(element, function () {
-                    element.elementQueriesSetupInformation.call();
-                });
-            }
-
-            element.elementQueriesSetupInformation.call();
-        }
-
-        /**
-         * Stores rules to the selector that should be applied once resized.
-         *
-         * @param {String} selector
-         * @param {String} mode min|max
-         * @param {String} property width|height
-         * @param {String} value
-         */
-        function queueQuery(selector, mode, property, value) {
-            if (typeof(allQueries[selector]) === 'undefined') {
-                allQueries[selector] = [];
-                // add animation to trigger animationstart event, so we know exactly when a element appears in the DOM
-
-                var id = idToSelectorMapping.length;
-                cssStyleElement.innerHTML += '\n' + selector + ' {animation: 0.1s element-queries;}';
-                cssStyleElement.innerHTML += '\n' + selector + ' > .resize-sensor {min-width: '+id+'px;}';
-                idToSelectorMapping.push(selector);
-            }
-
-            allQueries[selector].push({
-                mode: mode,
-                property: property,
-                value: value
-            });
-        }
-
-        function getQuery(container) {
-            var query;
-            if (document.querySelectorAll) query = (container) ? container.querySelectorAll.bind(container) : document.querySelectorAll.bind(document);
-            if (!query && 'undefined' !== typeof $$) query = $$;
-            if (!query && 'undefined' !== typeof jQuery) query = jQuery;
-
-            if (!query) {
-                throw 'No document.querySelectorAll, jQuery or Mootools\'s $$ found.';
-            }
-
-            return query;
-        }
-
-        /**
-         * If animationStart didn't catch a new element in the DOM, we can manually search for it
-         */
-        function findElementQueriesElements(container) {
-            var query = getQuery(container);
-
-            for (var selector in allQueries) if (allQueries.hasOwnProperty(selector)) {
-                // find all elements based on the extract query selector from the element query rule
-                var elements = query(selector, container);
-
-                for (var i = 0, j = elements.length; i < j; i++) {
-                    setupElement(elements[i], selector);
-                }
-            }
-        }
-
-        /**
-         *
-         * @param {HTMLElement} element
-         */
-        function attachResponsiveImage(element) {
-            var children = [];
-            var rules = [];
-            var sources = [];
-            var defaultImageId = 0;
-            var lastActiveImage = -1;
-            var loadedImages = [];
-
-            for (var i in element.children) {
-                if (!element.children.hasOwnProperty(i)) continue;
-
-                if (element.children[i].tagName && element.children[i].tagName.toLowerCase() === 'img') {
-                    children.push(element.children[i]);
-
-                    var minWidth = element.children[i].getAttribute('min-width') || element.children[i].getAttribute('data-min-width');
-                    //var minHeight = element.children[i].getAttribute('min-height') || element.children[i].getAttribute('data-min-height');
-                    var src = element.children[i].getAttribute('data-src') || element.children[i].getAttribute('url');
-
-                    sources.push(src);
-
-                    var rule = {
-                        minWidth: minWidth
-                    };
-
-                    rules.push(rule);
-
-                    if (!minWidth) {
-                        defaultImageId = children.length - 1;
-                        element.children[i].style.display = 'block';
-                    } else {
-                        element.children[i].style.display = 'none';
-                    }
-                }
-            }
-
-            lastActiveImage = defaultImageId;
-
-            function check() {
-                var imageToDisplay = false, i;
-
-                for (i in children) {
-                    if (!children.hasOwnProperty(i)) continue;
-
-                    if (rules[i].minWidth) {
-                        if (element.offsetWidth > rules[i].minWidth) {
-                            imageToDisplay = i;
-                        }
-                    }
-                }
-
-                if (!imageToDisplay) {
-                    //no rule matched, show default
-                    imageToDisplay = defaultImageId;
-                }
-
-                if (lastActiveImage !== imageToDisplay) {
-                    //image change
-
-                    if (!loadedImages[imageToDisplay]) {
-                        //image has not been loaded yet, we need to load the image first in memory to prevent flash of
-                        //no content
-
-                        var image = new Image();
-                        image.onload = function () {
-                            children[imageToDisplay].src = sources[imageToDisplay];
-
-                            children[lastActiveImage].style.display = 'none';
-                            children[imageToDisplay].style.display = 'block';
-
-                            loadedImages[imageToDisplay] = true;
-
-                            lastActiveImage = imageToDisplay;
-                        };
-
-                        image.src = sources[imageToDisplay];
-                    } else {
-                        children[lastActiveImage].style.display = 'none';
-                        children[imageToDisplay].style.display = 'block';
-                        lastActiveImage = imageToDisplay;
-                    }
-                } else {
-                    //make sure for initial check call the .src is set correctly
-                    children[imageToDisplay].src = sources[imageToDisplay];
-                }
-            }
-
-            element.resizeSensor = new ResizeSensor(element, check);
-            check();
-        }
-
-        function findResponsiveImages() {
-            var query = getQuery();
-
-            var elements = query('[data-responsive-image],[responsive-image]');
-            for (var i = 0, j = elements.length; i < j; i++) {
-                attachResponsiveImage(elements[i]);
-            }
-        }
-
-        var regex = /,?[\s\t]*([^,\n]*?)((?:\[[\s\t]*?(?:min|max)-(?:width|height)[\s\t]*?[~$\^]?=[\s\t]*?"[^"]*?"[\s\t]*?])+)([^,\n\s\{]*)/mgi;
-        var attrRegex = /\[[\s\t]*?(min|max)-(width|height)[\s\t]*?[~$\^]?=[\s\t]*?"([^"]*?)"[\s\t]*?]/mgi;
-
-        /**
-         * @param {String} css
-         */
-        function extractQuery(css) {
-            var match, smatch, attrs, attrMatch;
-
-            css = css.replace(/'/g, '"');
-            while (null !== (match = regex.exec(css))) {
-                smatch = match[1] + match[3];
-                attrs = match[2];
-
-                while (null !== (attrMatch = attrRegex.exec(attrs))) {
-                    queueQuery(smatch, attrMatch[1], attrMatch[2], attrMatch[3]);
-                }
-            }
-        }
-
-        /**
-         * @param {CssRule[]|String} rules
-         */
-        function readRules(rules) {
-            var selector = '';
-
-            if (!rules) {
-                return;
-            }
-
-            if ('string' === typeof rules) {
-                rules = rules.toLowerCase();
-                if (-1 !== rules.indexOf('min-width') || -1 !== rules.indexOf('max-width')) {
-                    extractQuery(rules);
-                }
-            } else {
-                for (var i = 0, j = rules.length; i < j; i++) {
-                    if (1 === rules[i].type) {
-                        selector = rules[i].selectorText || rules[i].cssText;
-                        if (-1 !== selector.indexOf('min-height') || -1 !== selector.indexOf('max-height')) {
-                            extractQuery(selector);
-                        } else if (-1 !== selector.indexOf('min-width') || -1 !== selector.indexOf('max-width')) {
-                            extractQuery(selector);
-                        }
-                    } else if (4 === rules[i].type) {
-                        readRules(rules[i].cssRules || rules[i].rules);
-                    } else if (3 === rules[i].type) {
-                        if(rules[i].styleSheet.hasOwnProperty("cssRules")) {
-                            readRules(rules[i].styleSheet.cssRules);
-                        }
-                    }
-                }
-            }
-        }
-
-        var defaultCssInjected = false;
-
-        /**
-         * Searches all css rules and setups the event listener to all elements with element query rules..
-         */
-        this.init = function () {
-            var animationStart = 'animationstart';
-            if (typeof document.documentElement.style['webkitAnimationName'] !== 'undefined') {
-                animationStart = 'webkitAnimationStart';
-            } else if (typeof document.documentElement.style['MozAnimationName'] !== 'undefined') {
-                animationStart = 'mozanimationstart';
-            } else if (typeof document.documentElement.style['OAnimationName'] !== 'undefined') {
-                animationStart = 'oanimationstart';
-            }
-
-            document.body.addEventListener(animationStart, function (e) {
-                var element = e.target;
-                var styles = window.getComputedStyle(element, null);
-
-                if (-1 !== styles.getPropertyValue('animation-name').indexOf('element-queries')) {
-                    element.elementQueriesSensor = new ResizeSensor(element, function () {
-                        if (element.elementQueriesSetupInformation) {
-                            element.elementQueriesSetupInformation.call();
-                        }
-                    });
-
-                    var sensorStyles = window.getComputedStyle(element.resizeSensor, null);
-                    var id = sensorStyles.getPropertyValue('min-width');
-                    id = parseInt(id.replace('px', ''));
-                    setupElement(e.target, idToSelectorMapping[id]);
-                }
-            });
-
-            if (!defaultCssInjected) {
-                cssStyleElement = document.createElement('style');
-                cssStyleElement.type = 'text/css';
-                cssStyleElement.innerHTML = '[responsive-image] > img, [data-responsive-image] {overflow: hidden; padding: 0; } [responsive-image] > img, [data-responsive-image] > img {width: 100%;}';
-
-                //safari wants at least one rule in keyframes to start working
-                cssStyleElement.innerHTML += '\n@keyframes element-queries { 0% { visibility: inherit; } }';
-                document.getElementsByTagName('head')[0].appendChild(cssStyleElement);
-                defaultCssInjected = true;
-            }
-
-            for (var i = 0, j = document.styleSheets.length; i < j; i++) {
-                try {
-                    if (document.styleSheets[i].href && 0 === document.styleSheets[i].href.indexOf('file://')) {
-                        console.log("CssElementQueries: unable to parse local css files, " + document.styleSheets[i].href);
-                    }
-
-                    readRules(document.styleSheets[i].cssRules || document.styleSheets[i].rules || document.styleSheets[i].cssText);
-                } catch (e) {
-                }
-            }
-
-            findResponsiveImages();
-        };
-
-        /**
-         * Go through all collected rules (readRules()) and attach the resize-listener.
-         * Not necessary to call it manually, since we detect automatically when new elements
-         * are available in the DOM. However, sometimes handy for dirty DOM modifications.
-         *
-         * @param {HTMLElement} container only elements of the container are considered (document.body if not set)
-         */
-        this.findElementQueriesElements = function (container) {
-            findElementQueriesElements(container);
-        };
-
-        this.update = function () {
-            this.init();
-        };
-    };
-
-    ElementQueries.update = function () {
-        ElementQueries.instance.update();
-    };
-
-    /**
-     * Removes all sensor and elementquery information from the element.
-     *
-     * @param {HTMLElement} element
-     */
-    ElementQueries.detach = function (element) {
-        if (element.elementQueriesSetupInformation) {
-            //element queries
-            element.elementQueriesSensor.detach();
-            delete element.elementQueriesSetupInformation;
-            delete element.elementQueriesSensor;
-
-        } else if (element.resizeSensor) {
-            //responsive image
-
-            element.resizeSensor.detach();
-            delete element.resizeSensor;
-        }
-    };
-
-    ElementQueries.init = function () {
-        if (!ElementQueries.instance) {
-            ElementQueries.instance = new ElementQueries();
-        }
-
-        ElementQueries.instance.init();
-    };
-
-    var domLoaded = function (callback) {
-        /* Mozilla, Chrome, Opera */
-        if (document.addEventListener) {
-            document.addEventListener('DOMContentLoaded', callback, false);
-        }
-        /* Safari, iCab, Konqueror */
-        else if (/KHTML|WebKit|iCab/i.test(navigator.userAgent)) {
-            var DOMLoadTimer = setInterval(function () {
-                if (/loaded|complete/i.test(document.readyState)) {
-                    callback();
-                    clearInterval(DOMLoadTimer);
-                }
-            }, 10);
-        }
-        /* Other web browsers */
-        else window.onload = callback;
-    };
-
-    ElementQueries.findElementQueriesElements = function (container) {
-        ElementQueries.instance.findElementQueriesElements(container);
-    };
-
-    ElementQueries.listen = function () {
-        domLoaded(ElementQueries.init);
-    };
-
-    return ElementQueries;
-
-}));
-
 
 /***/ })
 /******/ ]);

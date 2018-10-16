@@ -1,0 +1,5 @@
+@each $name, $hex in $colors {
+    .bg-#{$name} {
+        background: $hex;
+    }
+}

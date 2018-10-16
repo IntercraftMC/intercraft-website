@@ -18,17 +18,19 @@
 @import 'buttons';
 
 // Font Awesome
-@import '~@fortawesome/fontawesome-free/scss/fontawesome.scss';
-@import '~@fortawesome/fontawesome-free/scss/brands.scss';
+@import '~@fortawesome/fontawesome-free/css/fontawesome.css';
+@import '~@fortawesome/fontawesome-free/css/all.css';
 
 // Photoswipe
 @import '~photoswipe/dist/photoswipe.css';
 @import '~photoswipe/dist/default-skin/default-skin.css';
 
 // Other
+@import 'colors';
 @import 'header';
-@import 'billboard.scss';
+@import 'billboard';
 @import 'navbar';
+@import 'paginated_form';
 @import 'loading';
 @import 'typography';
 @import 'sections';

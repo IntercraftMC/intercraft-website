@@ -18,3 +18,4 @@ Route::get('/blog',     "BlogController@index")->name("blog");
 Route::get('/showcase', "ShowcaseController@index")->name("showcase");
 Route::get('/members',  "MembersController@index")->name("members");
 Route::get('/map',      "MapController@index")->name("map");
+Route::get('/join',     "JoinController@index")->name("map");

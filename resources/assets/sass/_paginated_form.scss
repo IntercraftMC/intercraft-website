@@ -1,0 +1,105 @@
+.paginated-form {
+    .container-breadcrumbs {
+        // background: darken($body-background, 15%);
+        @include container-shadow();
+        background: white;
+        text-align: center;
+        padding: 25px;
+
+        .col-12 {
+            position: relative;
+
+            hr {
+                height: 2px;
+                border: none;
+                background: #ccc;
+                box-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
+                position: absolute;
+                margin: 0;
+                top: 32px;
+                left: 32px;
+                right: 32px;
+                z-index: 1;
+            }
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            z-index: 25;
+            li {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                div {
+                    align-items: center;
+                    border-radius: 100%;
+                    // box-shadow: 0 0 3px rgba(0, 0, 0, 0.4);
+                    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.1);
+                    color: white;
+                    cursor: pointer;
+                    display: flex;
+                    font-size: 1.2rem;
+                    height: 64px;
+                    justify-content: center;
+                    width: 64px;
+                    transition: box-shadow, transform, background;
+                    transition-duration: 0.15s;
+                    transition-timing-function: ease-in-out;
+                    z-index: 25;
+                    &:hover {
+                        transform: scale(1.1);
+                        // box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+                        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+                    }
+                }
+                span {
+                    display: block;
+                    margin-top: 10px;
+                }
+            }
+            .active ~ li {
+                div {
+                    background: #bbb !important;
+                }
+            }
+        }
+    }
+    .container-pages {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        padding: 0;
+        margin-bottom: 0;
+        transition: height 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
+        & > * {
+            padding: 0;
+            margin: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            transition: left, opacity;
+            transition-duration: 0.5s;
+            transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
+            opacity: 0;
+            &.left {
+                left: -100%;
+            }
+            &.right {
+                left: 100%;
+            }
+            &.active {
+                opacity: 1.0;
+            }
+        }
+    }
+    .container-page-buttons {
+        padding: 0;
+    }
+}
