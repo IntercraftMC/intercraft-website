@@ -17,7 +17,7 @@
                 </div>
             </div>
         </section>
-        <section class="container-pages">
+        <section class="container-pages" v-cloak>
             <slot></slot>
         </section>
         <section class="container-page-buttons">

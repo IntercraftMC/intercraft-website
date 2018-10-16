@@ -42,3 +42,7 @@ body {
 section:last-of-type {
     margin-bottom: 60px;
 }
+
+[v-cloak] {
+    display: none;
+}

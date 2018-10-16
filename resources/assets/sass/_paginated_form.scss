@@ -76,7 +76,9 @@
         overflow: hidden;
         padding: 0;
         margin-bottom: 0;
-        transition: height 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
+        transition: transform $section-fade-duration cubic-bezier(0.0, 0.0, 0.2, 1),
+                    opacity $section-fade-duration cubic-bezier(0.0, 0.0, 0.2, 1),
+                    height 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
         & > * {
             padding: 0;
             margin: 0;
@@ -86,7 +88,7 @@
             width: 100%;
             transition: left, opacity;
             transition-duration: 0.5s;
-            transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
+            transition-timing-function: cubic-bezier(0.0, 0.0, 0.2, 1);
             opacity: 0;
             &.left {
                 left: -100%;

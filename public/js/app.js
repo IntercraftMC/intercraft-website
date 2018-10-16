@@ -56869,12 +56869,19 @@ var createVue = function createVue() {
  * Display the visible sections
  */
 var displaySections = function displaySections() {
+    var toReveal = [];
     hiddenSections.forEach(function (section) {
         if ($(section).isInViewport()) {
-            $(section).addClass("visible");
+            toReveal.push($(section));
             hiddenSections.delete(section);
         }
     });
+    for (var i = 0; i < toReveal.length; i++) {
+        toReveal[i].delay(i * page.TRANSITION_DELAY).queue(function () {
+            console.log(this);
+            $(this).addClass("visible");
+        });
+    }
 };
 
 /**
