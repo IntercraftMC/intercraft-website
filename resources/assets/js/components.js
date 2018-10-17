@@ -1,5 +1,6 @@
 Vue.component('discord-background', require('./vue/DiscordBackground.vue'));
 Vue.component('loading-logo',       require('./vue/LoadingLogo.vue'));
+Vue.component('icon-input',         require('./vue/IconInput.vue'));
 Vue.component('header-video',       require('./vue/HeaderVideo.vue'));
 Vue.component('paginated-form',     require('./vue/PaginatedForm.vue'));
 

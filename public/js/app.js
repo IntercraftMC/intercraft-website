@@ -55475,6 +55475,7 @@ window.utils = {
 
 Vue.component('discord-background', __webpack_require__(53));
 Vue.component('loading-logo', __webpack_require__(55));
+Vue.component('icon-input', __webpack_require__(100));
 Vue.component('header-video', __webpack_require__(58));
 Vue.component('paginated-form', __webpack_require__(61));
 
@@ -56719,20 +56720,24 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             $(this.pages[page]).removeClass().addClass("active").height();
             $(this.pages[page]).prevAll().removeClass().addClass("left");
             $(this.pages[page]).nextAll().removeClass().addClass("right");
-            $(".container-pages").css("height", $(this.pages[page]).outerHeight() + "px");
             this.page = page;
+            this.resize();
         },
         next: function next() {
             this.setPage(this.page + 1);
         },
         previous: function previous() {
             this.setPage(this.page - 1);
+        },
+        resize: function resize() {
+            $(".container-pages").css("height", $(this.pages[this.page]).outerHeight() + "px");
         }
     },
     mounted: function mounted() {
         var pages = $(this.$el).find(".container-pages").children();
         this.pages = pages.toArray();
         this.setPage(0);
+        $(window).on("resize", this.resize);
     }
 });
 
@@ -57014,6 +57019,143 @@ module.exports = {"particles":{"number":{"value":25,"density":{"enable":true,"va
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 70 */,
+/* 71 */,
+/* 72 */,
+/* 73 */,
+/* 74 */,
+/* 75 */,
+/* 76 */,
+/* 77 */,
+/* 78 */,
+/* 79 */,
+/* 80 */,
+/* 81 */,
+/* 82 */,
+/* 83 */,
+/* 84 */,
+/* 85 */,
+/* 86 */,
+/* 87 */,
+/* 88 */,
+/* 89 */,
+/* 90 */,
+/* 91 */,
+/* 92 */,
+/* 93 */,
+/* 94 */,
+/* 95 */,
+/* 96 */,
+/* 97 */,
+/* 98 */,
+/* 99 */,
+/* 100 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(2)
+/* script */
+var __vue_script__ = __webpack_require__(102)
+/* template */
+var __vue_template__ = __webpack_require__(101)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/vue/IconInput.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-5b9bf0a6", Component.options)
+  } else {
+    hotAPI.reload("data-v-5b9bf0a6", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 101 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _c("input", { staticClass: "form-control", attrs: { type: _vm.type } }),
+    _vm._v(" "),
+    _c("i", { class: _vm.icon })
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-5b9bf0a6", module.exports)
+  }
+}
+
+/***/ }),
+/* 102 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    mounted: function mounted() {
+        var input = $(this.$el).find("input");
+        $.each(this.$el.attributes, function () {
+            if (this.specified) {
+                input.attr(this.name, this.value);
+            }
+        });
+        $(this.$el).addClass("icon-input");
+    },
+
+    props: {
+        type: {
+            type: String,
+            default: "type"
+        },
+        icon: {
+            type: String,
+            required: true
+        }
+    }
+});
 
 /***/ })
 /******/ ]);

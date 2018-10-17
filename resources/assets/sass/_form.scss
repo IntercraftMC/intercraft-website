@@ -1,0 +1,31 @@
+label {
+    font-size: 1rem;
+}
+
+input.form-control {
+    border: 1px solid $border-color;
+    font-size: 1.1rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+select.custom-select {
+    height: 49.97px;
+    font-size: 1.1rem;
+    border: 1px solid $border-color;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.icon-input {
+    position: relative;
+    i {
+        position: absolute;
+        top: 50%;
+        left: 14px;
+        margin-top: -8px;
+        font-size: 1.1rem;
+    }
+    input {
+        padding-left: 42px;
+    }
+}

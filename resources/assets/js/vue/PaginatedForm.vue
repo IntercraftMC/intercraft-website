@@ -55,20 +55,24 @@ export default {
             $(this.pages[page]).removeClass().addClass("active").height();
             $(this.pages[page]).prevAll().removeClass().addClass("left");
             $(this.pages[page]).nextAll().removeClass().addClass("right");
-            $(".container-pages").css("height", $(this.pages[page]).outerHeight() + "px");
             this.page = page;
+            this.resize();
         },
         next () {
             this.setPage(this.page + 1)
         },
         previous () {
             this.setPage(this.page - 1);
+        },
+        resize () {
+            $(".container-pages").css("height", $(this.pages[this.page]).outerHeight() + "px");
         }
     },
     mounted () {
         var pages  = $(this.$el).find(".container-pages").children();
         this.pages = pages.toArray();
         this.setPage(0);
+        $(window).on("resize", this.resize);
     }
 }
 </script>
