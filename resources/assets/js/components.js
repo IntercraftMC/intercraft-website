@@ -3,6 +3,8 @@ Vue.component('loading-logo',       require('./vue/LoadingLogo.vue'));
 Vue.component('icon-input',         require('./vue/IconInput.vue'));
 Vue.component('header-video',       require('./vue/HeaderVideo.vue'));
 Vue.component('paginated-form',     require('./vue/PaginatedForm.vue'));
+Vue.component('gallery-image',      require('./vue/GalleryImage.vue'));
+Vue.component('gallery-showcase',   require('./vue/GalleryShowcase.vue'));
 
 // const COMPONENTS = [
 //     "example_component",

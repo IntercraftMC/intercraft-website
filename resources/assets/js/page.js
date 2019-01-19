@@ -12,6 +12,13 @@ var createVue = function () {
     });
 };
 
+var destroyVue = function () {
+    if (page.app) {
+        page.app.$destroy();
+        page.app = null;
+    }
+}
+
 /**
  * Display the visible sections
  */
@@ -25,7 +32,6 @@ var displaySections = function () {
     });
     for (var i = 0; i < toReveal.length; i++) {
         toReveal[i].delay(i*page.TRANSITION_DELAY).queue(function () {
-            console.log(this);
             $(this).addClass("visible");
         });
     }
@@ -45,6 +51,7 @@ var findHiddenSections = function () {
  * Set the content of the body
  */
 var setBody = function (content) {
+    destroyVue();
     $("#body").stop().clearQueue();
     $("#body").fadeOut(page.TRANSITION_DELAY, function () {
         $(this).html(content).show();

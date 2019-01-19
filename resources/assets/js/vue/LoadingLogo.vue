@@ -37,13 +37,16 @@ export default {
         }
     },
 
+    mounted () {
+        $(this.$el).find("circle").first().on("animationiteration", this.onFinished);
+    },
+
     methods: {
         onFinished () {
-            if (!this.active && this.step) {
-                $(this.$el).removeClass("active");
-                $(this.$el).find("circle").first().off("animationiteration", this.onFinished);
-            }
             this.step = !this.step;
+            if (!this.active && !this.step) {
+                $(this.$el).removeClass("active");
+            }
         },
 
         cycle () {
@@ -55,7 +58,9 @@ export default {
             if (this.active)
                 return false;
             this.active = true;
-            $(this.$el).addClass("active").find("circle").first().on("animationiteration", this.onFinished);
+            if (!this.step) {
+                $(this.$el).addClass("active");
+            }
             return true;
         },
 

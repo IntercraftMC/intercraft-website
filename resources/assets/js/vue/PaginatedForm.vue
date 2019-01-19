@@ -6,7 +6,7 @@
                     <div class="col-12">
                         <hr>
                         <ul>
-                            <li v-for="(page, i) in pages" :data-page="i" :class="i == 0 ? 'active' : ''">
+                            <li v-for="(page, i) in pages" :data-page="i" :class="i == 0 ? 'active' : ''" v-bind:key="i">
                                 <div :class="'bg-' + page.getAttribute('icon-color')" v-on:click="changePage">
                                     <i :class="page.getAttribute('icon')"></i>
                                 </div>

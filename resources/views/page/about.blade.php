@@ -1,6 +1,1 @@
-<header>
-    About
-</header>
-<section>
-    Section
-</section>
+@include("section.apply")

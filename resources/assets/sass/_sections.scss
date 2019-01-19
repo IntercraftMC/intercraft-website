@@ -51,3 +51,33 @@ footer {
     opacity: 100;
     transform: translateY(0px);
 }
+
+.no-slide {
+    transform: translateY(0px) !important;
+}
+
+.section-bg {
+    color: white !important;
+    padding: 60px 0;
+}
+
+.section-bg-join {
+    background-image: url("../img/apply_bg.png");
+    background-size: cover;
+    background-position: center center;
+
+    &:after {
+        position: absolute;
+        top: 0;
+        left: 0;
+        content: '';
+        width: 100%;
+        height: 100%;
+        background: rgba($blue, 0.9);
+        z-index: 1;
+    }
+
+    .container {
+        z-index: 2;
+    }
+}

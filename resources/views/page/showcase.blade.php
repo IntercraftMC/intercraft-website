@@ -1,6 +1,1 @@
-<header>
-    Gallery
-</header>
-<section>
-    Section
-</section>
+@include("section.showcase")

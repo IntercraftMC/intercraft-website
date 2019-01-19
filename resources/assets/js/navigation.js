@@ -124,6 +124,7 @@ var requestPage = function (url, pushState = false) {
     if (isLoading) {
         return;
     }
+    // if ()
     isLoading    = true;
     pageInfo.url = url;
     eventEmitter.emit("beforeload");
@@ -168,9 +169,15 @@ var onLinkClick = function (elem) {
  * Invoked when the browser pops a state off of the history stack
  */
 var onPopState = function (event) {
-    pageInfo.title = event.originalEvent.state.title;
-    pageInfo.url   = event.originalEvent.state.url;
-    requestPage(pageInfo.url, false);
+    if (event.originalEvent.state) {
+        // Don't request new pages if only the hash changes
+        let newHash = (document.URL.match(/#[^?]*/gi) || [""])[0];
+        if (pageInfo.url.replace(/#[^?]*/gi, newHash) != document.URL) {
+            pageInfo.title = event.originalEvent.state.title;
+            pageInfo.url   = event.originalEvent.state.url;
+            requestPage(pageInfo.url, false);
+        }
+    }
 };
 
 /**

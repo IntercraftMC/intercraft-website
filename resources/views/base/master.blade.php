@@ -12,6 +12,8 @@
         @stack("head")
     </head>
     <body>
+        {{-- Modals --}}
+        @include("component.photoswipe")
         {{-- Main content --}}
         <div id="prebody">
             @stack("prebody")

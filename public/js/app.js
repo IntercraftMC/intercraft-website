@@ -14262,7 +14262,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(14);
-module.exports = __webpack_require__(69);
+module.exports = __webpack_require__(72);
 
 
 /***/ }),
@@ -14284,9 +14284,9 @@ __webpack_require__(49);
 __webpack_require__(51);
 
 __webpack_require__(52);
-__webpack_require__(64);
-__webpack_require__(65);
-__webpack_require__(66);
+__webpack_require__(67);
+__webpack_require__(68);
+__webpack_require__(69);
 
 /**
  * Invoked when the browser starts loading a new page
@@ -47606,9 +47606,9 @@ module.exports = function spread(callback) {
 /* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! PhotoSwipe - v4.1.2 - 2017-04-05
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! PhotoSwipe - v4.1.3 - 2019-01-08
 * http://photoswipe.com
-* Copyright (c) 2017 Dmitry Semenov; */
+* Copyright (c) 2019 Dmitry Semenov; */
 (function (root, factory) { 
 	if (true) {
 		!(__WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
@@ -47769,7 +47769,7 @@ var framework = {
 			features.caf = window.cancelAnimationFrame;
 		}
 
-		features.pointerEvent = navigator.pointerEnabled || navigator.msPointerEnabled;
+		features.pointerEvent = !!(window.PointerEvent) || navigator.msPointerEnabled;
 
 		// fix false-positive detection of old Android in new IE
 		// (IE11 ua string contains "Android 4.0")
@@ -49599,9 +49599,7 @@ var _gestureStartTime,
 			if(pointerIndex > -1) {
 				releasePoint = _currPointers.splice(pointerIndex, 1)[0];
 
-				if(navigator.pointerEnabled) {
-					releasePoint.type = e.pointerType || 'mouse';
-				} else {
+				if(navigator.msPointerEnabled) {
 					var MSPOINTER_TYPES = {
 						4: 'mouse', // event.MSPOINTER_TYPE_MOUSE
 						2: 'touch', // event.MSPOINTER_TYPE_TOUCH 
@@ -49612,6 +49610,8 @@ var _gestureStartTime,
 					if(!releasePoint.type) {
 						releasePoint.type = e.pointerType || 'mouse';
 					}
+				} else {
+					releasePoint.type = e.pointerType || 'mouse';
 				}
 
 			}
@@ -50064,11 +50064,11 @@ _registerModule('Gestures', {
 			}
 
 			if(_pointerEventEnabled) {
-				if(navigator.pointerEnabled) {
-					addEventNames('pointer', 'down', 'move', 'up', 'cancel');
-				} else {
+				if(navigator.msPointerEnabled) {
 					// IE10 pointer events are case-sensitive
 					addEventNames('MSPointer', 'Down', 'Move', 'Up', 'Cancel');
+				} else {
+					addEventNames('pointer', 'down', 'move', 'up', 'cancel');
 				}
 			} else if(_features.touch) {
 				addEventNames('touch', 'start', 'move', 'end', 'cancel');
@@ -51349,9 +51349,9 @@ _registerModule('History', {
 /* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! PhotoSwipe Default UI - 4.1.2 - 2017-04-05
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! PhotoSwipe Default UI - 4.1.3 - 2019-01-08
 * http://photoswipe.com
-* Copyright (c) 2017 Dmitry Semenov; */
+* Copyright (c) 2019 Dmitry Semenov; */
 /**
 *
 * UI on top of main sliding area (caption, arrows, close button, etc.).
@@ -55034,6 +55034,7 @@ var requestPage = function requestPage(url) {
     if (isLoading) {
         return;
     }
+    // if ()
     isLoading = true;
     pageInfo.url = url;
     eventEmitter.emit("beforeload");
@@ -55077,9 +55078,15 @@ var onLinkClick = function onLinkClick(elem) {
  * Invoked when the browser pops a state off of the history stack
  */
 var onPopState = function onPopState(event) {
-    pageInfo.title = event.originalEvent.state.title;
-    pageInfo.url = event.originalEvent.state.url;
-    requestPage(pageInfo.url, false);
+    if (event.originalEvent.state) {
+        // Don't request new pages if only the hash changes
+        var newHash = (document.URL.match(/#[^?]*/gi) || [""])[0];
+        if (pageInfo.url.replace(/#[^?]*/gi, newHash) != document.URL) {
+            pageInfo.title = event.originalEvent.state.title;
+            pageInfo.url = event.originalEvent.state.url;
+            requestPage(pageInfo.url, false);
+        }
+    }
 };
 
 /**
@@ -55475,9 +55482,11 @@ window.utils = {
 
 Vue.component('discord-background', __webpack_require__(53));
 Vue.component('loading-logo', __webpack_require__(55));
-Vue.component('icon-input', __webpack_require__(100));
-Vue.component('header-video', __webpack_require__(58));
-Vue.component('paginated-form', __webpack_require__(61));
+Vue.component('icon-input', __webpack_require__(58));
+Vue.component('header-video', __webpack_require__(61));
+Vue.component('paginated-form', __webpack_require__(64));
+Vue.component('gallery-image', __webpack_require__(104));
+Vue.component('gallery-showcase', __webpack_require__(101));
 
 // const COMPONENTS = [
 //     "example_component",
@@ -56120,15 +56129,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             step: false
         };
     },
+    mounted: function mounted() {
+        $(this.$el).find("circle").first().on("animationiteration", this.onFinished);
+    },
 
 
     methods: {
         onFinished: function onFinished() {
-            if (!this.active && this.step) {
-                $(this.$el).removeClass("active");
-                $(this.$el).find("circle").first().off("animationiteration", this.onFinished);
-            }
             this.step = !this.step;
+            if (!this.active && !this.step) {
+                $(this.$el).removeClass("active");
+            }
         },
         cycle: function cycle() {
             if (this.start()) this.stop();
@@ -56136,7 +56147,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         start: function start() {
             if (this.active) return false;
             this.active = true;
-            $(this.$el).addClass("active").find("circle").first().on("animationiteration", this.onFinished);
+            if (!this.step) {
+                $(this.$el).addClass("active");
+            }
             return true;
         },
         stop: function stop() {
@@ -56385,6 +56398,113 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
+Component.options.__file = "resources/assets/js/vue/IconInput.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-5b9bf0a6", Component.options)
+  } else {
+    hotAPI.reload("data-v-5b9bf0a6", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 59 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    mounted: function mounted() {
+        var input = $(this.$el).find("input");
+        $.each(this.$el.attributes, function () {
+            if (this.specified) {
+                input.attr(this.name, this.value);
+            }
+        });
+        $(this.$el).addClass("icon-input");
+    },
+
+    props: {
+        type: {
+            type: String,
+            default: "type"
+        },
+        icon: {
+            type: String,
+            required: true
+        }
+    }
+});
+
+/***/ }),
+/* 60 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _c("input", { staticClass: "form-control", attrs: { type: _vm.type } }),
+    _vm._v(" "),
+    _c("i", { class: _vm.icon })
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-5b9bf0a6", module.exports)
+  }
+}
+
+/***/ }),
+/* 61 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(2)
+/* script */
+var __vue_script__ = __webpack_require__(62)
+/* template */
+var __vue_template__ = __webpack_require__(63)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
 Component.options.__file = "resources/assets/js/vue/HeaderVideo.vue"
 
 /* hot reload */
@@ -56407,7 +56527,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 59 */
+/* 62 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -56542,7 +56662,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 60 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -56611,15 +56731,15 @@ if (false) {
 }
 
 /***/ }),
-/* 61 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 var normalizeComponent = __webpack_require__(2)
 /* script */
-var __vue_script__ = __webpack_require__(62)
+var __vue_script__ = __webpack_require__(65)
 /* template */
-var __vue_template__ = __webpack_require__(63)
+var __vue_template__ = __webpack_require__(66)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -56658,7 +56778,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 62 */
+/* 65 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -56742,7 +56862,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 63 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -56761,7 +56881,11 @@ var render = function() {
               _vm._l(_vm.pages, function(page, i) {
                 return _c(
                   "li",
-                  { class: i == 0 ? "active" : "", attrs: { "data-page": i } },
+                  {
+                    key: i,
+                    class: i == 0 ? "active" : "",
+                    attrs: { "data-page": i }
+                  },
                   [
                     _c(
                       "div",
@@ -56826,7 +56950,7 @@ if (false) {
 }
 
 /***/ }),
-/* 64 */
+/* 67 */
 /***/ (function(module, exports) {
 
 // $(".navbar-brand a").mouseover(function () {
@@ -56853,7 +56977,7 @@ navigate.event.on("scroll", function (pos) {
 });
 
 /***/ }),
-/* 65 */
+/* 68 */
 /***/ (function(module, exports) {
 
 /**
@@ -56870,6 +56994,13 @@ var createVue = function createVue() {
     });
 };
 
+var destroyVue = function destroyVue() {
+    if (page.app) {
+        page.app.$destroy();
+        page.app = null;
+    }
+};
+
 /**
  * Display the visible sections
  */
@@ -56883,7 +57014,6 @@ var displaySections = function displaySections() {
     });
     for (var i = 0; i < toReveal.length; i++) {
         toReveal[i].delay(i * page.TRANSITION_DELAY).queue(function () {
-            console.log(this);
             $(this).addClass("visible");
         });
     }
@@ -56903,6 +57033,7 @@ var findHiddenSections = function findHiddenSections() {
  * Set the content of the body
  */
 var setBody = function setBody(content) {
+    destroyVue();
     $("#body").stop().clearQueue();
     $("#body").fadeOut(page.TRANSITION_DELAY, function () {
         $(this).html(content).show();
@@ -56976,10 +57107,10 @@ window.page = {
 };
 
 /***/ }),
-/* 66 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var CONFIG = __webpack_require__(67);
+var CONFIG = __webpack_require__(70);
 
 window.particles = {
     /**
@@ -56996,7 +57127,7 @@ window.particles = {
 };
 
 /***/ }),
-/* 67 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -57005,25 +57136,22 @@ window.particles = {
  * Format: <id>: require("config")
  */
 module.exports = {
-  "particles_header": __webpack_require__(68)
+  "particles_header": __webpack_require__(71)
 };
 
 /***/ }),
-/* 68 */
+/* 71 */
 /***/ (function(module, exports) {
 
 module.exports = {"particles":{"number":{"value":25,"density":{"enable":true,"value_area":800}},"color":{"value":"#ffffff"},"shape":{"type":"circle","stroke":{"width":0,"color":"#000000"},"polygon":{"nb_sides":5},"image":{"src":"img/github.svg","width":100,"height":100}},"opacity":{"value":0.5,"random":false,"anim":{"enable":false,"speed":1,"opacity_min":0.1,"sync":false}},"size":{"value":5,"random":true,"anim":{"enable":false,"speed":20,"size_min":0.3,"sync":false}},"line_linked":{"enable":true,"distance":150,"color":"#ffffff","opacity":0.4,"width":1},"move":{"enable":true,"speed":2,"direction":"none","random":false,"straight":false,"out_mode":"out","attract":{"enable":false,"rotateX":600,"rotateY":1200}}},"interactivity":{"detect_on":"canvas","events":{"onhover":{"enable":false,"mode":"repulse"},"onclick":{"enable":false,"mode":"push"},"resize":true},"modes":{"grab":{"distance":400,"line_linked":{"opacity":1}},"bubble":{"distance":400,"size":40,"duration":2,"opacity":8,"speed":3},"repulse":{"distance":200},"push":{"particles_nb":4},"remove":{"particles_nb":2}}},"retina_detect":true,"config_demo":{"hide_card":false,"background_color":"#b61924","background_image":"","background_position":"50% 50%","background_repeat":"no-repeat","background_size":"cover"}}
 
 /***/ }),
-/* 69 */
+/* 72 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 70 */,
-/* 71 */,
-/* 72 */,
 /* 73 */,
 /* 74 */,
 /* 75 */,
@@ -57051,7 +57179,8 @@ module.exports = {"particles":{"number":{"value":25,"density":{"enable":true,"va
 /* 97 */,
 /* 98 */,
 /* 99 */,
-/* 100 */
+/* 100 */,
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
@@ -57059,7 +57188,7 @@ var normalizeComponent = __webpack_require__(2)
 /* script */
 var __vue_script__ = __webpack_require__(102)
 /* template */
-var __vue_template__ = __webpack_require__(101)
+var __vue_template__ = __webpack_require__(103)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -57076,7 +57205,7 @@ var Component = normalizeComponent(
   __vue_scopeId__,
   __vue_module_identifier__
 )
-Component.options.__file = "resources/assets/js/vue/IconInput.vue"
+Component.options.__file = "resources/assets/js/vue/GalleryShowcase.vue"
 
 /* hot reload */
 if (false) {(function () {
@@ -57085,9 +57214,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-5b9bf0a6", Component.options)
+    hotAPI.createRecord("data-v-47b98234", Component.options)
   } else {
-    hotAPI.reload("data-v-5b9bf0a6", Component.options)
+    hotAPI.reload("data-v-47b98234", Component.options)
   }
   module.hot.dispose(function (data) {
     disposed = true
@@ -57096,30 +57225,6 @@ if (false) {(function () {
 
 module.exports = Component.exports
 
-
-/***/ }),
-/* 101 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", [
-    _c("input", { staticClass: "form-control", attrs: { type: _vm.type } }),
-    _vm._v(" "),
-    _c("i", { class: _vm.icon })
-  ])
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-5b9bf0a6", module.exports)
-  }
-}
 
 /***/ }),
 /* 102 */
@@ -57133,29 +57238,312 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    mounted: function mounted() {
-        var input = $(this.$el).find("input");
-        $.each(this.$el.attributes, function () {
-            if (this.specified) {
-                input.attr(this.name, this.value);
+    data: function data() {
+        return {
+            gallery: null
+        };
+    },
+
+    methods: {
+        close: function close() {
+            if (this.gallery) {
+                this.gallery.close();
             }
-        });
-        $(this.$el).addClass("icon-input");
+            this.gallery = null;
+        },
+        toItems: function toItems() {
+            var items = [];
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = this.$children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var image = _step.value;
+
+                    var item = {
+                        el: image.$el,
+                        src: image.src,
+                        msrc: image.msrc,
+                        pid: image.pid,
+                        w: image.w,
+                        h: image.h
+                    };
+                    items.push(item);
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            return items;
+        },
+        findIndex: function findIndex(id) {
+            for (var i in this.$children) {
+                if (this.$children[i].pid == id) {
+                    return i;
+                }
+            }
+            return -1;
+        },
+        openFromHash: function openFromHash() {
+            var id = window.location.hash.substring(1).match(/(?:^|&)pid=(\d+)/);
+            if (id) {
+                this.open(parseInt(id[1]));
+            }
+        },
+        open: function open(id) {
+            var _this = this;
+
+            var index = this.findIndex(id);
+            if (index === -1) {
+                this.close();
+                return false;
+            }
+
+            var modal = $(".pswp")[0];
+            var options = {
+                galleryUID: this.id,
+                galleryPIDs: true,
+                getThumbBoundsFn: function getThumbBoundsFn(index) {
+                    var thumbnail = _this.$children[index].$el.getElementsByTagName("img")[0];
+                    var pageYScroll = window.pageYOffset || document.documentElement.scrollTop;
+                    var rect = thumbnail.getBoundingClientRect();
+                    return {
+                        x: rect.left,
+                        y: rect.top + pageYScroll,
+                        w: rect.width
+                    };
+                },
+                index: index
+            };
+            if (this.gallery) {
+                this.close();
+            }
+            this.gallery = new PhotoSwipe(modal, PhotoSwipeUI, this.toItems(this.$children), options);
+            this.gallery.init();
+            return true;
+        }
+    },
+    mounted: function mounted() {
+        var _iteratorNormalCompletion2 = true;
+        var _didIteratorError2 = false;
+        var _iteratorError2 = undefined;
+
+        try {
+            for (var _iterator2 = this.$children[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                var image = _step2.value;
+
+                image.$on("click", this.open);
+            }
+        } catch (err) {
+            _didIteratorError2 = true;
+            _iteratorError2 = err;
+        } finally {
+            try {
+                if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                    _iterator2.return();
+                }
+            } finally {
+                if (_didIteratorError2) {
+                    throw _iteratorError2;
+                }
+            }
+        }
+
+        ;
+        this.openFromHash();
     },
 
     props: {
-        type: {
-            type: String,
-            default: "type"
-        },
-        icon: {
-            type: String,
-            required: true
-        }
+        id: String
+    },
+    created: function created() {
+        window.addEventListener("hashchange", this.openFromHash);
+    },
+    destroyed: function destroyed() {
+        window.removeEventListener("hashchange", this.openFromHash);
     }
 });
+
+/***/ }),
+/* 103 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "row showcase" },
+    [
+      _vm._t("default", [
+        _c("span", { staticClass: "no-images" }, [
+          _vm._v("No images available")
+        ])
+      ])
+    ],
+    2
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-47b98234", module.exports)
+  }
+}
+
+/***/ }),
+/* 104 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(2)
+/* script */
+var __vue_script__ = __webpack_require__(105)
+/* template */
+var __vue_template__ = __webpack_require__(106)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/vue/GalleryImage.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-e732f338", Component.options)
+  } else {
+    hotAPI.reload("data-v-e732f338", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 105 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    methods: {
+        onClick: function onClick(e) {
+            e.preventDefault();
+            this.$emit("click", this.pid);
+        }
+    },
+    props: {
+        pid: {
+            type: String,
+            required: true
+        },
+        src: {
+            type: String,
+            required: true
+        },
+        msrc: {
+            type: String,
+            required: true
+        },
+        w: {
+            type: Number,
+            required: true
+        },
+        h: {
+            type: Number,
+            required: true
+        },
+        title: String,
+        description: String
+    }
+});
+
+/***/ }),
+/* 106 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "form-group col-lg-4 col-md-6 showcase-image" },
+    [
+      _c(
+        "a",
+        {
+          attrs: { href: _vm.src, itemprop: "contentUrl" },
+          on: { click: _vm.onClick }
+        },
+        [
+          _c("img", {
+            attrs: {
+              src: _vm.msrc,
+              itemprop: "thumbnail",
+              alt: _vm.description
+            }
+          })
+        ]
+      )
+    ]
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-e732f338", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);
