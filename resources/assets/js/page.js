@@ -23,6 +23,12 @@ var destroyVue = function () {
  * Display the visible sections
  */
 var displaySections = function () {
+    if (window.innerWidth < 768) {
+        hiddenSections.forEach((section) => {
+            $(section).addClass("visible");
+        });
+        return;
+    }
     var toReveal = [];
     hiddenSections.forEach((section) => {
         if ($(section).isInViewport()) {
@@ -55,6 +61,9 @@ var setBody = function (content) {
     $("#body").stop().clearQueue();
     $("#body").fadeOut(page.TRANSITION_DELAY, function () {
         $(this).html(content).show();
+        if (window.innerWidth < 768) {
+            $("header").addClass("small");
+        }
         createVue();
         findHiddenSections();
         page.render();
@@ -104,6 +113,9 @@ window.page = {
      * Render the page
      */
     render () {
+        if (window.innerWidth < 768) {
+            $("header").addClass("small");
+        }
         displaySections();
     },
 

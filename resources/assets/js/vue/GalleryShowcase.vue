@@ -26,7 +26,7 @@ export default {
                     el  : image.$el,
                     src : image.src,
                     msrc: image.msrc,
-                    pid : image.pid,
+                    pid : parseInt(image.pid),
                     w   : image.w,
                     h   : image.h
                 }
@@ -69,7 +69,7 @@ export default {
                         w: rect.width
                     }
                 },
-                index: index
+                index: parseInt(index)
             };
             if (this.gallery) {
                 this.close();

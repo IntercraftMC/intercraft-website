@@ -377,33 +377,6 @@ module.exports = {
 /* 1 */
 /***/ (function(module, exports) {
 
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports) {
-
 /* globals __VUE_SSR_CONTEXT__ */
 
 // IMPORTANT: Do NOT use ES2015 features in this file.
@@ -507,6 +480,33 @@ module.exports = function normalizeComponent (
     options: options
   }
 }
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
 
 
 /***/ }),
@@ -13523,7 +13523,7 @@ Popper.Defaults = Defaults;
 /* harmony default export */ __webpack_exports__["default"] = (Popper);
 //# sourceMappingURL=popper.js.map
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(2)))
 
 /***/ }),
 /* 6 */
@@ -14262,7 +14262,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(14);
-module.exports = __webpack_require__(72);
+module.exports = __webpack_require__(78);
 
 
 /***/ }),
@@ -14284,9 +14284,9 @@ __webpack_require__(49);
 __webpack_require__(51);
 
 __webpack_require__(52);
-__webpack_require__(67);
-__webpack_require__(68);
-__webpack_require__(69);
+__webpack_require__(73);
+__webpack_require__(74);
+__webpack_require__(75);
 
 /**
  * Invoked when the browser starts loading a new page
@@ -31505,7 +31505,7 @@ __webpack_require__(46);
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(17)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(17)(module)))
 
 /***/ }),
 /* 17 */
@@ -46449,7 +46449,7 @@ Vue.compile = compileToFunctions;
 
 module.exports = Vue;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(20).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(20).setImmediate))
 
 /***/ }),
 /* 20 */
@@ -46519,7 +46519,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
                          (typeof global !== "undefined" && global.clearImmediate) ||
                          (this && this.clearImmediate);
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
 /* 21 */
@@ -46712,7 +46712,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(6)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(6)))
 
 /***/ }),
 /* 22 */
@@ -51356,9 +51356,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! PhotoSwipe
 *
 * UI on top of main sliding area (caption, arrows, close button, etc.).
 * Built just using public methods/properties of PhotoSwipe.
-* 
+*
 */
-(function (root, factory) { 
+(function (root, factory) {
 	if (true) {
 		!(__WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
@@ -51403,11 +51403,11 @@ var PhotoSwipeUI_Default =
 		_options,
 		_defaultUIOptions = {
 			barsSize: {top:44, bottom:'auto'},
-			closeElClasses: ['item', 'caption', 'zoom-wrap', 'ui', 'top-bar'], 
-			timeToIdle: 4000, 
+			closeElClasses: ['item', 'caption', 'zoom-wrap', 'ui', 'top-bar'],
+			timeToIdle: 4000,
 			timeToIdleOutside: 1000,
 			loadingIndicatorDelay: 1000, // 2s
-			
+
 			addCaptionHTMLFn: function(item, captionEl /*, isFake */) {
 				if(!item.title) {
 					captionEl.children[0].innerHTML = '';
@@ -51447,7 +51447,7 @@ var PhotoSwipeUI_Default =
 			getTextForShare: function( /* shareButtonData */ ) {
 				return pswp.currItem.title || '';
 			},
-				
+
 			indexIndicatorSep: ' / ',
 			fitControlsWidth: 1200
 
@@ -51491,12 +51491,12 @@ var PhotoSwipeUI_Default =
 				}
 				_blockControlsTap = true;
 
-				// Some versions of Android don't prevent ghost click event 
+				// Some versions of Android don't prevent ghost click event
 				// when preventDefault() was called on touchstart and/or touchend.
-				// 
-				// This happens on v4.3, 4.2, 4.1, 
-				// older versions strangely work correctly, 
-				// but just in case we add delay on all of them)	
+				//
+				// This happens on v4.3, 4.2, 4.1,
+				// older versions strangely work correctly,
+				// but just in case we add delay on all of them)
 				var tapDelay = framework.features.isOldAndroid ? 600 : 30;
 				_blockControlsTapTimeout = setTimeout(function() {
 					_blockControlsTap = false;
@@ -51527,8 +51527,8 @@ var PhotoSwipeUI_Default =
 		_toggleShareModal = function() {
 
 			_shareModalHidden = !_shareModalHidden;
-			
-			
+
+
 			if(!_shareModalHidden) {
 				_toggleShareModalClass();
 				setTimeout(function() {
@@ -51544,7 +51544,7 @@ var PhotoSwipeUI_Default =
 					}
 				}, 300);
 			}
-			
+
 			if(!_shareModalHidden) {
 				_updateShareURLs();
 			}
@@ -51566,13 +51566,13 @@ var PhotoSwipeUI_Default =
 			}
 
 			window.open(target.href, 'pswp_share', 'scrollbars=yes,resizable=yes,toolbar=no,'+
-										'location=yes,width=550,height=420,top=100,left=' + 
+										'location=yes,width=550,height=420,top=100,left=' +
 										(window.screen ? Math.round(screen.width / 2 - 275) : 100)  );
 
 			if(!_shareModalHidden) {
 				_toggleShareModal();
 			}
-			
+
 			return false;
 		},
 		_updateShareURLs = function() {
@@ -51597,7 +51597,7 @@ var PhotoSwipeUI_Default =
 
 				shareButtonOut += '<a href="' + shareURL + '" target="_blank" '+
 									'class="pswp__share--' + shareButtonData.id + '"' +
-									(shareButtonData.download ? 'download' : '') + '>' + 
+									(shareButtonData.download ? 'download' : '') + '>' +
 									shareButtonData.label + '</a>';
 
 				if(_options.parseShareButtonOut) {
@@ -51652,7 +51652,7 @@ var PhotoSwipeUI_Default =
 		_setupLoadingIndicator = function() {
 			// Setup loading indicator
 			if(_options.preloaderEl) {
-			
+
 				_toggleLoadingIndicator(true);
 
 				_listen('beforeChange', function() {
@@ -51665,18 +51665,18 @@ var PhotoSwipeUI_Default =
 						if(pswp.currItem && pswp.currItem.loading) {
 
 							if( !pswp.allowProgressiveImg() || (pswp.currItem.img && !pswp.currItem.img.naturalWidth)  ) {
-								// show preloader if progressive loading is not enabled, 
+								// show preloader if progressive loading is not enabled,
 								// or image width is not defined yet (because of slow connection)
-								_toggleLoadingIndicator(false); 
+								_toggleLoadingIndicator(false);
 								// items-controller.js function allowProgressiveImg
 							}
-							
+
 						} else {
 							_toggleLoadingIndicator(true); // hide preloader
 						}
 
 					}, _options.loadingIndicatorDelay);
-					
+
 				});
 				_listen('imageLoadComplete', function(index, item) {
 					if(pswp.currItem === item) {
@@ -51696,8 +51696,8 @@ var PhotoSwipeUI_Default =
 			var gap = item.vGap;
 
 			if( _fitControlsInViewport() ) {
-				
-				var bars = _options.barsSize; 
+
+				var bars = _options.barsSize;
 				if(_options.captionEl && bars.bottom === 'auto') {
 					if(!_fakeCaptionContainer) {
 						_fakeCaptionContainer = framework.createEl('pswp__caption pswp__caption--fake');
@@ -51715,7 +51715,7 @@ var PhotoSwipeUI_Default =
 				} else {
 					gap.bottom = bars.bottom === 'auto' ? 0 : bars.bottom;
 				}
-				
+
 				// height of top bar is static, no need to calculate it
 				gap.top = bars.top;
 			} else {
@@ -51726,7 +51726,7 @@ var PhotoSwipeUI_Default =
 			// Hide controls when mouse is used
 			if(_options.timeToIdle) {
 				_listen('mouseUsed', function() {
-					
+
 					framework.bind(document, 'mousemove', _onIdleMouseMove);
 					framework.bind(document, 'mouseout', _onMouseLeaveWindow);
 
@@ -51773,77 +51773,77 @@ var PhotoSwipeUI_Default =
 
 
 	var _uiElements = [
-		{ 
-			name: 'caption', 
+		{
+			name: 'caption',
 			option: 'captionEl',
-			onInit: function(el) {  
-				_captionContainer = el; 
-			} 
+			onInit: function(el) {
+				_captionContainer = el;
+			}
 		},
-		{ 
-			name: 'share-modal', 
+		{
+			name: 'share-modal',
 			option: 'shareEl',
-			onInit: function(el) {  
+			onInit: function(el) {
 				_shareModal = el;
 			},
 			onTap: function() {
 				_toggleShareModal();
-			} 
+			}
 		},
-		{ 
-			name: 'button--share', 
+		{
+			name: 'button--share',
 			option: 'shareEl',
-			onInit: function(el) { 
+			onInit: function(el) {
 				_shareButton = el;
 			},
 			onTap: function() {
 				_toggleShareModal();
-			} 
+			}
 		},
-		{ 
-			name: 'button--zoom', 
+		{
+			name: 'button--zoom',
 			option: 'zoomEl',
 			onTap: pswp.toggleDesktopZoom
 		},
-		{ 
-			name: 'counter', 
+		{
+			name: 'counter',
 			option: 'counterEl',
-			onInit: function(el) {  
+			onInit: function(el) {
 				_indexIndicator = el;
-			} 
+			}
 		},
-		{ 
-			name: 'button--close', 
+		{
+			name: 'button--close',
 			option: 'closeEl',
 			onTap: pswp.close
 		},
-		{ 
-			name: 'button--arrow--left', 
+		{
+			name: 'button--arrow--left',
 			option: 'arrowEl',
 			onTap: pswp.prev
 		},
-		{ 
-			name: 'button--arrow--right', 
+		{
+			name: 'button--arrow--right',
 			option: 'arrowEl',
 			onTap: pswp.next
 		},
-		{ 
-			name: 'button--fs', 
+		{
+			name: 'button--fs',
 			option: 'fullscreenEl',
-			onTap: function() {  
+			onTap: function() {
 				if(_fullscrenAPI.isFullscreen()) {
 					_fullscrenAPI.exit();
 				} else {
 					_fullscrenAPI.enter();
 				}
-			} 
+			}
 		},
-		{ 
-			name: 'preloader', 
+		{
+			name: 'preloader',
 			option: 'preloaderEl',
-			onInit: function(el) {  
+			onInit: function(el) {
 				_loadingIndicator = el;
-			} 
+			}
 		}
 
 	];
@@ -51869,12 +51869,12 @@ var PhotoSwipeUI_Default =
 					if(classAttr.indexOf('pswp__' + uiElement.name) > -1  ) {
 
 						if( _options[uiElement.option] ) { // if element is not disabled from options
-							
+
 							framework.removeClass(item, 'pswp__element--disabled');
 							if(uiElement.onInit) {
 								uiElement.onInit(item);
 							}
-							
+
 							//item.style.display = 'block';
 						} else {
 							framework.addClass(item, 'pswp__element--disabled');
@@ -51893,7 +51893,7 @@ var PhotoSwipeUI_Default =
 	};
 
 
-	
+
 
 	ui.init = function() {
 
@@ -51929,9 +51929,9 @@ var PhotoSwipeUI_Default =
 		_listen('preventDragEvent', function(e, isDown, preventObj) {
 			var t = e.target || e.srcElement;
 			if(
-				t && 
-				t.getAttribute('class') && e.type.indexOf('mouse') > -1 && 
-				( t.getAttribute('class').indexOf('__caption') > 0 || (/(SMALL|STRONG|EM)/i).test(t.tagName) ) 
+				t &&
+				t.getAttribute('class') && e.type.indexOf('mouse') > -1 &&
+				( t.getAttribute('class').indexOf('__caption') > 0 || (/(SMALL|STRONG|EM)/i).test(t.tagName) )
 			) {
 				preventObj.prevent = false;
 			}
@@ -51989,7 +51989,7 @@ var PhotoSwipeUI_Default =
 			framework.addClass( _controls, 'pswp__ui--hidden');
 			ui.setIdle(false);
 		});
-		
+
 
 		if(!_options.showAnimationDuration) {
 			framework.removeClass( _controls, 'pswp__ui--hidden');
@@ -52004,7 +52004,7 @@ var PhotoSwipeUI_Default =
 		});
 
 		_listen('parseVerticalMargin', _applyNavBarGaps);
-		
+
 		_setupUIElements();
 
 		if(_options.shareEl && _shareButton && _shareModal) {
@@ -52028,7 +52028,7 @@ var PhotoSwipeUI_Default =
 	ui.update = function() {
 		// Don't update UI if it's hidden
 		if(_controlsVisible && pswp.currItem) {
-			
+
 			ui.updateIndexIndicator();
 
 			if(_options.captionEl) {
@@ -52059,19 +52059,19 @@ var PhotoSwipeUI_Default =
 				pswp.setScrollOffset( 0, framework.getScrollY() );
 			}, 50);
 		}
-		
+
 		// toogle pswp--fs class on root element
 		framework[ (_fullscrenAPI.isFullscreen() ? 'add' : 'remove') + 'Class' ](pswp.template, 'pswp--fs');
 	};
 
 	ui.updateIndexIndicator = function() {
 		if(_options.counterEl) {
-			_indexIndicator.innerHTML = (pswp.getCurrentIndex()+1) + 
-										_options.indexIndicatorSep + 
+			_indexIndicator.innerHTML = (pswp.getCurrentIndex()+1) +
+										_options.indexIndicatorSep +
 										_options.getNumItemsFn();
 		}
 	};
-	
+
 	ui.onGlobalTap = function(e) {
 		e = e || window.event;
 		var target = e.target || e.srcElement;
@@ -52097,7 +52097,7 @@ var PhotoSwipeUI_Default =
 					pswp.toggleDesktopZoom(e.detail.releasePoint);
 				}
 			}
-			
+
 		} else {
 
 			// tap anywhere (except buttons) to toggle visibility of controls
@@ -52114,7 +52114,7 @@ var PhotoSwipeUI_Default =
 				pswp.close();
 				return;
 			}
-			
+
 		}
 	};
 	ui.onMouseOver = function(e) {
@@ -52164,7 +52164,7 @@ var PhotoSwipeUI_Default =
 				eventK: 'moz' + tF
 			};
 
-			
+
 
 		} else if(dE.webkitRequestFullscreen) {
 			api = {
@@ -52184,21 +52184,21 @@ var PhotoSwipeUI_Default =
 		}
 
 		if(api) {
-			api.enter = function() { 
+			api.enter = function() {
 				// disable close-on-scroll in fullscreen
-				_initalCloseOnScrollValue = _options.closeOnScroll; 
-				_options.closeOnScroll = false; 
+				_initalCloseOnScrollValue = _options.closeOnScroll;
+				_options.closeOnScroll = false;
 
 				if(this.enterK === 'webkitRequestFullscreen') {
 					pswp.template[this.enterK]( Element.ALLOW_KEYBOARD_INPUT );
 				} else {
-					return pswp.template[this.enterK](); 
+					return pswp.template[this.enterK]();
 				}
 			};
-			api.exit = function() { 
+			api.exit = function() {
 				_options.closeOnScroll = _initalCloseOnScrollValue;
 
-				return document[this.exitK](); 
+				return document[this.exitK]();
 
 			};
 			api.isFullscreen = function() { return document[this.elementK]; };
@@ -55485,8 +55485,8 @@ Vue.component('loading-logo', __webpack_require__(55));
 Vue.component('icon-input', __webpack_require__(58));
 Vue.component('header-video', __webpack_require__(61));
 Vue.component('paginated-form', __webpack_require__(64));
-Vue.component('gallery-image', __webpack_require__(104));
-Vue.component('gallery-showcase', __webpack_require__(101));
+Vue.component('gallery-image', __webpack_require__(67));
+Vue.component('gallery-showcase', __webpack_require__(70));
 
 // const COMPONENTS = [
 //     "example_component",
@@ -55504,7 +55504,7 @@ Vue.component('gallery-showcase', __webpack_require__(101));
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(2)
+var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = null
 /* template */
@@ -56043,7 +56043,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(2)
+var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(56)
 /* template */
@@ -56377,7 +56377,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(2)
+var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(59)
 /* template */
@@ -56484,7 +56484,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(2)
+var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(62)
 /* template */
@@ -56735,7 +56735,7 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(2)
+var normalizeComponent = __webpack_require__(1)
 /* script */
 var __vue_script__ = __webpack_require__(65)
 /* template */
@@ -56951,244 +56951,149 @@ if (false) {
 
 /***/ }),
 /* 67 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-// $(".navbar-brand a").mouseover(function () {
-//     loading.once(".loading-logo-nav");
-// });
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(68)
+/* template */
+var __vue_template__ = __webpack_require__(69)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/vue/GalleryImage.vue"
 
-/**
- * How far from the top can we be before it is no longer
- * considered the top
- */
-var TOP_MARGIN = 100;
-
-/**
- * Keep track if we're at the top of the page
- */
-var top = true;
-
-navigate.event.on("scroll", function (pos) {
-  var isTop = pos < TOP_MARGIN;
-  if (top != isTop) {
-    top = isTop;
-    $("nav.navbar").toggleClass("navbar-top", top).toggleClass("navbar-dark", top).toggleClass("navbar-light", !top).toggleClass("navbar-color", !top);
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-e732f338", Component.options)
+  } else {
+    hotAPI.reload("data-v-e732f338", Component.options)
   }
-});
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
 
 /***/ }),
 /* 68 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-/**
- * Keep track of the sections that are hidden
- */
-var hiddenSections = new Set();
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
 
-/**
- * Create a new Vue instance
- */
-var createVue = function createVue() {
-    page.app = new Vue({
-        el: "#body"
-    });
-};
-
-var destroyVue = function destroyVue() {
-    if (page.app) {
-        page.app.$destroy();
-        page.app = null;
-    }
-};
-
-/**
- * Display the visible sections
- */
-var displaySections = function displaySections() {
-    var toReveal = [];
-    hiddenSections.forEach(function (section) {
-        if ($(section).isInViewport()) {
-            toReveal.push($(section));
-            hiddenSections.delete(section);
+/* harmony default export */ __webpack_exports__["default"] = ({
+    methods: {
+        onClick: function onClick(e) {
+            e.preventDefault();
+            this.$emit("click", this.pid);
         }
-    });
-    for (var i = 0; i < toReveal.length; i++) {
-        toReveal[i].delay(i * page.TRANSITION_DELAY).queue(function () {
-            $(this).addClass("visible");
-        });
+    },
+    props: {
+        pid: {
+            type: String,
+            required: true
+        },
+        src: {
+            type: String,
+            required: true
+        },
+        msrc: {
+            type: String,
+            required: true
+        },
+        w: {
+            type: Number,
+            required: true
+        },
+        h: {
+            type: Number,
+            required: true
+        },
+        title: String,
+        description: String
     }
-};
-
-/**
- * Locate any hidden sections and keep track of them
- */
-var findHiddenSections = function findHiddenSections() {
-    hiddenSections.clear();
-    $("#body").find("section:not(.visible)").each(function () {
-        hiddenSections.add(this);
-    });
-};
-
-/**
- * Set the content of the body
- */
-var setBody = function setBody(content) {
-    destroyVue();
-    $("#body").stop().clearQueue();
-    $("#body").fadeOut(page.TRANSITION_DELAY, function () {
-        $(this).html(content).show();
-        createVue();
-        findHiddenSections();
-        page.render();
-    });
-};
-
-/**
- * Page management
- */
-window.page = {
-
-    /**
-     * The amount of delay for transitions in miliseconds
-     */
-    TRANSITION_DELAY: 100,
-
-    /**
-     * The Vue app instance
-     */
-    app: null,
-
-    /**
-     * The Vue instance of header components
-     */
-    prebody: new Vue({
-        el: "#prebody"
-    }),
-
-    /**
-     * Append content to the page
-     */
-    append: function append(content) {
-        $("#body").append(content);
-        page.render();
-    },
-
-
-    /**
-     * Set the current page content
-     */
-    set: function set(title, header, content) {
-        document.title = title;
-        page.prebody.$refs.header.setHeader(header);
-        setBody(content);
-    },
-
-
-    /**
-     * Render the page
-     */
-    render: function render() {
-        displaySections();
-    },
-
-
-    /**
-     * Initial rendering of the page
-     */
-    init: function init() {
-        createVue();
-        findHiddenSections();
-        particles.render();
-        $(".navbar").fadeIn(1000);
-        setTimeout(function () {
-            page.render();
-        }, 1400);
-    }
-};
+});
 
 /***/ }),
 /* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var CONFIG = __webpack_require__(70);
-
-window.particles = {
-    /**
-     * Render the particles
-     */
-    render: function render() {
-        if (utils.isMobile()) return;
-        for (id in CONFIG) {
-            if ($("#" + id).length) {
-                particlesJS(id, CONFIG[id]);
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "form-group col-lg-4 col-md-6 showcase-image" },
+    [
+      _c(
+        "a",
+        {
+          attrs: { href: _vm.src, itemprop: "contentUrl" },
+          on: { click: _vm.onClick }
+        },
+        [
+          _c("img", {
+            attrs: {
+              src: _vm.msrc,
+              itemprop: "thumbnail",
+              alt: _vm.description
             }
-        }
-    }
-};
+          })
+        ]
+      )
+    ]
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-e732f338", module.exports)
+  }
+}
 
 /***/ }),
 /* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/**
- * Export the particle configurations
- *
- * Format: <id>: require("config")
- */
-module.exports = {
-  "particles_header": __webpack_require__(71)
-};
-
-/***/ }),
-/* 71 */
-/***/ (function(module, exports) {
-
-module.exports = {"particles":{"number":{"value":25,"density":{"enable":true,"value_area":800}},"color":{"value":"#ffffff"},"shape":{"type":"circle","stroke":{"width":0,"color":"#000000"},"polygon":{"nb_sides":5},"image":{"src":"img/github.svg","width":100,"height":100}},"opacity":{"value":0.5,"random":false,"anim":{"enable":false,"speed":1,"opacity_min":0.1,"sync":false}},"size":{"value":5,"random":true,"anim":{"enable":false,"speed":20,"size_min":0.3,"sync":false}},"line_linked":{"enable":true,"distance":150,"color":"#ffffff","opacity":0.4,"width":1},"move":{"enable":true,"speed":2,"direction":"none","random":false,"straight":false,"out_mode":"out","attract":{"enable":false,"rotateX":600,"rotateY":1200}}},"interactivity":{"detect_on":"canvas","events":{"onhover":{"enable":false,"mode":"repulse"},"onclick":{"enable":false,"mode":"push"},"resize":true},"modes":{"grab":{"distance":400,"line_linked":{"opacity":1}},"bubble":{"distance":400,"size":40,"duration":2,"opacity":8,"speed":3},"repulse":{"distance":200},"push":{"particles_nb":4},"remove":{"particles_nb":2}}},"retina_detect":true,"config_demo":{"hide_card":false,"background_color":"#b61924","background_image":"","background_position":"50% 50%","background_repeat":"no-repeat","background_size":"cover"}}
-
-/***/ }),
-/* 72 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 73 */,
-/* 74 */,
-/* 75 */,
-/* 76 */,
-/* 77 */,
-/* 78 */,
-/* 79 */,
-/* 80 */,
-/* 81 */,
-/* 82 */,
-/* 83 */,
-/* 84 */,
-/* 85 */,
-/* 86 */,
-/* 87 */,
-/* 88 */,
-/* 89 */,
-/* 90 */,
-/* 91 */,
-/* 92 */,
-/* 93 */,
-/* 94 */,
-/* 95 */,
-/* 96 */,
-/* 97 */,
-/* 98 */,
-/* 99 */,
-/* 100 */,
-/* 101 */
-/***/ (function(module, exports, __webpack_require__) {
-
 var disposed = false
-var normalizeComponent = __webpack_require__(2)
+var normalizeComponent = __webpack_require__(1)
 /* script */
-var __vue_script__ = __webpack_require__(102)
+var __vue_script__ = __webpack_require__(71)
 /* template */
-var __vue_template__ = __webpack_require__(103)
+var __vue_template__ = __webpack_require__(72)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -57227,7 +57132,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 102 */
+/* 71 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -57268,7 +57173,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                         el: image.$el,
                         src: image.src,
                         msrc: image.msrc,
-                        pid: image.pid,
+                        pid: parseInt(image.pid),
                         w: image.w,
                         h: image.h
                     };
@@ -57328,7 +57233,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                         w: rect.width
                     };
                 },
-                index: index
+                index: parseInt(index)
             };
             if (this.gallery) {
                 this.close();
@@ -57380,7 +57285,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 103 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -57411,139 +57316,236 @@ if (false) {
 }
 
 /***/ }),
-/* 104 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 73 */
+/***/ (function(module, exports) {
 
-var disposed = false
-var normalizeComponent = __webpack_require__(2)
-/* script */
-var __vue_script__ = __webpack_require__(105)
-/* template */
-var __vue_template__ = __webpack_require__(106)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources/assets/js/vue/GalleryImage.vue"
+// $(".navbar-brand a").mouseover(function () {
+//     loading.once(".loading-logo-nav");
+// });
 
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-e732f338", Component.options)
-  } else {
-    hotAPI.reload("data-v-e732f338", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
+/**
+ * How far from the top can we be before it is no longer
+ * considered the top
+ */
+var TOP_MARGIN = 100;
 
-module.exports = Component.exports
+/**
+ * Keep track if we're at the top of the page
+ */
+var top = true;
+var small = false;
 
+var updateNavbarStyle = function updateNavbarStyle() {
+    console.log("Updating...");
+    $("nav.navbar").toggleClass("navbar-top", top && !small).toggleClass("navbar-dark", top && !small).toggleClass("navbar-light", !top || small).toggleClass("navbar-color", !top || small);
+};
 
-/***/ }),
-/* 105 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-    methods: {
-        onClick: function onClick(e) {
-            e.preventDefault();
-            this.$emit("click", this.pid);
+$(document).ready(function () {
+    window.addEventListener("resize", function () {
+        var isSmall = window.innerWidth < 768;
+        console.log(isSmall);
+        if (small != isSmall) {
+            small = isSmall;
+            $("header").toggleClass("small", small);
+            updateNavbarStyle();
         }
-    },
-    props: {
-        pid: {
-            type: String,
-            required: true
-        },
-        src: {
-            type: String,
-            required: true
-        },
-        msrc: {
-            type: String,
-            required: true
-        },
-        w: {
-            type: Number,
-            required: true
-        },
-        h: {
-            type: Number,
-            required: true
-        },
-        title: String,
-        description: String
-    }
+    });
+    navigate.event.on("scroll", function (pos) {
+        var isTop = pos < TOP_MARGIN;
+        if (top != isTop) {
+            top = isTop;
+            updateNavbarStyle();
+        }
+    });
+    updateNavbarStyle();
 });
 
 /***/ }),
-/* 106 */
+/* 74 */
+/***/ (function(module, exports) {
+
+/**
+ * Keep track of the sections that are hidden
+ */
+var hiddenSections = new Set();
+
+/**
+ * Create a new Vue instance
+ */
+var createVue = function createVue() {
+    page.app = new Vue({
+        el: "#body"
+    });
+};
+
+var destroyVue = function destroyVue() {
+    if (page.app) {
+        page.app.$destroy();
+        page.app = null;
+    }
+};
+
+/**
+ * Display the visible sections
+ */
+var displaySections = function displaySections() {
+    if (window.innerWidth < 768) {
+        hiddenSections.forEach(function (section) {
+            $(section).addClass("visible");
+        });
+        return;
+    }
+    var toReveal = [];
+    hiddenSections.forEach(function (section) {
+        if ($(section).isInViewport()) {
+            toReveal.push($(section));
+            hiddenSections.delete(section);
+        }
+    });
+    for (var i = 0; i < toReveal.length; i++) {
+        toReveal[i].delay(i * page.TRANSITION_DELAY).queue(function () {
+            $(this).addClass("visible");
+        });
+    }
+};
+
+/**
+ * Locate any hidden sections and keep track of them
+ */
+var findHiddenSections = function findHiddenSections() {
+    hiddenSections.clear();
+    $("#body").find("section:not(.visible)").each(function () {
+        hiddenSections.add(this);
+    });
+};
+
+/**
+ * Set the content of the body
+ */
+var setBody = function setBody(content) {
+    destroyVue();
+    $("#body").stop().clearQueue();
+    $("#body").fadeOut(page.TRANSITION_DELAY, function () {
+        $(this).html(content).show();
+        if (window.innerWidth < 768) {
+            $("header").addClass("small");
+        }
+        createVue();
+        findHiddenSections();
+        page.render();
+    });
+};
+
+/**
+ * Page management
+ */
+window.page = {
+
+    /**
+     * The amount of delay for transitions in miliseconds
+     */
+    TRANSITION_DELAY: 100,
+
+    /**
+     * The Vue app instance
+     */
+    app: null,
+
+    /**
+     * The Vue instance of header components
+     */
+    prebody: new Vue({
+        el: "#prebody"
+    }),
+
+    /**
+     * Append content to the page
+     */
+    append: function append(content) {
+        $("#body").append(content);
+        page.render();
+    },
+
+
+    /**
+     * Set the current page content
+     */
+    set: function set(title, header, content) {
+        document.title = title;
+        page.prebody.$refs.header.setHeader(header);
+        setBody(content);
+    },
+
+
+    /**
+     * Render the page
+     */
+    render: function render() {
+        if (window.innerWidth < 768) {
+            $("header").addClass("small");
+        }
+        displaySections();
+    },
+
+
+    /**
+     * Initial rendering of the page
+     */
+    init: function init() {
+        createVue();
+        findHiddenSections();
+        particles.render();
+        $(".navbar").fadeIn(1000);
+        setTimeout(function () {
+            page.render();
+        }, 1400);
+    }
+};
+
+/***/ }),
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { staticClass: "form-group col-lg-4 col-md-6 showcase-image" },
-    [
-      _c(
-        "a",
-        {
-          attrs: { href: _vm.src, itemprop: "contentUrl" },
-          on: { click: _vm.onClick }
-        },
-        [
-          _c("img", {
-            attrs: {
-              src: _vm.msrc,
-              itemprop: "thumbnail",
-              alt: _vm.description
+var CONFIG = __webpack_require__(76);
+
+window.particles = {
+    /**
+     * Render the particles
+     */
+    render: function render() {
+        if (utils.isMobile()) return;
+        for (id in CONFIG) {
+            if ($("#" + id).length) {
+                particlesJS(id, CONFIG[id]);
             }
-          })
-        ]
-      )
-    ]
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-e732f338", module.exports)
-  }
-}
+        }
+    }
+};
+
+/***/ }),
+/* 76 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * Export the particle configurations
+ *
+ * Format: <id>: require("config")
+ */
+module.exports = {
+  "particles_header": __webpack_require__(77)
+};
+
+/***/ }),
+/* 77 */
+/***/ (function(module, exports) {
+
+module.exports = {"particles":{"number":{"value":25,"density":{"enable":true,"value_area":800}},"color":{"value":"#ffffff"},"shape":{"type":"circle","stroke":{"width":0,"color":"#000000"},"polygon":{"nb_sides":5},"image":{"src":"img/github.svg","width":100,"height":100}},"opacity":{"value":0.5,"random":false,"anim":{"enable":false,"speed":1,"opacity_min":0.1,"sync":false}},"size":{"value":5,"random":true,"anim":{"enable":false,"speed":20,"size_min":0.3,"sync":false}},"line_linked":{"enable":true,"distance":150,"color":"#ffffff","opacity":0.4,"width":1},"move":{"enable":true,"speed":2,"direction":"none","random":false,"straight":false,"out_mode":"out","attract":{"enable":false,"rotateX":600,"rotateY":1200}}},"interactivity":{"detect_on":"canvas","events":{"onhover":{"enable":false,"mode":"repulse"},"onclick":{"enable":false,"mode":"push"},"resize":true},"modes":{"grab":{"distance":400,"line_linked":{"opacity":1}},"bubble":{"distance":400,"size":40,"duration":2,"opacity":8,"speed":3},"repulse":{"distance":200},"push":{"particles_nb":4},"remove":{"particles_nb":2}}},"retina_detect":true,"config_demo":{"hide_card":false,"background_color":"#b61924","background_image":"","background_position":"50% 50%","background_repeat":"no-repeat","background_size":"cover"}}
+
+/***/ }),
+/* 78 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
 
 /***/ })
 /******/ ]);

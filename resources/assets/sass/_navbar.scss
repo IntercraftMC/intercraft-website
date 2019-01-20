@@ -24,6 +24,7 @@ nav.navbar {
     .navbar-brand {
         box-sizing: border-box;
         position: relative;
+        padding-left: 15px;
         transform-origin: left;
         transition: transform $nav-transition-duration;
         a {
@@ -72,7 +73,6 @@ nav.navbar {
         box-shadow: none;
 
         .navbar-brand {
-            transform: scale(1.1);
             a {
                 color: white;
             }
@@ -82,14 +82,22 @@ nav.navbar {
                 }
             }
         }
-        .navbar-nav {
-            transform: scale(1.1);
-        }
     }
 
     @include media-breakpoint-up (lg) {
         & .navbar-brand {
-            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        &.navbar-top {
+            .navbar-brand, .navbar-nav {
+                transform: scale(1.1);
+            }
+        }
+    }
+
+    @include media-breakpoint-down (md) {
+        & .container-fluid {
             padding-right: 15px;
         }
     }
