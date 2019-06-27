@@ -10,9 +10,19 @@
     <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
+    <header>
+        <navigation-bar>
+            @foreach (config("navbar")["routes"] as $route)
+                <navigation-link href="{{ route($route) }}">{{ __("navbar.$route") }}</navigation-link>
+            @endforeach
+        </navigation-bar>
+    </header>
     <div id="app">
         @include($page)
     </div>
+    <footer>
+
+    </footer>
     <script src="js/app.js"></script>
 </body>
 </html>
