@@ -10,4 +10,9 @@ class HomeController extends Controller
     {
         return ajax_view("home", "home");
     }
+
+    public function test()
+    {
+        return ajax_view("test", "test");
+    }
 }
