@@ -1885,15 +1885,48 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       // Store the current URL for reference
-      currentUrl: null
+      activeLink: null,
+      currentUrl: null,
+      routes: {}
     };
   },
   methods: {
     /**
+     * Initialize the routes
+     */
+    initRoutes: function initRoutes() {
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = this.$children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var link = _step.value;
+          this.routes[link.url.pathname] = link;
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+            _iterator["return"]();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      this.routes["/index"] = this.routes['/'];
+    },
+
+    /**
      * Invoked when navigation events are emitted
      */
     onNavigate: function onNavigate() {
-      if (location.href != this.currentUrl) {
+      if (location.href != this.currentUrl.href) {
         this.setCurrentUrl(location.href);
       }
     },
@@ -1902,15 +1935,39 @@ __webpack_require__.r(__webpack_exports__);
      * Set the current URL
      */
     setCurrentUrl: function setCurrentUrl(url) {
-      this.currentUrl = url;
-      console.log("Navigated");
+      this.currentUrl = new URL(url);
+      this.updateActiveLink();
+    },
+
+    /**
+     * Update the active link
+     */
+    updateActiveLink: function updateActiveLink() {
+      var root = this.routes;
+      var parts = this.currentUrl.pathname.substring(1).split('/');
+
+      for (var i = 0; i < parts.length && !(root instanceof Vue); i++) {
+        root = this.routes['/' + parts[i]];
+
+        if (root instanceof Vue) {
+          if (root !== this.activeLink) {
+            if (this.activeLink) {
+              this.activeLink.deactivate();
+            }
+
+            this.activeLink = root.activate();
+          }
+        }
+      }
     }
   },
   mounted: function mounted() {
     // Register the navigation events
     navigate.event.on("beforeload", this.onNavigate);
     navigate.event.on("error", this.onNavigate);
-    navigate.event.on("load", this.onNavigate); // Initialize the current URL
+    navigate.event.on("load", this.onNavigate); // Initialize the route tree
+
+    this.initRoutes(); // Initialize the current URL
 
     this.setCurrentUrl(location.href);
   }
@@ -1935,6 +1992,28 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      url: new URL(this.href)
+    };
+  },
+  methods: {
+    /**
+     * Activate the state as the active link
+     */
+    activate: function activate() {
+      $(this.$el).addClass("active");
+      return this;
+    },
+
+    /**
+     * Deactivate the state as the active link
+     */
+    deactivate: function deactivate() {
+      $(this.$el).removeClass("active");
+      return this;
+    }
+  },
   props: ["href"]
 });
 

@@ -7,7 +7,7 @@
 
     <title>{{ $title }}</title>
 
-    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
     <header>
@@ -23,6 +23,6 @@
     <footer>
 
     </footer>
-    <script src="js/app.js"></script>
+    <script src="/js/app.js"></script>
 </body>
 </html>
