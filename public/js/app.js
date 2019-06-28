@@ -1882,8 +1882,35 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      // Store the current URL for reference
+      currentUrl: null
+    };
+  },
+  methods: {
+    /**
+     * Invoked when navigation events are emitted
+     */
+    onNavigate: function onNavigate() {
+      if (location.href != this.currentUrl) {
+        this.setCurrentUrl(location.href);
+      }
+    },
+
+    /**
+     * Set the current URL
+     */
+    setCurrentUrl: function setCurrentUrl(url) {
+      this.currentUrl = url;
+      console.log("Navigated");
+    }
+  },
   mounted: function mounted() {
-    console.log('Component mounted.');
+    // Register the navigation events
+    navigate.event.on("beforeload", this.onNavigate);
+    navigate.event.on("error", this.onNavigate);
+    navigate.event.on("load", this.onNavigate);
   }
 });
 
@@ -37668,7 +37695,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "navbar-brand" }, [
-      _c("a", { attrs: { href: "#" } }, [_c("span", [_vm._v("Intercraft")])])
+      _c("a", { attrs: { href: "/" } }, [_c("span", [_vm._v("Intercraft")])])
     ])
   },
   function() {
@@ -50298,6 +50325,7 @@ var requestPage = function requestPage(url) {
 
 
 var onAjaxError = function onAjaxError(err) {
+  eventEmitter.emit("error", err);
   console.error("Navigation Error: ", err, {
     request: err.request,
     response: err.response

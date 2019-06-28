@@ -2,7 +2,7 @@
     <nav class="navbar navbar-top navbar-expand-md">
         <div class="container-fluid">
             <div class="navbar-brand">
-                <a href="#">
+                <a href="/">
                     <!-- <loading-logo class="loading-logo-nav" ref="nav_logo"></loading-logo> -->
                     <span>Intercraft</span>
                 </a>
@@ -21,8 +21,35 @@
 
 <script>
     export default {
+        data() {
+            return {
+                // Store the current URL for reference
+                currentUrl: null
+            }
+        },
+        methods: {
+            /**
+             * Invoked when navigation events are emitted
+             */
+            onNavigate() {
+                if (location.href != this.currentUrl) {
+                    this.setCurrentUrl(location.href);
+                }
+            },
+
+            /**
+             * Set the current URL
+             */
+            setCurrentUrl(url) {
+                this.currentUrl = url;
+                console.log("Navigated");
+            }
+        },
         mounted() {
-            console.log('Component mounted.')
+            // Register the navigation events
+            navigate.event.on("beforeload", this.onNavigate);
+            navigate.event.on("error",      this.onNavigate);
+            navigate.event.on("load",       this.onNavigate);
         }
     }
 </script>
