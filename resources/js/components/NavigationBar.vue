@@ -50,6 +50,9 @@
             navigate.event.on("beforeload", this.onNavigate);
             navigate.event.on("error",      this.onNavigate);
             navigate.event.on("load",       this.onNavigate);
+
+            // Initialize the current URL
+            this.setCurrentUrl(location.href);
         }
     }
 </script>

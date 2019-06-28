@@ -1910,7 +1910,9 @@ __webpack_require__.r(__webpack_exports__);
     // Register the navigation events
     navigate.event.on("beforeload", this.onNavigate);
     navigate.event.on("error", this.onNavigate);
-    navigate.event.on("load", this.onNavigate);
+    navigate.event.on("load", this.onNavigate); // Initialize the current URL
+
+    this.setCurrentUrl(location.href);
   }
 });
 
