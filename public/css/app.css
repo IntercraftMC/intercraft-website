@@ -11138,3 +11138,462 @@ nav .navbar-nav .nav-item.active a {
   color: rgba(0, 0, 0, 0.8);
 }
 
+/**
+ * A fully animated SVG created by hand.
+ * The original SVG is represented as a 512x512 graphic.
+ * All calculations are based on this representation.
+ * These calculations will still work with any size logo.
+ */
+
+/**
+ * Set the origin of each circle to where it should be
+ */
+
+/**
+ * Transform the graphic so it closes differently
+ */
+
+@-webkit-keyframes loading-transform {
+  50%, 100% {
+    -webkit-transform: scaleX(-1) rotate(-60deg);
+            transform: scaleX(-1) rotate(-60deg);
+  }
+}
+
+@keyframes loading-transform {
+  50%, 100% {
+    -webkit-transform: scaleX(-1) rotate(-60deg);
+            transform: scaleX(-1) rotate(-60deg);
+  }
+}
+
+/**
+ * Create the keyframes required for the long edges
+ */
+
+@-webkit-keyframes loading-edge-long-1 {
+  0%, 20% {
+    height: 0;
+  }
+
+  40%, 100% {
+    height: 430px;
+  }
+}
+
+@keyframes loading-edge-long-1 {
+  0%, 20% {
+    height: 0;
+  }
+
+  40%, 100% {
+    height: 430px;
+  }
+}
+
+.logo-animated .logo-edge-long-1 {
+  animation: loading-edge-long-1 0.75s linear 0s infinite alternate-reverse none paused;
+}
+
+@-webkit-keyframes loading-edge-long-2 {
+  0%, 30% {
+    height: 0;
+  }
+
+  50%, 100% {
+    height: 430px;
+  }
+}
+
+@keyframes loading-edge-long-2 {
+  0%, 30% {
+    height: 0;
+  }
+
+  50%, 100% {
+    height: 430px;
+  }
+}
+
+.logo-animated .logo-edge-long-2 {
+  animation: loading-edge-long-2 0.75s linear 0s infinite alternate-reverse none paused;
+}
+
+@-webkit-keyframes loading-edge-long-3 {
+  0%, 40% {
+    height: 0;
+  }
+
+  60%, 100% {
+    height: 430px;
+  }
+}
+
+@keyframes loading-edge-long-3 {
+  0%, 40% {
+    height: 0;
+  }
+
+  60%, 100% {
+    height: 430px;
+  }
+}
+
+.logo-animated .logo-edge-long-3 {
+  animation: loading-edge-long-3 0.75s linear 0s infinite alternate-reverse none paused;
+}
+
+/**
+ * Create the keyframes for the small edges and circles
+ */
+
+@-webkit-keyframes loading-edge-1 {
+  0%, 20% {
+    height: 0;
+  }
+
+  30%, 100% {
+    height: 215px;
+  }
+}
+
+@keyframes loading-edge-1 {
+  0%, 20% {
+    height: 0;
+  }
+
+  30%, 100% {
+    height: 215px;
+  }
+}
+
+@-webkit-keyframes loading-circle-1 {
+  0%, 10% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+
+  30%, 100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+}
+
+@keyframes loading-circle-1 {
+  0%, 10% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+
+  30%, 100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+}
+
+.logo-animated .logo-edge-1 {
+  animation: loading-edge-1 0.75s linear 0s infinite alternate-reverse none paused;
+}
+
+.logo-animated .logo-circle-1 {
+  -webkit-transform-origin: 86.3663011355% 70.99609375%;
+          transform-origin: 86.3663011355% 70.99609375%;
+  animation: loading-circle-1 0.75s linear 0.01875s infinite alternate-reverse none paused;
+}
+
+@-webkit-keyframes loading-edge-2 {
+  0%, 30% {
+    height: 0;
+  }
+
+  40%, 100% {
+    height: 215px;
+  }
+}
+
+@keyframes loading-edge-2 {
+  0%, 30% {
+    height: 0;
+  }
+
+  40%, 100% {
+    height: 215px;
+  }
+}
+
+@-webkit-keyframes loading-circle-2 {
+  0%, 20% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+
+  40%, 100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+}
+
+@keyframes loading-circle-2 {
+  0%, 20% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+
+  40%, 100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+}
+
+.logo-animated .logo-edge-2 {
+  animation: loading-edge-2 0.75s linear 0s infinite alternate-reverse none paused;
+}
+
+.logo-animated .logo-circle-2 {
+  -webkit-transform-origin: 86.3663011355% 29.00390625%;
+          transform-origin: 86.3663011355% 29.00390625%;
+  animation: loading-circle-2 0.75s linear 0.01875s infinite alternate-reverse none paused;
+}
+
+@-webkit-keyframes loading-edge-3 {
+  0%, 40% {
+    height: 0;
+  }
+
+  50%, 100% {
+    height: 215px;
+  }
+}
+
+@keyframes loading-edge-3 {
+  0%, 40% {
+    height: 0;
+  }
+
+  50%, 100% {
+    height: 215px;
+  }
+}
+
+@-webkit-keyframes loading-circle-3 {
+  0%, 30% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+
+  50%, 100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+}
+
+@keyframes loading-circle-3 {
+  0%, 30% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+
+  50%, 100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+}
+
+.logo-animated .logo-edge-3 {
+  animation: loading-edge-3 0.75s linear 0s infinite alternate-reverse none paused;
+}
+
+.logo-animated .logo-circle-3 {
+  -webkit-transform-origin: 50% 8.0078125%;
+          transform-origin: 50% 8.0078125%;
+  animation: loading-circle-3 0.75s linear 0.01875s infinite alternate-reverse none paused;
+}
+
+@-webkit-keyframes loading-edge-4 {
+  0%, 50% {
+    height: 0;
+  }
+
+  60%, 100% {
+    height: 215px;
+  }
+}
+
+@keyframes loading-edge-4 {
+  0%, 50% {
+    height: 0;
+  }
+
+  60%, 100% {
+    height: 215px;
+  }
+}
+
+@-webkit-keyframes loading-circle-4 {
+  0%, 40% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+
+  60%, 100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+}
+
+@keyframes loading-circle-4 {
+  0%, 40% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+
+  60%, 100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+}
+
+.logo-animated .logo-edge-4 {
+  animation: loading-edge-4 0.75s linear 0s infinite alternate-reverse none paused;
+}
+
+.logo-animated .logo-circle-4 {
+  -webkit-transform-origin: 13.6336988646% 29.00390625%;
+          transform-origin: 13.6336988646% 29.00390625%;
+  animation: loading-circle-4 0.75s linear 0.01875s infinite alternate-reverse none paused;
+}
+
+@-webkit-keyframes loading-edge-5 {
+  0%, 60% {
+    height: 0;
+  }
+
+  70%, 100% {
+    height: 215px;
+  }
+}
+
+@keyframes loading-edge-5 {
+  0%, 60% {
+    height: 0;
+  }
+
+  70%, 100% {
+    height: 215px;
+  }
+}
+
+@-webkit-keyframes loading-circle-5 {
+  0%, 50% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+
+  70%, 100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+}
+
+@keyframes loading-circle-5 {
+  0%, 50% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+
+  70%, 100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+}
+
+.logo-animated .logo-edge-5 {
+  animation: loading-edge-5 0.75s linear 0s infinite alternate-reverse none paused;
+}
+
+.logo-animated .logo-circle-5 {
+  -webkit-transform-origin: 13.6336989583% 70.996093735%;
+          transform-origin: 13.6336989583% 70.996093735%;
+  animation: loading-circle-5 0.75s linear 0.01875s infinite alternate-reverse none paused;
+}
+
+@-webkit-keyframes loading-edge-6 {
+  0%, 70% {
+    height: 0;
+  }
+
+  80%, 100% {
+    height: 215px;
+  }
+}
+
+@keyframes loading-edge-6 {
+  0%, 70% {
+    height: 0;
+  }
+
+  80%, 100% {
+    height: 215px;
+  }
+}
+
+@-webkit-keyframes loading-circle-6 {
+  0%, 60% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+
+  80%, 100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+}
+
+@keyframes loading-circle-6 {
+  0%, 60% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+
+  80%, 100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+}
+
+.logo-animated .logo-edge-6 {
+  animation: loading-edge-6 0.75s linear 0s infinite alternate-reverse none paused;
+}
+
+.logo-animated .logo-circle-6 {
+  -webkit-transform-origin: 50.000023253% 91.9921827208%;
+          transform-origin: 50.000023253% 91.9921827208%;
+  animation: loading-circle-6 0.75s linear 0.01875s infinite alternate-reverse none paused;
+}
+
+.logo-animated rect {
+  height: 0;
+}
+
+.logo-animated.active rect,
+.logo-animated.active circle {
+  -webkit-animation-play-state: running !important;
+          animation-play-state: running !important;
+}
+
+.logo-animated.active .logo-circles,
+.logo-animated.active .logo-edges {
+  animation: loading-transform 1.5s infinite reverse;
+  -webkit-animation-timing-function: step-end;
+          animation-timing-function: step-end;
+  -webkit-transform-origin: center center;
+          transform-origin: center center;
+  -webkit-animation-play-state: running !important;
+          animation-play-state: running !important;
+}
+
+.nav-logo {
+  width: 40px;
+  height: auto;
+}
+

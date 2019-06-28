@@ -3,7 +3,7 @@
         <div class="container-fluid">
             <div class="navbar-brand">
                 <a href="/">
-                    <!-- <loading-logo class="loading-logo-nav" ref="nav_logo"></loading-logo> -->
+                    <intercraft-logo class="nav-logo" ref="nav_logo"></intercraft-logo>
                     <span>Intercraft</span>
                 </a>
             </div>
@@ -18,7 +18,6 @@
         </div>
     </nav>
 </template>
-
 <script>
     export default {
         data() {
@@ -34,10 +33,19 @@
              * Initialize the routes
              */
             initRoutes() {
-                for (let link of this.$children) {
+                for (let link of this.links()) {
                     this.routes[link.url.pathname] = link;
                 }
                 this.routes["/index"] = this.routes['/'];
+            },
+
+            /**
+             * Fetch the link components
+             */
+            links() {
+                return this.$children.filter(child => {
+                    return child.$options._componentTag === "navigation-link"
+                });
             },
 
             /**

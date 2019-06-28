@@ -1851,6 +1851,49 @@ module.exports = function isBuffer (obj) {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/IntercraftLogo.vue?vue&type=script&lang=js&":
+/*!*************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/IntercraftLogo.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/NavigationBar.vue?vue&type=script&lang=js&":
 /*!************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/NavigationBar.vue?vue&type=script&lang=js& ***!
@@ -1860,7 +1903,6 @@ module.exports = function isBuffer (obj) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
 //
 //
 //
@@ -1900,7 +1942,7 @@ __webpack_require__.r(__webpack_exports__);
       var _iteratorError = undefined;
 
       try {
-        for (var _iterator = this.$children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        for (var _iterator = this.links()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var link = _step.value;
           this.routes[link.url.pathname] = link;
         }
@@ -1920,6 +1962,15 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       this.routes["/index"] = this.routes['/'];
+    },
+
+    /**
+     * Fetch the link components
+     */
+    links: function links() {
+      return this.$children.filter(function (child) {
+        return child.$options._componentTag === "navigation-link";
+      });
     },
 
     /**
@@ -37731,6 +37782,224 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/IntercraftLogo.vue?vue&type=template&id=796d2b8c&":
+/*!*****************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/IntercraftLogo.vue?vue&type=template&id=796d2b8c& ***!
+  \*****************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "svg",
+    {
+      staticClass: "logo-nav logo-animated",
+      staticStyle: { isolation: "isolate" },
+      attrs: {
+        xmlns: "http://www.w3.org/2000/svg",
+        width: "512",
+        height: "512",
+        viewBox: "0 0 512 512",
+        preserveAspectRatio: "xMidYMid"
+      }
+    },
+    [
+      _c("defs", [
+        _c("clipPath", { attrs: { id: "a" } }, [
+          _c("path", { attrs: { d: "M0 0h512v512H0z" } })
+        ])
+      ]),
+      _vm._v(" "),
+      _c("g", { attrs: { "clip-path": "url(#a)" } }, [
+        _c("g", { staticClass: "logo-edges" }, [
+          _c("rect", {
+            staticClass: "logo-edge-6",
+            attrs: {
+              width: "22",
+              height: "215",
+              x: "338.1",
+              y: "309.754",
+              fill: "rgb(0,0,0)",
+              transform: "matrix(-0.5,-0.866,0.866,-0.5,162.297,928.21)"
+            }
+          }),
+          _vm._v(" "),
+          _c("rect", {
+            staticClass: "logo-edge-5",
+            attrs: {
+              width: "22",
+              height: "215",
+              x: "151.9",
+              y: "309.754",
+              fill: "rgb(0,0,0)",
+              transform: "matrix(0.5,-0.866,0.866,0.5,-279.903,349.703)"
+            }
+          }),
+          _vm._v(" "),
+          _c("rect", {
+            staticClass: "logo-edge-4",
+            attrs: {
+              width: "22",
+              height: "215",
+              x: "58.8",
+              y: "148.5",
+              fill: "rgb(0,0,0)",
+              transform: "matrix(1,0,0,1,0,0)"
+            }
+          }),
+          _vm._v(" "),
+          _c("rect", {
+            staticClass: "logo-edge-3",
+            attrs: {
+              width: "22",
+              height: "215",
+              x: "151.9",
+              y: "-12.754",
+              fill: "rgb(0,0,0)",
+              transform: "matrix(0.5,0.866,-0.866,0.5,163.503,-93.703)"
+            }
+          }),
+          _vm._v(" "),
+          _c("rect", {
+            staticClass: "logo-edge-2",
+            attrs: {
+              width: "22",
+              height: "215",
+              x: "338.1",
+              y: "-12.754",
+              fill: "rgb(0,0,0)",
+              transform: "matrix(-0.5,0.866,-0.866,-0.5,605.703,-160.21)"
+            }
+          }),
+          _vm._v(" "),
+          _c("rect", {
+            staticClass: "logo-edge-1",
+            attrs: {
+              width: "22",
+              height: "215",
+              x: "431.2",
+              y: "148.5",
+              fill: "rgb(0,0,0)",
+              transform: "matrix(-1,0,0,-1,884.4,512)"
+            }
+          }),
+          _vm._v(" "),
+          _c("rect", {
+            staticClass: "logo-edge-long-3",
+            attrs: {
+              width: "22",
+              height: "430",
+              x: "245",
+              y: "41",
+              fill: "rgb(0,0,0)",
+              transform: "matrix(1,0,0,1,0,0)"
+            }
+          }),
+          _vm._v(" "),
+          _c("rect", {
+            staticClass: "logo-edge-long-2",
+            attrs: {
+              width: "22",
+              height: "430",
+              x: "245",
+              y: "41",
+              fill: "rgb(0,0,0)",
+              transform: "matrix(0.5,0.866,-0.866,0.5,349.703,-93.703)"
+            }
+          }),
+          _vm._v(" "),
+          _c("rect", {
+            staticClass: "logo-edge-long-1",
+            attrs: {
+              width: "22",
+              height: "430",
+              x: "245",
+              y: "41",
+              fill: "rgb(0,0,0)",
+              transform: "matrix(-0.5,0.866,-0.866,-0.5,605.703,162.297)"
+            }
+          })
+        ]),
+        _vm._v(" "),
+        _c("g", { staticClass: "logo-circles" }, [
+          _c("circle", {
+            staticClass: "logo-circle-6",
+            attrs: {
+              cx: "256",
+              cy: "471",
+              r: "32",
+              "vector-effect": "non-scaling-stroke"
+            }
+          }),
+          _vm._v(" "),
+          _c("circle", {
+            staticClass: "logo-circle-5",
+            attrs: {
+              cx: "69.8",
+              cy: "363.5",
+              r: "32",
+              "vector-effect": "non-scaling-stroke"
+            }
+          }),
+          _vm._v(" "),
+          _c("circle", {
+            staticClass: "logo-circle-4",
+            attrs: {
+              cx: "69.8",
+              cy: "148.5",
+              r: "32",
+              "vector-effect": "non-scaling-stroke"
+            }
+          }),
+          _vm._v(" "),
+          _c("circle", {
+            staticClass: "logo-circle-3",
+            attrs: {
+              cx: "256",
+              cy: "41",
+              r: "32",
+              "vector-effect": "non-scaling-stroke"
+            }
+          }),
+          _vm._v(" "),
+          _c("circle", {
+            staticClass: "logo-circle-2",
+            attrs: {
+              cx: "442.2",
+              cy: "148.5",
+              r: "32",
+              "vector-effect": "non-scaling-stroke"
+            }
+          }),
+          _vm._v(" "),
+          _c("circle", {
+            staticClass: "logo-circle-1",
+            attrs: {
+              cx: "442.2",
+              cy: "363.5",
+              r: "32",
+              "vector-effect": "non-scaling-stroke"
+            }
+          })
+        ])
+      ])
+    ]
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/NavigationBar.vue?vue&type=template&id=30e7b4f8&":
 /*!****************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/NavigationBar.vue?vue&type=template&id=30e7b4f8& ***!
@@ -37748,9 +38017,20 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("nav", { staticClass: "navbar navbar-top navbar-expand-md" }, [
     _c("div", { staticClass: "container-fluid" }, [
-      _vm._m(0),
+      _c("div", { staticClass: "navbar-brand" }, [
+        _c(
+          "a",
+          { attrs: { href: "/" } },
+          [
+            _c("intercraft-logo", { ref: "nav_logo", staticClass: "nav-logo" }),
+            _vm._v(" "),
+            _c("span", [_vm._v("Intercraft")])
+          ],
+          1
+        )
+      ]),
       _vm._v(" "),
-      _vm._m(1),
+      _vm._m(0),
       _vm._v(" "),
       _c(
         "div",
@@ -37771,14 +38051,6 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "navbar-brand" }, [
-      _c("a", { attrs: { href: "/" } }, [_c("span", [_vm._v("Intercraft")])])
-    ])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -49981,6 +50253,7 @@ module.exports = function(module) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
+	"./components/IntercraftLogo.vue": "./resources/js/components/IntercraftLogo.vue",
 	"./components/NavigationBar.vue": "./resources/js/components/NavigationBar.vue",
 	"./components/NavigationLink.vue": "./resources/js/components/NavigationLink.vue"
 };
@@ -50110,6 +50383,75 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     encrypted: true
 // });
+
+/***/ }),
+
+/***/ "./resources/js/components/IntercraftLogo.vue":
+/*!****************************************************!*\
+  !*** ./resources/js/components/IntercraftLogo.vue ***!
+  \****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _IntercraftLogo_vue_vue_type_template_id_796d2b8c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./IntercraftLogo.vue?vue&type=template&id=796d2b8c& */ "./resources/js/components/IntercraftLogo.vue?vue&type=template&id=796d2b8c&");
+/* harmony import */ var _IntercraftLogo_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./IntercraftLogo.vue?vue&type=script&lang=js& */ "./resources/js/components/IntercraftLogo.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _IntercraftLogo_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _IntercraftLogo_vue_vue_type_template_id_796d2b8c___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _IntercraftLogo_vue_vue_type_template_id_796d2b8c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/IntercraftLogo.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/IntercraftLogo.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************!*\
+  !*** ./resources/js/components/IntercraftLogo.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_IntercraftLogo_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./IntercraftLogo.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/IntercraftLogo.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_IntercraftLogo_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/IntercraftLogo.vue?vue&type=template&id=796d2b8c&":
+/*!***********************************************************************************!*\
+  !*** ./resources/js/components/IntercraftLogo.vue?vue&type=template&id=796d2b8c& ***!
+  \***********************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_IntercraftLogo_vue_vue_type_template_id_796d2b8c___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./IntercraftLogo.vue?vue&type=template&id=796d2b8c& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/IntercraftLogo.vue?vue&type=template&id=796d2b8c&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_IntercraftLogo_vue_vue_type_template_id_796d2b8c___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_IntercraftLogo_vue_vue_type_template_id_796d2b8c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
 
 /***/ }),
 
