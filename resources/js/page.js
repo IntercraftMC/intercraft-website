@@ -1,16 +1,14 @@
 /**
  * Create a new Vue instance
  */
-var createVue = function() {
-    page.app = new Vue({
-        el: "#app"
-    });
+var createVueApp = function() {
+    page.app = new Vue({ el: "#app" });
 };
 
 /**
  * Destroy the current Vue instance
  */
-var destroyVue = function() {
+var destroyVueApp = function() {
     if (page.app) {
         page.app.$destroy();
         page.app = null;
@@ -21,7 +19,7 @@ var destroyVue = function() {
  * Set the content of the body
  */
 var setBody = function(content) {
-    destroyVue();
+    destroyVueApp();
     $("#app").stop().clearQueue();
     $("#app").fadeOut(page.TRANSITION_DELAY, function () {
         $(this).html(content);
@@ -33,7 +31,7 @@ var setBody = function(content) {
  * Render the contents of the page
  */
 var render = function() {
-    createVue();
+    createVueApp();
     $("#app").show();
 }
 
@@ -51,6 +49,11 @@ window.page = {
      * The Vue app instance
      */
     app: null,
+
+    /**
+     * The Vue header instance
+     */
+    header: null,
 
     /**
      * Append content to the page
@@ -72,6 +75,7 @@ window.page = {
      * Initial rendering of the page
      */
     init () {
-        createVue();
+        page.header = new Vue({ el: "header" });
+        createVueApp();
     }
 };
