@@ -11,3 +11,12 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+
+// Mixins
+@import './mixins/shadows';
+
+// Navbar
+@import 'navbar';
+
+// Logo
+@import 'logo';

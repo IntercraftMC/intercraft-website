@@ -1,0 +1,98 @@
+/**
+ * A fully animated SVG created by hand.
+ * The original SVG is represented as a 512x512 graphic.
+ * All calculations are based on this representation.
+ * These calculations will still work with any size logo.
+ */
+
+/**
+ * Set the origin of each circle to where it should be
+ */
+@mixin circle-origin ($index) {
+    transform-origin:
+        (256 + 215*cos(-30deg + ($index - 1)*60deg)) / 512 * 100%
+        (256 + 215*sin(30deg - ($index - 1)*60deg)) / 512 * 100%;
+}
+
+/**
+ * Transform the graphic so it closes differently
+ */
+@keyframes loading-transform {
+    #{50%, 100%} {
+        transform: scaleX(-1) rotate(-60deg);
+    }
+}
+
+/**
+ * Create the keyframes required for the long edges
+ */
+@for $i from 1 through 3 {
+    @keyframes loading-edge-long-#{$i} {
+        #{0%, $i / 10 * 100% + 10%} {
+            height: 0;
+        }
+        #{$i / 10 * 100% + 30%, 100%} {
+            height: 430px;
+        }
+    }
+    .logo-animated.active .logo-edge-long-#{$i} {
+        animation: loading-edge-long-#{$i} $loading-duration / 2 linear 0s infinite alternate-reverse none paused;
+    }
+}
+
+/**
+ * Create the keyframes for the small edges and circles
+ */
+@for $i from 1 through 6 {
+    @keyframes loading-edge-#{$i} {
+        #{0%, $i / 10 * 100% + 10%} {
+            height: 0;
+        }
+        #{$i / 10 * 100% + 20%, 100%} {
+            height: 215px;
+        }
+    }
+    @keyframes loading-circle-#{$i} {
+        #{0%, $i / 10 * 100%} {
+            transform: scale(0);
+        }
+        #{$i / 10 * 100% + 20%, 100%} {
+            transform: scale(1);
+        }
+    }
+    .logo-animated.active {
+        .logo-edge-#{$i} {
+            animation: loading-edge-#{$i} $loading-duration / 2 linear 0s infinite alternate-reverse none paused;
+        }
+        .logo-circle-#{$i} {
+            @include circle-origin($i);
+            animation: loading-circle-#{$i} $loading-duration / 2 linear $loading-duration / 80 infinite alternate-reverse none paused;
+        }
+    }
+}
+
+.logo {
+    height: auto;
+}
+
+.logo-animated {
+    width: auto;
+    rect, circle {
+        animation: none;
+    }
+    &.active {
+        rect, circle {
+            animation-play-state: running !important;
+        }
+        .logo-circles, .logo-edges {
+            animation: loading-transform $loading-duration infinite reverse;
+            animation-play-state: running !important;
+            animation-timing-function: step-end;
+            transform-origin: center center;
+        }
+    }
+}
+
+.logo-nav {
+    width: 40px;
+}

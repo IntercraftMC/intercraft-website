@@ -140,6 +140,7 @@ var requestPage = function (url, pushState = false) {
  * Invoked when an error occurs
  */
 var onAjaxError = function (err) {
+    eventEmitter.emit("error", err);
     console.error("Navigation Error: ", err, {
         request: err.request,
         response: err.response
