@@ -57,7 +57,7 @@ export default {
         /**
          * Invoked at each cycle of the animation
          */
-        _onCycle() {
+        __onCycle() {
             if (!this.isActive) {
                 $(this.$el).removeClass("active");
             }
@@ -70,7 +70,7 @@ export default {
         $(this.$el).addClass("logo-animated");
         $(this.$el).on("animationiteration", "circle:first-of-type", () => {
             if (this.cycleComplete = !this.cycleComplete) {
-                this._onCycle();
+                this.__onCycle();
             }
         });
     },
