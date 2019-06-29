@@ -1890,7 +1890,61 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-/* harmony default export */ __webpack_exports__["default"] = ({});
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      isActive: false,
+      cycleComplete: true
+    };
+  },
+  methods: {
+    /**
+     * Start the animation
+     */
+    activate: function activate() {
+      if (this.isAnimated && !this.isActive) {
+        this.isActive = true;
+        $(this.$el).addClass("active");
+      }
+    },
+
+    /**
+     * Stop the animation
+     */
+    deactivate: function deactivate() {
+      this.isActive = false;
+    },
+
+    /**
+     * Invoked at each cycle of the animation
+     */
+    _onCycle: function _onCycle() {
+      if (!this.isActive) {
+        $(this.$el).removeClass("active");
+      }
+    }
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    if (!this.isAnimated) {
+      return;
+    }
+
+    $(this.$el).addClass("logo-animated");
+    $(this.$el).on("animationiteration", "circle:first-of-type", function () {
+      if (_this.cycleComplete = !_this.cycleComplete) {
+        _this._onCycle();
+      }
+    });
+  },
+  props: {
+    isAnimated: {
+      type: Boolean,
+      "default": false
+    }
+  }
+});
 
 /***/ }),
 
@@ -2015,8 +2069,11 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     // Register the navigation events
     navigate.event.on("beforeload", this.onNavigate);
+    navigate.event.on("beforeload", this.$refs.logo.activate);
     navigate.event.on("error", this.onNavigate);
-    navigate.event.on("load", this.onNavigate); // Initialize the route tree
+    navigate.event.on("error", this.$refs.logo.deactivate);
+    navigate.event.on("load", this.onNavigate);
+    navigate.event.on("load", this.$refs.logo.deactivate); // Initialize the route tree
 
     this.initRoutes(); // Initialize the current URL
 
@@ -37800,7 +37857,7 @@ var render = function() {
   return _c(
     "svg",
     {
-      staticClass: "logo-nav logo-animated",
+      staticClass: "logo",
       staticStyle: { isolation: "isolate" },
       attrs: {
         xmlns: "http://www.w3.org/2000/svg",
@@ -38022,7 +38079,11 @@ var render = function() {
           "a",
           { attrs: { href: "/" } },
           [
-            _c("intercraft-logo", { ref: "nav_logo", staticClass: "nav-logo" }),
+            _c("intercraft-logo", {
+              ref: "logo",
+              staticClass: "logo-nav",
+              attrs: { "is-animated": "" }
+            }),
             _vm._v(" "),
             _c("span", [_vm._v("Intercraft")])
           ],

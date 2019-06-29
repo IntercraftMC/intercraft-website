@@ -35,7 +35,7 @@
             height: 430px;
         }
     }
-    .logo-animated .logo-edge-long-#{$i} {
+    .logo-animated.active .logo-edge-long-#{$i} {
         animation: loading-edge-long-#{$i} $loading-duration / 2 linear 0s infinite alternate-reverse none paused;
     }
 }
@@ -60,7 +60,7 @@
             transform: scale(1);
         }
     }
-    .logo-animated {
+    .logo-animated.active {
         .logo-edge-#{$i} {
             animation: loading-edge-#{$i} $loading-duration / 2 linear 0s infinite alternate-reverse none paused;
         }
@@ -71,10 +71,14 @@
     }
 }
 
+.logo {
+    height: auto;
+}
 
 .logo-animated {
-    rect {
-        height: 0;
+    width: auto;
+    rect, circle {
+        animation: none;
     }
     &.active {
         rect, circle {
@@ -82,14 +86,13 @@
         }
         .logo-circles, .logo-edges {
             animation: loading-transform $loading-duration infinite reverse;
+            animation-play-state: running !important;
             animation-timing-function: step-end;
             transform-origin: center center;
-            animation-play-state: running !important;
         }
     }
 }
 
-.nav-logo {
+.logo-nav {
     width: 40px;
-    height: auto;
 }

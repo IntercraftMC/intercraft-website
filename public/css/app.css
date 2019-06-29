@@ -11191,8 +11191,8 @@ nav .navbar-nav .nav-item.active a {
   }
 }
 
-.logo-animated .logo-edge-long-1 {
-  animation: loading-edge-long-1 0.75s linear 0s infinite alternate-reverse none paused;
+.logo-animated.active .logo-edge-long-1 {
+  animation: loading-edge-long-1 0.6s linear 0s infinite alternate-reverse none paused;
 }
 
 @-webkit-keyframes loading-edge-long-2 {
@@ -11215,8 +11215,8 @@ nav .navbar-nav .nav-item.active a {
   }
 }
 
-.logo-animated .logo-edge-long-2 {
-  animation: loading-edge-long-2 0.75s linear 0s infinite alternate-reverse none paused;
+.logo-animated.active .logo-edge-long-2 {
+  animation: loading-edge-long-2 0.6s linear 0s infinite alternate-reverse none paused;
 }
 
 @-webkit-keyframes loading-edge-long-3 {
@@ -11239,8 +11239,8 @@ nav .navbar-nav .nav-item.active a {
   }
 }
 
-.logo-animated .logo-edge-long-3 {
-  animation: loading-edge-long-3 0.75s linear 0s infinite alternate-reverse none paused;
+.logo-animated.active .logo-edge-long-3 {
+  animation: loading-edge-long-3 0.6s linear 0s infinite alternate-reverse none paused;
 }
 
 /**
@@ -11291,14 +11291,14 @@ nav .navbar-nav .nav-item.active a {
   }
 }
 
-.logo-animated .logo-edge-1 {
-  animation: loading-edge-1 0.75s linear 0s infinite alternate-reverse none paused;
+.logo-animated.active .logo-edge-1 {
+  animation: loading-edge-1 0.6s linear 0s infinite alternate-reverse none paused;
 }
 
-.logo-animated .logo-circle-1 {
+.logo-animated.active .logo-circle-1 {
   -webkit-transform-origin: 86.3663011355% 70.99609375%;
           transform-origin: 86.3663011355% 70.99609375%;
-  animation: loading-circle-1 0.75s linear 0.01875s infinite alternate-reverse none paused;
+  animation: loading-circle-1 0.6s linear 0.015s infinite alternate-reverse none paused;
 }
 
 @-webkit-keyframes loading-edge-2 {
@@ -11345,14 +11345,14 @@ nav .navbar-nav .nav-item.active a {
   }
 }
 
-.logo-animated .logo-edge-2 {
-  animation: loading-edge-2 0.75s linear 0s infinite alternate-reverse none paused;
+.logo-animated.active .logo-edge-2 {
+  animation: loading-edge-2 0.6s linear 0s infinite alternate-reverse none paused;
 }
 
-.logo-animated .logo-circle-2 {
+.logo-animated.active .logo-circle-2 {
   -webkit-transform-origin: 86.3663011355% 29.00390625%;
           transform-origin: 86.3663011355% 29.00390625%;
-  animation: loading-circle-2 0.75s linear 0.01875s infinite alternate-reverse none paused;
+  animation: loading-circle-2 0.6s linear 0.015s infinite alternate-reverse none paused;
 }
 
 @-webkit-keyframes loading-edge-3 {
@@ -11399,14 +11399,14 @@ nav .navbar-nav .nav-item.active a {
   }
 }
 
-.logo-animated .logo-edge-3 {
-  animation: loading-edge-3 0.75s linear 0s infinite alternate-reverse none paused;
+.logo-animated.active .logo-edge-3 {
+  animation: loading-edge-3 0.6s linear 0s infinite alternate-reverse none paused;
 }
 
-.logo-animated .logo-circle-3 {
+.logo-animated.active .logo-circle-3 {
   -webkit-transform-origin: 50% 8.0078125%;
           transform-origin: 50% 8.0078125%;
-  animation: loading-circle-3 0.75s linear 0.01875s infinite alternate-reverse none paused;
+  animation: loading-circle-3 0.6s linear 0.015s infinite alternate-reverse none paused;
 }
 
 @-webkit-keyframes loading-edge-4 {
@@ -11453,14 +11453,14 @@ nav .navbar-nav .nav-item.active a {
   }
 }
 
-.logo-animated .logo-edge-4 {
-  animation: loading-edge-4 0.75s linear 0s infinite alternate-reverse none paused;
+.logo-animated.active .logo-edge-4 {
+  animation: loading-edge-4 0.6s linear 0s infinite alternate-reverse none paused;
 }
 
-.logo-animated .logo-circle-4 {
+.logo-animated.active .logo-circle-4 {
   -webkit-transform-origin: 13.6336988646% 29.00390625%;
           transform-origin: 13.6336988646% 29.00390625%;
-  animation: loading-circle-4 0.75s linear 0.01875s infinite alternate-reverse none paused;
+  animation: loading-circle-4 0.6s linear 0.015s infinite alternate-reverse none paused;
 }
 
 @-webkit-keyframes loading-edge-5 {
@@ -11507,14 +11507,14 @@ nav .navbar-nav .nav-item.active a {
   }
 }
 
-.logo-animated .logo-edge-5 {
-  animation: loading-edge-5 0.75s linear 0s infinite alternate-reverse none paused;
+.logo-animated.active .logo-edge-5 {
+  animation: loading-edge-5 0.6s linear 0s infinite alternate-reverse none paused;
 }
 
-.logo-animated .logo-circle-5 {
+.logo-animated.active .logo-circle-5 {
   -webkit-transform-origin: 13.6336989583% 70.996093735%;
           transform-origin: 13.6336989583% 70.996093735%;
-  animation: loading-circle-5 0.75s linear 0.01875s infinite alternate-reverse none paused;
+  animation: loading-circle-5 0.6s linear 0.015s infinite alternate-reverse none paused;
 }
 
 @-webkit-keyframes loading-edge-6 {
@@ -11561,18 +11561,28 @@ nav .navbar-nav .nav-item.active a {
   }
 }
 
-.logo-animated .logo-edge-6 {
-  animation: loading-edge-6 0.75s linear 0s infinite alternate-reverse none paused;
+.logo-animated.active .logo-edge-6 {
+  animation: loading-edge-6 0.6s linear 0s infinite alternate-reverse none paused;
 }
 
-.logo-animated .logo-circle-6 {
+.logo-animated.active .logo-circle-6 {
   -webkit-transform-origin: 50.000023253% 91.9921827208%;
           transform-origin: 50.000023253% 91.9921827208%;
-  animation: loading-circle-6 0.75s linear 0.01875s infinite alternate-reverse none paused;
+  animation: loading-circle-6 0.6s linear 0.015s infinite alternate-reverse none paused;
 }
 
-.logo-animated rect {
-  height: 0;
+.logo {
+  height: auto;
+}
+
+.logo-animated {
+  width: auto;
+}
+
+.logo-animated rect,
+.logo-animated circle {
+  -webkit-animation: none;
+          animation: none;
 }
 
 .logo-animated.active rect,
@@ -11583,17 +11593,16 @@ nav .navbar-nav .nav-item.active a {
 
 .logo-animated.active .logo-circles,
 .logo-animated.active .logo-edges {
-  animation: loading-transform 1.5s infinite reverse;
+  animation: loading-transform 1.2s infinite reverse;
+  -webkit-animation-play-state: running !important;
+          animation-play-state: running !important;
   -webkit-animation-timing-function: step-end;
           animation-timing-function: step-end;
   -webkit-transform-origin: center center;
           transform-origin: center center;
-  -webkit-animation-play-state: running !important;
-          animation-play-state: running !important;
 }
 
-.nav-logo {
+.logo-nav {
   width: 40px;
-  height: auto;
 }
 

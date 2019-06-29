@@ -1,5 +1,5 @@
 <template>
-    <svg class="logo-nav logo-animated" xmlns="http://www.w3.org/2000/svg" width="512" height="512" style="isolation:isolate" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid">
+    <svg class="logo" xmlns="http://www.w3.org/2000/svg" width="512" height="512" style="isolation:isolate" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid">
         <defs>
             <clipPath id="a">
                 <path d="M0 0h512v512H0z"/>
@@ -30,6 +30,55 @@
 </template>
 <script>
 export default {
+    data() {
+        return {
+            isActive: false,
+            cycleComplete: true
+        };
+    },
+    methods: {
+        /**
+         * Start the animation
+         */
+        activate() {
+            if (this.isAnimated && !this.isActive) {
+                this.isActive = true;
+                $(this.$el).addClass("active");
+            }
+        },
 
+        /**
+         * Stop the animation
+         */
+        deactivate() {
+            this.isActive = false;
+        },
+
+        /**
+         * Invoked at each cycle of the animation
+         */
+        _onCycle() {
+            if (!this.isActive) {
+                $(this.$el).removeClass("active");
+            }
+        }
+    },
+    mounted() {
+        if (!this.isAnimated) {
+            return;
+        }
+        $(this.$el).addClass("logo-animated");
+        $(this.$el).on("animationiteration", "circle:first-of-type", () => {
+            if (this.cycleComplete = !this.cycleComplete) {
+                this._onCycle();
+            }
+        });
+    },
+    props: {
+        isAnimated: {
+            type: Boolean,
+            default: false
+        }
+    }
 }
 </script>

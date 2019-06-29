@@ -3,7 +3,7 @@
         <div class="container-fluid">
             <div class="navbar-brand">
                 <a href="/">
-                    <intercraft-logo class="nav-logo" ref="nav_logo"></intercraft-logo>
+                    <intercraft-logo class="logo-nav" ref="logo" is-animated></intercraft-logo>
                     <span>Intercraft</span>
                 </a>
             </div>
@@ -87,8 +87,11 @@
         mounted() {
             // Register the navigation events
             navigate.event.on("beforeload", this.onNavigate);
+            navigate.event.on("beforeload", this.$refs.logo.activate);
             navigate.event.on("error",      this.onNavigate);
+            navigate.event.on("error",      this.$refs.logo.deactivate);
             navigate.event.on("load",       this.onNavigate);
+            navigate.event.on("load",       this.$refs.logo.deactivate);
 
             // Initialize the route tree
             this.initRoutes();
