@@ -126,7 +126,7 @@ var requestPage = function (url, pushState = false) {
     }
     isLoading = true;
     pageInfo.url = url;
-    eventEmitter.emit("beforeload");
+    eventEmitter.emit("beforeload", url);
     axios.get(url, AXIOS_CONFIG)
         .then((response) => { onAjaxLoad(response, url, pushState); })
         .catch(onAjaxError)

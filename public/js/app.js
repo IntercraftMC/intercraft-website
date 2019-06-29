@@ -2030,8 +2030,10 @@ __webpack_require__.r(__webpack_exports__);
     /**
      * Invoked when navigation events are emitted
      */
-    onNavigate: function onNavigate() {
-      if (location.href != this.currentUrl.href) {
+    onNavigate: function onNavigate(url) {
+      if (url != undefined && url != this.currentUrl.href) {
+        this.setCurrentUrl(url);
+      } else if (location.href != this.currentUrl.href) {
         this.setCurrentUrl(location.href);
       }
     },
@@ -50795,7 +50797,7 @@ var requestPage = function requestPage(url) {
 
   isLoading = true;
   pageInfo.url = url;
-  eventEmitter.emit("beforeload");
+  eventEmitter.emit("beforeload", url);
   axios.get(url, AXIOS_CONFIG).then(function (response) {
     onAjaxLoad(response, url, pushState);
   })["catch"](onAjaxError).then(function () {

@@ -51,8 +51,10 @@
             /**
              * Invoked when navigation events are emitted
              */
-            onNavigate() {
-                if (location.href != this.currentUrl.href) {
+            onNavigate(url) {
+                if (url != undefined && url != this.currentUrl.href) {
+                    this.setCurrentUrl(url);
+                } else if (location.href != this.currentUrl.href) {
                     this.setCurrentUrl(location.href);
                 }
             },
