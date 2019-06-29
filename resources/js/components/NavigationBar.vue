@@ -1,6 +1,6 @@
 <template>
-    <nav class="navbar navbar-top navbar-expand-md">
-        <div class="container-fluid">
+    <nav class="navbar navbar-top navbar-expand-md fixed-top">
+        <div class="container">
             <div class="navbar-brand">
                 <a href="/">
                     <intercraft-logo class="logo-nav" ref="logo" is-animated></intercraft-logo>

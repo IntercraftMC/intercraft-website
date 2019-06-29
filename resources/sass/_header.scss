@@ -1,0 +1,11 @@
+.video-header {
+    min-height: 80vh;
+
+    .overlay {
+        box-sizing: border-box;
+        width: 100%;
+        min-height: inherit;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 2;
+    }
+}

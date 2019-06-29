@@ -18,5 +18,12 @@
 // Navbar
 @import 'navbar';
 
+// Header
+@import 'header';
+
 // Logo
 @import 'logo';
+
+body {
+    min-height: 2000px;
+}

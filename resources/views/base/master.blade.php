@@ -16,13 +16,12 @@
                 <navigation-link href="{{ route($route) }}">{{ __("navbar.$route") }}</navigation-link>
             @endforeach
         </navigation-bar>
+        <background-video></background-video>
     </header>
     <div id="app">
         @include($page)
     </div>
-    <footer>
-
-    </footer>
+    <footer></footer>
     <script src="/js/app.js"></script>
 </body>
 </html>
