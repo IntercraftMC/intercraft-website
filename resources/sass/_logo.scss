@@ -36,7 +36,7 @@
         }
     }
     .logo-animated.active .logo-edge-long-#{$i} {
-        animation: loading-edge-long-#{$i} $loading-duration / 2 linear 0s infinite alternate-reverse none paused;
+        animation: loading-edge-long-#{$i} $logo-animation-duration / 2 linear 0s infinite alternate-reverse none paused;
     }
 }
 
@@ -62,11 +62,11 @@
     }
     .logo-animated.active {
         .logo-edge-#{$i} {
-            animation: loading-edge-#{$i} $loading-duration / 2 linear 0s infinite alternate-reverse none paused;
+            animation: loading-edge-#{$i} $logo-animation-duration / 2 linear 0s infinite alternate-reverse none paused;
         }
         .logo-circle-#{$i} {
             @include circle-origin($i);
-            animation: loading-circle-#{$i} $loading-duration / 2 linear $loading-duration / 80 infinite alternate-reverse none paused;
+            animation: loading-circle-#{$i} $logo-animation-duration / 2 linear $logo-animation-duration / 80 infinite alternate-reverse none paused;
         }
     }
 }
@@ -85,7 +85,7 @@
             animation-play-state: running !important;
         }
         .logo-circles, .logo-edges {
-            animation: loading-transform $loading-duration infinite reverse;
+            animation: loading-transform $logo-animation-duration infinite reverse;
             animation-play-state: running !important;
             animation-timing-function: step-end;
             transform-origin: center center;

@@ -1,11 +1,32 @@
 .video-header {
+    position: relative;
     min-height: 80vh;
 
     .overlay {
-        box-sizing: border-box;
-        width: 100%;
-        min-height: inherit;
         background: rgba(0, 0, 0, 0.4);
-        z-index: 2;
+        box-sizing: border-box;
+        height: 100%;
+        position: absolute;
+        width: 100%;
+
+        .content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            height: 100%;
+
+            h1 {
+                color: rgba(255, 255, 255, 0.9);
+                font-size: 5rem;
+                text-transform: uppercase;
+                text-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+            }
+            p {
+                color: rgba(255, 255, 255, 0.9);
+                font-size: 1.5rem;
+                text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+            }
+        }
     }
 }

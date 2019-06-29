@@ -16,7 +16,7 @@
                 <navigation-link href="{{ route($route) }}">{{ __("navbar.$route") }}</navigation-link>
             @endforeach
         </navigation-bar>
-        <background-video></background-video>
+        <video-header></video-header>
     </header>
     <div id="app">
         @include($page)
