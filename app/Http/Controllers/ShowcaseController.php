@@ -10,4 +10,9 @@ class ShowcaseController extends Controller
     {
         return ajax_view("showcase", "showcase");
     }
+
+    public function project($project)
+    {
+        return ajax_view("showcase", "showcase");
+    }
 }
