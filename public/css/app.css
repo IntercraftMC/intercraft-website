@@ -10908,6 +10908,24 @@ nav.navbar.navbar-top .navbar-nav .nav-item.active a {
   color: white;
 }
 
+.billboard {
+  height: auto;
+  width: 100%;
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.5);
+  -webkit-transition: box-shadow 0.2s ease-out, -webkit-transform 0.2s ease-out;
+  transition: box-shadow 0.2s ease-out, -webkit-transform 0.2s ease-out;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, -webkit-transform 0.2s ease-out;
+  -webkit-transform-origin: center center;
+          transform-origin: center center;
+}
+
+.billboard:hover {
+  -webkit-transform: scale(1.02);
+          transform: scale(1.02);
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.4);
+}
+
 .btn {
   -webkit-transition: box-shadow 0.2s ease-in-out;
   transition: box-shadow 0.2s ease-in-out;
@@ -11413,22 +11431,38 @@ nav.navbar.navbar-top .navbar-nav .nav-item.active a {
   width: 40px;
 }
 
-.billboard {
-  height: auto;
-  width: 100%;
-  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.5);
+.showcase .showcase-item {
+  margin-bottom: 30px;
+  -webkit-transition: -webkit-transform 0.3s ease-out;
+  transition: -webkit-transform 0.3s ease-out;
+  transition: transform 0.3s ease-out;
+  transition: transform 0.3s ease-out, -webkit-transform 0.3s ease-out;
+}
+
+.showcase .showcase-item.hidden {
+  -webkit-transform: scale(0);
+          transform: scale(0);
+}
+
+.showcase .showcase-item .title {
+  margin: 15px 0;
+  font-size: 1.1rem;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.showcase .showcase-item img {
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
   -webkit-transition: box-shadow 0.2s ease-out, -webkit-transform 0.2s ease-out;
   transition: box-shadow 0.2s ease-out, -webkit-transform 0.2s ease-out;
   transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
   transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, -webkit-transform 0.2s ease-out;
-  -webkit-transform-origin: center center;
-          transform-origin: center center;
 }
 
-.billboard:hover {
-  -webkit-transform: scale(1.02);
-          transform: scale(1.02);
-  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.4);
+.showcase .showcase-item img:hover {
+  -webkit-transform: scale(1.04);
+          transform: scale(1.04);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
 }
 
 .video-header {
@@ -11479,6 +11513,10 @@ nav.navbar.navbar-top .navbar-nav .nav-item.active a {
 
 section {
   margin: 60px 0;
+}
+
+section .section-title {
+  margin-bottom: 60px;
 }
 
 body {

@@ -8,6 +8,6 @@ class ShowcaseController extends Controller
 {
     public function index()
     {
-        return ajax_view("home", "showcase");
+        return ajax_view("showcase", "showcase");
     }
 }
