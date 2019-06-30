@@ -14,6 +14,11 @@ require('./navigation');
 require('./page');
 
 /**
+ * Utility functions
+ */
+require('./utils');
+
+/**
  * Load Vue components
  */
 const files = require.context('./', true, /\.vue$/i);

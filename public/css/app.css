@@ -10913,7 +10913,7 @@ nav.navbar.navbar-top .navbar-nav .nav-item.active a {
   transition: box-shadow 0.2s ease-in-out;
 }
 
-.btn:active {
+.btn:focus {
   box-shadow: none;
 }
 
@@ -11432,8 +11432,8 @@ nav.navbar.navbar-top .navbar-nav .nav-item.active a {
 }
 
 .video-header {
+  min-height: 70vh;
   position: relative;
-  min-height: 80vh;
 }
 
 .video-header .overlay {
@@ -11445,20 +11445,21 @@ nav.navbar.navbar-top .navbar-nav .nav-item.active a {
 }
 
 .video-header .overlay .content {
-  display: -webkit-box;
-  display: flex;
   -webkit-box-align: center;
           align-items: center;
-  -webkit-box-pack: center;
-          justify-content: center;
+  display: -webkit-box;
+  display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
           flex-direction: column;
   height: 100%;
+  -webkit-box-pack: center;
+          justify-content: center;
 }
 
 .video-header .overlay .content h1 {
   color: rgba(255, 255, 255, 0.9);
+  font-weight: 300;
   font-size: 6rem;
   text-transform: uppercase;
   text-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
@@ -11467,7 +11468,13 @@ nav.navbar.navbar-top .navbar-nav .nav-item.active a {
 .video-header .overlay .content p {
   color: rgba(255, 255, 255, 0.9);
   font-size: 1.5rem;
-  text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 0 15px rgba(0, 0, 0, 0.9);
+}
+
+.video-header canvas {
+  height: 100%;
+  position: absolute;
+  width: 100%;
 }
 
 section {

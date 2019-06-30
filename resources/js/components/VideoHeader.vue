@@ -2,10 +2,11 @@
     <div class="video-header">
         <div class="overlay container-fluid">
             <div class="content">
-                <h1 class="display-1">Intercraft</h1>
-                <p>Minecraft 1.14.3 Survival Server</p>
+                <h1 class="display-1" ref="title"></h1>
+                <p ref="description"></p>
             </div>
         </div>
+        <div id="header_particles"></div>
     </div>
 </template>
 <script>
@@ -24,14 +25,14 @@ export default {
          * Set the description of the header
          */
         setDescription(description) {
-
+            $(this.$refs.description).html(description);
         },
 
         /**
          * Set the title of the header
          */
         setTitle(title) {
-
+            $(this.$refs.title).html(title);
         },
 
         /**
@@ -45,7 +46,7 @@ export default {
         }
     },
     mounted() {
-        this.setVideo("header");
+        this.setContent("header", "Intercraft", "Minecraft 1.14.3 Survival Server");
     },
     props: {
         disableParticles: {

@@ -5,7 +5,7 @@
 .btn {
     transition: box-shadow 0.2s ease-in-out;
 
-    &:active {
+    &:focus {
         box-shadow: none;
     }
 }

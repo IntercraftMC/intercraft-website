@@ -1,3 +1,4 @@
+const CONFIG = require("./config");
 /**
  * Create a new Vue instance
  */
@@ -33,6 +34,20 @@ var setBody = function(content) {
 var render = function() {
     createVueApp();
     $("#app").show();
+}
+
+/**
+ * Render the particles
+ */
+var renderParticles = function() {
+    if (utils.isMobile()) {
+        return;
+    }
+    for (id in CONFIG.particles) {
+        if ($(`#${id}`).length) {
+            particlesJS(id, CONFIG.particles[id]);
+        }
+    }
 }
 
 /**
@@ -77,5 +92,6 @@ window.page = {
     init () {
         page.header = new Vue({ el: "header" });
         createVueApp();
+        renderParticles(); // Needs to be moved to the render function later
     }
 };

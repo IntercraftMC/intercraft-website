@@ -43,9 +43,20 @@ if (token) {
 window.Vue = require('vue');
 
 /**
+ * Include Photoswipe for the gallery/showcase
+ */
+window.PhotoSwipe = require("photoswipe/dist/photoswipe.js");
+window.PhotoSwipeUI = require("photoswipe/dist/photoswipe-ui-default.js");
+
+/**
  * Vide
  */
 require('vide');
+
+/**
+ * Particles.js
+ */
+require('particles.js');
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
