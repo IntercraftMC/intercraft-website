@@ -18,11 +18,14 @@
 // Navbar
 @import 'navbar';
 
-// Header
-@import 'header';
-
-// Logo
+// Components
+@import 'buttons';
 @import 'logo';
+@import 'billboard';
+
+// Sections
+@import 'header';
+@import 'sections';
 
 body {
     min-height: 2000px;

@@ -1,0 +1,32 @@
+@mixin rounding($px) {
+	border-radius: $px;
+}
+
+.btn {
+}
+
+.btn-lg {
+}
+
+.btn-xl {
+	font-size: 1.125rem;
+	padding: 0.5rem 1.5rem;
+}
+
+.btn-round {
+	@include rounding(37px);
+	&.btn-lg {
+		@include rounding(45px);
+	}
+	&.btn-xl {
+		@include rounding(51.38px);
+	}
+}
+
+.btn-discord {
+	background: $color-discord;
+	color: white !important;
+	&:hover {
+		background: darken($color-discord, 5%);
+	}
+}

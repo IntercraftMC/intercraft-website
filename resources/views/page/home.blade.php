@@ -1,1 +1,1 @@
-@include("block.example")
+@include("block.discord")

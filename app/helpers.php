@@ -19,3 +19,11 @@ function ajax_view(string $page, $title, $args = [])
         "vars"   => $args
     ]);
 }
+
+/**
+ * Generate a Discord invite link
+ */
+function discord_invite()
+{
+    return "https://discord.gg/" . env("DISCORD_INVITE_CODE");
+}
