@@ -10860,18 +10860,17 @@ nav.navbar .navbar-brand a span {
 }
 
 nav.navbar .navbar-nav .nav-item {
-  margin-left: 5px;
-  margin-right: 5px;
+  margin-left: 10px;
+  margin-right: 10px;
   text-transform: uppercase;
+  font-size: 1.1rem;
+  font-weight: 400;
 }
 
 nav.navbar .navbar-nav .nav-item a {
   color: rgba(0, 0, 0, 0.5);
-  font-size: 1rem;
   -webkit-transition: color 0.1s ease-in-out, border 0.1s ease-in-out;
   transition: color 0.1s ease-in-out, border 0.1s ease-in-out;
-  margin-left: 5px;
-  margin-right: 5px;
 }
 
 nav.navbar .navbar-nav .nav-item a:hover {
@@ -10883,9 +10882,8 @@ nav.navbar .navbar-nav .nav-item.active a {
 }
 
 nav.navbar.navbar-top {
-  background: black;
-  background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.5)), to(rgba(0, 0, 0, 0))) !important;
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)) !important;
+  background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.3)), to(rgba(0, 0, 0, 0)));
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0));
   box-shadow: none;
 }
 
@@ -10899,7 +10897,7 @@ nav.navbar.navbar-top .navbar-brand a .logo circle {
 }
 
 nav.navbar.navbar-top .navbar-nav .nav-item a {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 nav.navbar.navbar-top .navbar-nav .nav-item a:hover {
@@ -10910,9 +10908,19 @@ nav.navbar.navbar-top .navbar-nav .nav-item.active a {
   color: white;
 }
 
+.btn {
+  -webkit-transition: box-shadow 0.2s ease-in-out;
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.btn:active {
+  box-shadow: none;
+}
+
 .btn-xl {
   font-size: 1.125rem;
-  padding: 0.5rem 1.5rem;
+  padding: 0.7rem 1.2rem;
+  box-shadow: 0 10px 40px rgba(20, 20, 20, 0.2);
 }
 
 .btn-round {
@@ -11451,9 +11459,9 @@ nav.navbar.navbar-top .navbar-nav .nav-item.active a {
 
 .video-header .overlay .content h1 {
   color: rgba(255, 255, 255, 0.9);
-  font-size: 5rem;
+  font-size: 6rem;
   text-transform: uppercase;
-  text-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
 }
 
 .video-header .overlay .content p {

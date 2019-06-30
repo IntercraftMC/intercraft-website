@@ -3,6 +3,11 @@
 }
 
 .btn {
+    transition: box-shadow 0.2s ease-in-out;
+
+    &:active {
+        box-shadow: none;
+    }
 }
 
 .btn-lg {
@@ -10,7 +15,8 @@
 
 .btn-xl {
 	font-size: 1.125rem;
-	padding: 0.5rem 1.5rem;
+    padding: 0.7rem 1.2rem;
+    box-shadow: 0 10px 40px rgba(20, 20, 20, 0.2);
 }
 
 .btn-round {
