@@ -8,7 +8,7 @@
         </div>
     </div>
     <showcase-container>
-        @for ($i = 0; $i < 12; $i++)
+        @for ($i = 0; $i < 36; $i++)
             <showcase-item thumbnail="/img/discord_bg.svg">
                 Project {{ $i }}
             </showcase-item>

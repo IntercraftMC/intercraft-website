@@ -2138,6 +2138,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _ShowcaseItem_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ShowcaseItem.vue */ "./resources/js/components/ShowcaseItem.vue");
 //
 //
 //
@@ -2145,40 +2146,116 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+
+/**
+ * Import the ShowcaseItem component
+ */
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      revealInterval: null,
-      queue: []
+      hidden: [],
+      queue: [],
+      revealInterval: null
     };
   },
   methods: {
-    reveal: function reveal() {
+    /**
+     * Create and insert a showcase item
+     */
+    createItem: function createItem(thumbnail, title) {
+      var ShowcaseItemClass = Vue.extend(_ShowcaseItem_vue__WEBPACK_IMPORTED_MODULE_0__["default"]);
+      var instance = new ShowcaseItemClass({
+        propsData: {
+          thumbnail: "/img/discord_bg.svg"
+        }
+      });
+      instance.$slots["default"] = [title];
+      instance.$parent = this;
+      instance.$mount();
+      this.$refs.container.appendChild(instance.$el);
+      this.$children.push(instance);
+      this.hidden.push(instance);
+      return instance;
+    },
+
+    /**
+     * Load more images
+     */
+    loadMore: function loadMore() {
+      for (var i = 0; i < 6; i++) {
+        this.createItem("/img/discord_bg.svg", "Project ".concat(this.$children.length));
+      }
+
+      this.revealItems();
+    },
+
+    /**
+     * Reveal an item
+     */
+    revealItem: function revealItem() {
       var item = this.queue.shift();
 
-      if (!item) {
+      if (item) {
+        item.reveal();
+
+        if (!$(item.$el).isInViewport()) {
+          this.revealItem();
+        }
+      } else {
         clearInterval(this.revealInterval);
+        this.revealInterval = null;
+      }
+    },
+
+    /**
+     * Reveal any visible items
+     */
+    revealItems: function revealItems() {
+      if (this.hidden.length == 0) {
         return;
       }
 
-      item.reveal();
-    },
-    revealItems: function revealItems() {
-      if (!this.revealInterval) {
-        this.revealInterval = setInterval(this.reveal, 150);
+      for (var i = 0; i < this.hidden.length;) {
+        if ($(this.hidden[i].$el).isInViewport()) {
+          this.queue.push(this.hidden[i]);
+          this.hidden.splice(i, 1);
+        } else {
+          i++;
+        }
       }
+
+      if (!this.revealInterval && this.queue.length > 0) {
+        this.revealInterval = setInterval(this.revealItem, 100);
+      }
+    },
+
+    /**
+     * Invoked when an item is ready to be displayed
+     */
+    __onItemReady: function __onItemReady() {
+      this.revealItems();
+    },
+
+    /**
+     * Invoked when the user scrolls
+     */
+    __onScroll: function __onScroll() {
+      this.revealItems();
     }
   },
   mounted: function mounted() {
     var _this = this;
 
-    setTimeout(function () {
-      _this.$children.forEach(function (item) {
-        _this.queue.push(item);
-      });
-
-      _this.revealItems();
-    }, 2000);
+    this.$children.forEach(function (item) {
+      return _this.hidden.push(item);
+    });
+    $(window).on("scroll", this.__onScroll);
   }
 });
 
@@ -2203,10 +2280,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      isHidden: true
+    };
+  },
   methods: {
+    /**
+     * Reveal the showcase item and indicate if it's visible to the user
+     */
     reveal: function reveal() {
-      $(this.$el).removeClass("hidden");
+      this.isHidden = false;
+      $(this.$refs.item).removeClass("hidden");
+      return $(this.$el).isInViewport();
     }
   },
   props: ["thumbnail"]
@@ -45023,7 +45112,24 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container showcase" }, [
-    _c("div", { staticClass: "row" }, [_vm._t("default")], 2)
+    _c("div", { ref: "container", staticClass: "row" }, [_vm._t("default")], 2),
+    _vm._v(" "),
+    _c("div", { staticClass: "row text-center" }, [
+      _c("div", { staticClass: "col-12" }, [
+        _c(
+          "button",
+          {
+            staticClass: "btn btn-lg btn-primary btn-round",
+            on: {
+              click: function($event) {
+                return _vm.loadMore()
+              }
+            }
+          },
+          [_vm._v("Load More")]
+        )
+      ])
+    ])
   ])
 }
 var staticRenderFns = []
@@ -45048,20 +45154,19 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { staticClass: "col-12 col-md-6 col-xl-4 showcase-item hidden" },
-    [
+  return _c("div", { staticClass: "col-12 col-md-6 col-xl-4" }, [
+    _c("div", { ref: "item", staticClass: "showcase-item hidden" }, [
       _c("a", { attrs: { href: "#" } }, [
         _c("img", {
+          ref: "thumbnail",
           staticStyle: { width: "100%" },
           attrs: { src: _vm.thumbnail }
         })
       ]),
       _vm._v(" "),
       _c("div", { staticClass: "title text-center" }, [_vm._t("default")], 2)
-    ]
-  )
+    ])
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -58223,6 +58328,38 @@ window.page = {
   \*******************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
+
+/**
+ * Extend jQuery to allow checking if an element is inside the viewport
+ */
+$.fn.isInViewport = function () {
+  var elementTop = $(this).offset().top;
+  var viewportTop = $(window).scrollTop();
+  var elementBottom = elementTop + $(this).outerHeight();
+  var viewportBottom = viewportTop + $(window).height();
+  return elementBottom > viewportTop && elementTop < viewportBottom;
+};
+/**
+ * Extend jQuery to allow loading an image asynchronously
+ */
+
+
+$.fn.loadImage = function (url) {
+  var _this = this;
+
+  var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+  var image = new Image();
+
+  image.onload = function () {
+    $(_this).attr("src", image.src);
+
+    if (callback) {
+      callback(_this);
+    }
+  };
+
+  image.src = url;
+};
 
 window.utils = {
   /**
