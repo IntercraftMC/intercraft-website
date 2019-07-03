@@ -7,7 +7,7 @@
             </div>
         </div>
     </div>
-    <showcase-container>
+    <showcase-container v-bind:total-items="40">
         @for ($i = 0; $i < 36; $i++)
             <showcase-item thumbnail="/img/discord_bg.svg">
                 Project {{ $i }}

@@ -2159,6 +2159,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      items: 0,
       hidden: [],
       queue: [],
       revealInterval: null
@@ -2172,7 +2173,7 @@ __webpack_require__.r(__webpack_exports__);
       var ShowcaseItemClass = Vue.extend(_ShowcaseItem_vue__WEBPACK_IMPORTED_MODULE_0__["default"]);
       var instance = new ShowcaseItemClass({
         propsData: {
-          thumbnail: "/img/discord_bg.svg"
+          thumbnail: thumbnail
         }
       });
       instance.$slots["default"] = [title];
@@ -2181,6 +2182,7 @@ __webpack_require__.r(__webpack_exports__);
       this.$refs.container.appendChild(instance.$el);
       this.$children.push(instance);
       this.hidden.push(instance);
+      this.items++;
       return instance;
     },
 
@@ -2193,6 +2195,8 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       this.revealItems();
+
+      this.__updateLoadMore();
     },
 
     /**
@@ -2247,15 +2251,32 @@ __webpack_require__.r(__webpack_exports__);
      */
     __onScroll: function __onScroll() {
       this.revealItems();
+    },
+
+    /**
+     * Update the load more button
+     */
+    __updateLoadMore: function __updateLoadMore() {
+      console.log(this.items, this.totalItems);
+      $(this.$refs.loadMore).toggleClass("hidden", this.items >= this.totalItems);
     }
   },
   mounted: function mounted() {
     var _this = this;
 
+    $(window).on("scroll", this.__onScroll);
     this.$children.forEach(function (item) {
       return _this.hidden.push(item);
     });
-    $(window).on("scroll", this.__onScroll);
+    this.items = this.hidden.length;
+
+    this.__updateLoadMore();
+  },
+  props: {
+    "totalItems": {
+      "type": Number,
+      "default": 0
+    }
   }
 });
 
@@ -45114,7 +45135,7 @@ var render = function() {
   return _c("div", { staticClass: "container showcase" }, [
     _c("div", { ref: "container", staticClass: "row" }, [_vm._t("default")], 2),
     _vm._v(" "),
-    _c("div", { staticClass: "row text-center" }, [
+    _c("div", { ref: "loadMore", staticClass: "row load-more text-center" }, [
       _c("div", { staticClass: "col-12" }, [
         _c(
           "button",

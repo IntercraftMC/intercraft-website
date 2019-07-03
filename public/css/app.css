@@ -11465,6 +11465,10 @@ nav.navbar.navbar-top .navbar-nav .nav-item.active a {
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
 }
 
+.showcase .load-more.hidden {
+  display: none;
+}
+
 .video-header {
   min-height: 70vh;
   position: relative;

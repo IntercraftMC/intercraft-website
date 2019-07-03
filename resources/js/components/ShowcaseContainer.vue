@@ -3,7 +3,7 @@
         <div class="row" ref="container">
             <slot></slot>
         </div>
-        <div class="row text-center">
+        <div class="row load-more text-center" ref="loadMore">
             <div class="col-12">
                 <button class="btn btn-lg btn-primary btn-round" v-on:click="loadMore()">Load More</button>
             </div>
@@ -19,6 +19,7 @@ import ShowcaseItem from "./ShowcaseItem.vue";
 export default {
     data() {
         return {
+            items         : 0,
             hidden        : [],
             queue         : [],
             revealInterval: null,
@@ -32,7 +33,7 @@ export default {
         createItem(thumbnail, title) {
             let ShowcaseItemClass = Vue.extend(ShowcaseItem)
             let instance = new ShowcaseItemClass({
-                propsData: { thumbnail: "/img/discord_bg.svg" },
+                propsData: { thumbnail: thumbnail },
             });
             instance.$slots.default = [title];
             instance.$parent = this;
@@ -40,6 +41,7 @@ export default {
             this.$refs.container.appendChild(instance.$el);
             this.$children.push(instance);
             this.hidden.push(instance);
+            this.items++;
             return instance;
         },
 
@@ -50,6 +52,7 @@ export default {
             for (let i = 0; i < 6; i++)
                 this.createItem("/img/discord_bg.svg", `Project ${this.$children.length}`);
             this.revealItems();
+            this.__updateLoadMore();
         },
 
         /**
@@ -101,10 +104,26 @@ export default {
         __onScroll() {
             this.revealItems();
         },
+
+        /**
+         * Update the load more button
+         */
+        __updateLoadMore() {
+            console.log(this.items, this.totalItems);
+            $(this.$refs.loadMore).toggleClass("hidden", this.items >= this.totalItems)
+        }
     },
     mounted() {
-        this.$children.forEach(item => this.hidden.push(item));
         $(window).on("scroll", this.__onScroll);
+        this.$children.forEach(item => this.hidden.push(item));
+        this.items = this.hidden.length;
+        this.__updateLoadMore();
+    },
+    props: {
+        "totalItems": {
+            "type": Number,
+            "default": 0
+        }
     }
 }
 </script>
