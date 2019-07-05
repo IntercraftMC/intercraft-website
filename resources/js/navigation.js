@@ -143,15 +143,16 @@ var componentRequest = function (component, route, pushState) {
     let url = new URL(route);
     let request = {
         parameters: {},
-        slug      : url.pathname.split('/')[2],
+        slug      : url.pathname.split('/')[2] || null,
         url       : url
     };
     component.onNavigateRequest(request);
     axios.get(url, AXIOS_CONFIG)
         .then((response) => {
+            component.onNavigateResponse(response);
             onAjaxLoad(response, url, pushState, false);
         })
-        .catch(onAjaxError)
+        .catch(component.onNavigateError)
         .then(() => {
             isLoading = false;
         });
@@ -163,9 +164,7 @@ var componentRequest = function (component, route, pushState) {
 var requestPage = function (url, pushState) {
     eventEmitter.emit("beforeload", url);
     axios.get(url, AXIOS_CONFIG)
-        .then((response) => {
-            onAjaxLoad(response, url, pushState);
-        })
+        .then(response => onAjaxLoad(response, url, pushState))
         .catch(onAjaxError)
         .then(() => {
             isLoading = false;

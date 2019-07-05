@@ -2247,7 +2247,9 @@ __webpack_require__.r(__webpack_exports__);
      * Invoked when component navigation is about to send a request
      */
     onNavigateRequest: function onNavigateRequest(request) {
-      console.log("Component Navigating...", request);
+      if (request.slug == null && this.showcaseId != null) {
+        request.parameters["showcase_id"] = this.showcaseId;
+      }
     },
 
     /**
@@ -2329,6 +2331,10 @@ __webpack_require__.r(__webpack_exports__);
     this.revealItems();
   },
   props: {
+    "showcaseId": {
+      "type": [String, null],
+      "default": null
+    },
     "route": String,
     "routeAjax": String,
     "totalItems": {
@@ -58216,13 +58222,14 @@ var componentRequest = function componentRequest(component, route, pushState) {
   var url = new URL(route);
   var request = {
     parameters: {},
-    slug: url.pathname.split('/')[2],
+    slug: url.pathname.split('/')[2] || null,
     url: url
   };
   component.onNavigateRequest(request);
   axios.get(url, AXIOS_CONFIG).then(function (response) {
+    component.onNavigateResponse(response);
     onAjaxLoad(response, url, pushState, false);
-  })["catch"](onAjaxError).then(function () {
+  })["catch"](component.onNavigateError).then(function () {
     isLoading = false;
   });
 };
@@ -58234,7 +58241,7 @@ var componentRequest = function componentRequest(component, route, pushState) {
 var requestPage = function requestPage(url, pushState) {
   eventEmitter.emit("beforeload", url);
   axios.get(url, AXIOS_CONFIG).then(function (response) {
-    onAjaxLoad(response, url, pushState);
+    return onAjaxLoad(response, url, pushState);
   })["catch"](onAjaxError).then(function () {
     isLoading = false;
     eventEmitter.emit("load");

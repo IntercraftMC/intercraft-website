@@ -100,7 +100,9 @@ export default {
          * Invoked when component navigation is about to send a request
          */
         onNavigateRequest(request) {
-            console.log("Component Navigating...", request);
+            if (request.slug == null && this.showcaseId != null) {
+                request.parameters["showcase_id"] = this.showcaseId;
+            }
         },
 
         /**
@@ -173,6 +175,10 @@ export default {
         this.revealItems();
     },
     props: {
+        "showcaseId": {
+            "type": [String, null],
+            "default": null
+        },
         "route"     : String,
         "routeAjax" : String,
         "totalItems": {
