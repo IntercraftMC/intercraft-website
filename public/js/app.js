@@ -58201,7 +58201,7 @@ var prepareRequest = function prepareRequest(url) {
 
   var component = navigate.componentRouting.resolve(url);
 
-  if (component && url != location.href) {
+  if (component) {
     componentRequest(component, url, pushState);
   } else {
     requestPage(url, pushState);

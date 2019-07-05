@@ -129,7 +129,7 @@ var prepareRequest = function (url, pushState = false) {
 
     // Component navigation
     let component = navigate.componentRouting.resolve(url);
-    if (component && url != location.href) {
+    if (component) {
         componentRequest(component, url, pushState);
     } else {
         requestPage(url, pushState);
