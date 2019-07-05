@@ -58429,8 +58429,8 @@ var setBody = function setBody(content) {
 
 
 var render = function render() {
-  createVueApp();
   $("#app").show();
+  createVueApp();
 };
 /**
  * Render the particles

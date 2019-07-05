@@ -32,8 +32,8 @@ var setBody = function(content) {
  * Render the contents of the page
  */
 var render = function() {
-    createVueApp();
     $("#app").show();
+    createVueApp();
 }
 
 /**
