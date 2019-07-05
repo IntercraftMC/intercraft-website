@@ -17,6 +17,9 @@
 import ShowcaseItem from "./ShowcaseItem.vue";
 
 export default {
+    beforeDestroy() {
+        this.__unregisterEvents();
+    },
     data() {
         return {
             items         : 0,
@@ -26,14 +29,16 @@ export default {
         }
     },
     methods: {
-
         /**
          * Create and insert a showcase item
          */
-        createItem(thumbnail, title) {
+        createItem(id, thumbnail, title) {
             let ShowcaseItemClass = Vue.extend(ShowcaseItem)
             let instance = new ShowcaseItemClass({
-                propsData: { thumbnail: thumbnail },
+                propsData: {
+                    showcaseId: id,
+                    thumbnail : thumbnail
+                }
             });
             instance.$slots.default = [title];
             instance.$parent = this;
@@ -50,7 +55,7 @@ export default {
          */
         loadMore() {
             for (let i = 0; i < 6; i++)
-                this.createItem("/img/discord_bg.svg", `Project ${this.$children.length}`);
+                this.createItem(this.items, "/img/discord_bg.svg", `Project ${this.$children.length}`);
             this.revealItems();
             this.__updateLoadMore();
         },
@@ -58,12 +63,12 @@ export default {
         /**
          * Reveal an item
          */
-        revealItem() {
+        revealNextItem() {
             let item = this.queue.shift();
             if (item) {
-                item.reveal()
+                item.reveal();
                 if (!$(item.$el).isInViewport()) {
-                    this.revealItem();
+                    this.revealNextItem();
                 }
             } else {
                 clearInterval(this.revealInterval);
@@ -87,8 +92,36 @@ export default {
                 }
             }
             if (!this.revealInterval && this.queue.length > 0) {
-                this.revealInterval = setInterval(this.revealItem, 100);
+                this.revealInterval = setInterval(this.revealNextItem, 100);
             }
+        },
+
+        /**
+         * Invoked when component navigation is about to send a request
+         */
+        onNavigateRequest(request) {
+            console.log("Component Navigating...", request);
+        },
+
+        /**
+         * Invoked when component navigation yields an error
+         */
+        onNavigateError(response) {
+            console.log("Component navigation yielded error:", response);
+        },
+
+        /**
+         * Invoked when component navigation yields a response
+         */
+        onNavigateResponse(response) {
+            console.log("Component navigation yielded response:", response);
+        },
+
+        /**
+         * Invoked when an item is clicked
+         */
+        __onItemClick(item) {
+            navigate.to(`${this.route}/${item.showcaseId}`);
         },
 
         /**
@@ -109,19 +142,41 @@ export default {
          * Update the load more button
          */
         __updateLoadMore() {
-            console.log(this.items, this.totalItems);
             $(this.$refs.loadMore).toggleClass("hidden", this.items >= this.totalItems)
+        },
+
+        /**
+         * Register the events
+         */
+        __registerEvents() {
+            $(window).on("scroll", this.__onScroll);
+            if (this.route) {
+                navigate.componentRouting.register(this, this.route);
+            }
+        },
+
+        /**
+         * Unregister the events
+         */
+        __unregisterEvents() {
+            $(window).off("scroll", this.__onScroll);
+            if (this.route) {
+                navigate.componentRouting.unregister(this, this.route);
+            }
         }
     },
     mounted() {
-        $(window).on("scroll", this.__onScroll);
+        this.__registerEvents();
         this.$children.forEach(item => this.hidden.push(item));
         this.items = this.hidden.length;
         this.__updateLoadMore();
+        this.revealItems();
     },
     props: {
+        "route"     : String,
+        "routeAjax" : String,
         "totalItems": {
-            "type": Number,
+            "type"   : Number,
             "default": 0
         }
     }

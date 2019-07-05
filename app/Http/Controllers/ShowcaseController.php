@@ -15,4 +15,16 @@ class ShowcaseController extends Controller
     {
         return ajax_view("showcase", "showcase");
     }
+
+    // API Methods --------------------------------------------------------------------------------
+
+    public function api_getProjects()
+    {
+
+    }
+
+    public function api_getProject($project)
+    {
+        return response()->json(["discord_bg.png"]);
+    }
 }

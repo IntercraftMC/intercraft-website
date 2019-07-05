@@ -11451,7 +11451,11 @@ nav.navbar.navbar-top .navbar-nav .nav-item.active a {
   text-transform: uppercase;
 }
 
-.showcase .showcase-item img {
+.showcase .showcase-item a {
+  cursor: pointer;
+}
+
+.showcase .showcase-item a img {
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
   -webkit-transition: box-shadow 0.2s ease-out, -webkit-transform 0.2s ease-out;
   transition: box-shadow 0.2s ease-out, -webkit-transform 0.2s ease-out;
@@ -11459,7 +11463,7 @@ nav.navbar.navbar-top .navbar-nav .nav-item.active a {
   transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, -webkit-transform 0.2s ease-out;
 }
 
-.showcase .showcase-item img:hover {
+.showcase .showcase-item a img:hover {
   -webkit-transform: scale(1.04);
           transform: scale(1.04);
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);

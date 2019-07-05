@@ -11,12 +11,15 @@
             font-weight: 400;
             text-transform: uppercase;
         }
-        img {
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
-            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-            &:hover {
-                transform: scale(1.04);
-                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        a {
+            cursor: pointer;
+            img {
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+                transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+                &:hover {
+                    transform: scale(1.04);
+                    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+                }
             }
         }
     }

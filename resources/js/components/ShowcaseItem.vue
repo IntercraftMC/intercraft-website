@@ -1,7 +1,7 @@
 <template>
     <div class="col-12 col-md-6 col-xl-4">
         <div class="showcase-item hidden" ref="item">
-            <a href="#">
+            <a v-on:click="onClick()" class="thumbnail-link">
                 <img :src="thumbnail" ref="thumbnail" style="width: 100%;">
             </a>
             <div class="title text-center">
@@ -19,6 +19,12 @@ export default {
     },
     methods: {
         /**
+         * Invoked when the item is clicked
+         */
+        onClick() {
+            this.$parent.__onItemClick(this);
+        },
+        /**
          * Reveal the showcase item and indicate if it's visible to the user
          */
         reveal() {
@@ -27,8 +33,9 @@ export default {
             return $(this.$el).isInViewport();
         }
     },
-    props: [
-        "thumbnail"
-    ]
+    props: {
+        "showcaseId": {},
+        "thumbnail": String
+    }
 }
 </script>

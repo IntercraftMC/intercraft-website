@@ -13,6 +13,10 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+/**
+ * Ajax Routes
+ */
+Route::middleware('auth:api')->group(function() {
+    Route::get("/showcase")->name("api/showcase");
+    Route::get("/showcase/{project}")->name("api/showcase-project");
 });

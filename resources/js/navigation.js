@@ -114,21 +114,58 @@ var initLinkListeners = function () {
 };
 
 /**
- * Request a page
+ * Prepare an Ajax request
  */
-var requestPage = function (url, pushState = false) {
+var prepareRequest = function (url, pushState = false) {
     if (!history.pushState) {
         location.assign(url);
         return;
     }
     if (isLoading) {
-        return;
+        navigate.abort();
     }
     isLoading = true;
     pageInfo.url = url;
+
+    // Component navigation
+    let component = navigate.componentRouting.resolve(url);
+    if (component && url != location.href) {
+        componentRequest(component, url, pushState);
+    } else {
+        requestPage(url, pushState);
+    }
+};
+
+/**
+ * Perform a request within a Vue component
+ */
+var componentRequest = function (component, route, pushState) {
+    let url = new URL(route);
+    let request = {
+        parameters: {},
+        slug      : url.pathname.split('/')[2],
+        url       : url
+    };
+    component.onNavigateRequest(request);
+    axios.get(url, AXIOS_CONFIG)
+        .then((response) => {
+            onAjaxLoad(response, url, pushState, false);
+        })
+        .catch(onAjaxError)
+        .then(() => {
+            isLoading = false;
+        });
+};
+
+/**
+ * Request a webpage
+ */
+var requestPage = function (url, pushState) {
     eventEmitter.emit("beforeload", url);
     axios.get(url, AXIOS_CONFIG)
-        .then((response) => { onAjaxLoad(response, url, pushState); })
+        .then((response) => {
+            onAjaxLoad(response, url, pushState);
+        })
         .catch(onAjaxError)
         .then(() => {
             isLoading = false;
@@ -150,12 +187,14 @@ var onAjaxError = function (err) {
 /**
  * Invoked when the Ajax completed successfully
  */
-var onAjaxLoad = function (response, url, pushState) {
+var onAjaxLoad = function (response, url, pushState, setContent = true) {
     pageInfo.title = response.data.title;
     if (pushState) {
         history.pushState(pageInfo, response.data.title, url);
     }
-    page.set(response.data.title, response.data.header, response.data.view);
+    if (setContent) {
+        page.set(response.data.title, response.data.header, response.data.view);
+    }
 };
 
 /**
@@ -175,7 +214,7 @@ var onPopState = function (event) {
         if (pageInfo.url.replace(/#[^?]*/gi, newHash) != document.URL) {
             pageInfo.title = event.originalEvent.state.title;
             pageInfo.url = event.originalEvent.state.url;
-            requestPage(pageInfo.url, false);
+            prepareRequest(pageInfo.url, false);
         }
     }
 };
@@ -188,6 +227,42 @@ var onScroll = function () {
 };
 
 /**
+ * Manage routing and navigation for Vue components
+ */
+var componentRouteManager = {
+
+    /**
+     * Store the route map
+     */
+    map: {},
+
+    /**
+     * Resolve a route to a component
+     */
+    resolve(route) {
+        let url = new URL(route);
+        let parts = url.pathname.split('/');
+        return this.map[`/${parts[1]}`];
+    },
+
+    /**
+     * Register a new component route
+     */
+    register(component, baseUrl) {
+        let url = new URL(baseUrl);
+        this.map[url.pathname] = component;
+    },
+
+    /**
+     * Unregister a component route
+     */
+    unregister(component, baseUrl) {
+        let url = new URL(baseUrl);
+        delete this.map[url.pathname];
+    }
+};
+
+/**
  * Navigation module
  */
 window.navigate = {
@@ -196,6 +271,11 @@ window.navigate = {
      * Store the event emitter
      */
     event: eventEmitter,
+
+    /**
+     * Component routing and navigation
+     */
+    componentRouting: componentRouteManager,
 
     /**
      * Initialize the navigation system
@@ -220,6 +300,6 @@ window.navigate = {
      * Go to a URL via Ajax
      */
     to(url) {
-        requestPage(url, true);
+        prepareRequest(url, true);
     }
 };

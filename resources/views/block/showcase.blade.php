@@ -7,9 +7,9 @@
             </div>
         </div>
     </div>
-    <showcase-container v-bind:total-items="40">
-        @for ($i = 0; $i < 36; $i++)
-            <showcase-item thumbnail="/img/discord_bg.svg">
+    <showcase-container v-bind:total-items="40" route="{{ route("showcase") }}" route-ajax="{{ route("api/showcase") }}">
+        @for ($i = 0; $i < 6; $i++)
+            <showcase-item thumbnail="/img/discord_bg.svg" showcase-id="{{ $i }}">
                 Project {{ $i }}
             </showcase-item>
         @endfor

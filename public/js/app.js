@@ -2157,6 +2157,9 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  beforeDestroy: function beforeDestroy() {
+    this.__unregisterEvents();
+  },
   data: function data() {
     return {
       items: 0,
@@ -2169,10 +2172,11 @@ __webpack_require__.r(__webpack_exports__);
     /**
      * Create and insert a showcase item
      */
-    createItem: function createItem(thumbnail, title) {
+    createItem: function createItem(id, thumbnail, title) {
       var ShowcaseItemClass = Vue.extend(_ShowcaseItem_vue__WEBPACK_IMPORTED_MODULE_0__["default"]);
       var instance = new ShowcaseItemClass({
         propsData: {
+          showcaseId: id,
           thumbnail: thumbnail
         }
       });
@@ -2191,7 +2195,7 @@ __webpack_require__.r(__webpack_exports__);
      */
     loadMore: function loadMore() {
       for (var i = 0; i < 6; i++) {
-        this.createItem("/img/discord_bg.svg", "Project ".concat(this.$children.length));
+        this.createItem(this.items, "/img/discord_bg.svg", "Project ".concat(this.$children.length));
       }
 
       this.revealItems();
@@ -2202,14 +2206,14 @@ __webpack_require__.r(__webpack_exports__);
     /**
      * Reveal an item
      */
-    revealItem: function revealItem() {
+    revealNextItem: function revealNextItem() {
       var item = this.queue.shift();
 
       if (item) {
         item.reveal();
 
         if (!$(item.$el).isInViewport()) {
-          this.revealItem();
+          this.revealNextItem();
         }
       } else {
         clearInterval(this.revealInterval);
@@ -2235,8 +2239,36 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       if (!this.revealInterval && this.queue.length > 0) {
-        this.revealInterval = setInterval(this.revealItem, 100);
+        this.revealInterval = setInterval(this.revealNextItem, 100);
       }
+    },
+
+    /**
+     * Invoked when component navigation is about to send a request
+     */
+    onNavigateRequest: function onNavigateRequest(request) {
+      console.log("Component Navigating...", request);
+    },
+
+    /**
+     * Invoked when component navigation yields an error
+     */
+    onNavigateError: function onNavigateError(response) {
+      console.log("Component navigation yielded error:", response);
+    },
+
+    /**
+     * Invoked when component navigation yields a response
+     */
+    onNavigateResponse: function onNavigateResponse(response) {
+      console.log("Component navigation yielded response:", response);
+    },
+
+    /**
+     * Invoked when an item is clicked
+     */
+    __onItemClick: function __onItemClick(item) {
+      navigate.to("".concat(this.route, "/").concat(item.showcaseId));
     },
 
     /**
@@ -2257,22 +2289,48 @@ __webpack_require__.r(__webpack_exports__);
      * Update the load more button
      */
     __updateLoadMore: function __updateLoadMore() {
-      console.log(this.items, this.totalItems);
       $(this.$refs.loadMore).toggleClass("hidden", this.items >= this.totalItems);
+    },
+
+    /**
+     * Register the events
+     */
+    __registerEvents: function __registerEvents() {
+      $(window).on("scroll", this.__onScroll);
+
+      if (this.route) {
+        navigate.componentRouting.register(this, this.route);
+      }
+    },
+
+    /**
+     * Unregister the events
+     */
+    __unregisterEvents: function __unregisterEvents() {
+      $(window).off("scroll", this.__onScroll);
+
+      if (this.route) {
+        navigate.componentRouting.unregister(this, this.route);
+      }
     }
   },
   mounted: function mounted() {
     var _this = this;
 
-    $(window).on("scroll", this.__onScroll);
+    this.__registerEvents();
+
     this.$children.forEach(function (item) {
       return _this.hidden.push(item);
     });
     this.items = this.hidden.length;
 
     this.__updateLoadMore();
+
+    this.revealItems();
   },
   props: {
+    "route": String,
+    "routeAjax": String,
     "totalItems": {
       "type": Number,
       "default": 0
@@ -2311,6 +2369,13 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     /**
+     * Invoked when the item is clicked
+     */
+    onClick: function onClick() {
+      this.$parent.__onItemClick(this);
+    },
+
+    /**
      * Reveal the showcase item and indicate if it's visible to the user
      */
     reveal: function reveal() {
@@ -2319,7 +2384,10 @@ __webpack_require__.r(__webpack_exports__);
       return $(this.$el).isInViewport();
     }
   },
-  props: ["thumbnail"]
+  props: {
+    "showcaseId": {},
+    "thumbnail": String
+  }
 });
 
 /***/ }),
@@ -45177,13 +45245,24 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "col-12 col-md-6 col-xl-4" }, [
     _c("div", { ref: "item", staticClass: "showcase-item hidden" }, [
-      _c("a", { attrs: { href: "#" } }, [
-        _c("img", {
-          ref: "thumbnail",
-          staticStyle: { width: "100%" },
-          attrs: { src: _vm.thumbnail }
-        })
-      ]),
+      _c(
+        "a",
+        {
+          staticClass: "thumbnail-link",
+          on: {
+            click: function($event) {
+              return _vm.onClick()
+            }
+          }
+        },
+        [
+          _c("img", {
+            ref: "thumbnail",
+            staticStyle: { width: "100%" },
+            attrs: { src: _vm.thumbnail }
+          })
+        ]
+      ),
       _vm._v(" "),
       _c("div", { staticClass: "title text-center" }, [_vm._t("default")], 2)
     ])
@@ -58101,11 +58180,11 @@ var initLinkListeners = function initLinkListeners() {
   });
 };
 /**
- * Request a page
+ * Prepare an Ajax request
  */
 
 
-var requestPage = function requestPage(url) {
+var prepareRequest = function prepareRequest(url) {
   var pushState = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
   if (!history.pushState) {
@@ -58114,11 +58193,45 @@ var requestPage = function requestPage(url) {
   }
 
   if (isLoading) {
-    return;
+    navigate.abort();
   }
 
   isLoading = true;
-  pageInfo.url = url;
+  pageInfo.url = url; // Component navigation
+
+  var component = navigate.componentRouting.resolve(url);
+
+  if (component && url != location.href) {
+    componentRequest(component, url, pushState);
+  } else {
+    requestPage(url, pushState);
+  }
+};
+/**
+ * Perform a request within a Vue component
+ */
+
+
+var componentRequest = function componentRequest(component, route, pushState) {
+  var url = new URL(route);
+  var request = {
+    parameters: {},
+    slug: url.pathname.split('/')[2],
+    url: url
+  };
+  component.onNavigateRequest(request);
+  axios.get(url, AXIOS_CONFIG).then(function (response) {
+    onAjaxLoad(response, url, pushState, false);
+  })["catch"](onAjaxError).then(function () {
+    isLoading = false;
+  });
+};
+/**
+ * Request a webpage
+ */
+
+
+var requestPage = function requestPage(url, pushState) {
   eventEmitter.emit("beforeload", url);
   axios.get(url, AXIOS_CONFIG).then(function (response) {
     onAjaxLoad(response, url, pushState);
@@ -58145,13 +58258,16 @@ var onAjaxError = function onAjaxError(err) {
 
 
 var onAjaxLoad = function onAjaxLoad(response, url, pushState) {
+  var setContent = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
   pageInfo.title = response.data.title;
 
   if (pushState) {
     history.pushState(pageInfo, response.data.title, url);
   }
 
-  page.set(response.data.title, response.data.header, response.data.view);
+  if (setContent) {
+    page.set(response.data.title, response.data.header, response.data.view);
+  }
 };
 /**
  * Invoked when a link is clicked
@@ -58174,7 +58290,7 @@ var onPopState = function onPopState(event) {
     if (pageInfo.url.replace(/#[^?]*/gi, newHash) != document.URL) {
       pageInfo.title = event.originalEvent.state.title;
       pageInfo.url = event.originalEvent.state.url;
-      requestPage(pageInfo.url, false);
+      prepareRequest(pageInfo.url, false);
     }
   }
 };
@@ -58187,15 +58303,55 @@ var onScroll = function onScroll() {
   eventEmitter.emit("scroll", $(window).scrollTop());
 };
 /**
- * Navigation module
+ * Manage routing and navigation for Vue components
  */
 
+
+var componentRouteManager = {
+  /**
+   * Store the route map
+   */
+  map: {},
+
+  /**
+   * Resolve a route to a component
+   */
+  resolve: function resolve(route) {
+    var url = new URL(route);
+    var parts = url.pathname.split('/');
+    return this.map["/".concat(parts[1])];
+  },
+
+  /**
+   * Register a new component route
+   */
+  register: function register(component, baseUrl) {
+    var url = new URL(baseUrl);
+    this.map[url.pathname] = component;
+  },
+
+  /**
+   * Unregister a component route
+   */
+  unregister: function unregister(component, baseUrl) {
+    var url = new URL(baseUrl);
+    delete this.map[url.pathname];
+  }
+};
+/**
+ * Navigation module
+ */
 
 window.navigate = {
   /**
    * Store the event emitter
    */
   event: eventEmitter,
+
+  /**
+   * Component routing and navigation
+   */
+  componentRouting: componentRouteManager,
 
   /**
    * Initialize the navigation system
@@ -58219,7 +58375,7 @@ window.navigate = {
    * Go to a URL via Ajax
    */
   to: function to(url) {
-    requestPage(url, true);
+    prepareRequest(url, true);
   }
 };
 
