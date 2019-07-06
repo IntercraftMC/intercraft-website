@@ -109,7 +109,7 @@ var popState = function (state) {
     let ticket = {
         componentKey: pageState.componentKey,
         pushState   : false,
-        url         : pageState.url
+        url         : state.url
     };
     // Check if going forward instead of back
     if (state.timestamp > pageState.timestamp) {
@@ -200,7 +200,7 @@ var sendRequest = function (ticket) {
 var onBeforeLoad = function (ticket) {
     if (ticket.componentKey in componentMap) {
         if (componentMap[ticket.componentKey].onNavigateBeforeLoad) {
-            componentMap[ticket.componentKey].onNavigateBeforeLoad();
+            componentMap[ticket.componentKey].onNavigateBeforeLoad(ticket);
         }
     } else {
         eventEmitter.emit("beforeload", ticket.url);
@@ -353,9 +353,10 @@ window.navigate = {
     /**
      * Navigate to a new URL via Ajax
      */
-    to(url, componentKey = null) {
+    to(url, parameters = {}, componentKey = null) {
         request({
             componentKey: componentKey,
+            parameters  : parameters,
             pushState   : true,
             url         : url
         });

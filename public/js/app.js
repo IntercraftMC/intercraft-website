@@ -2246,12 +2246,16 @@ __webpack_require__.r(__webpack_exports__);
     /**
      * Invoked when component navigation is about to send a request
      */
-    onNavigateRequest: function onNavigateRequest(request) {
-      console.log("Requested");
+    onNavigateBeforeLoad: function onNavigateBeforeLoad(ticket) {
+      var slug = ticket.url.substring(this.route.length + 1);
 
-      if (request.slug == null && this.showcaseId != null) {
-        request.parameters["showcase_id"] = this.showcaseId;
+      if (slug == null && this.showcaseId != null) {
+        ticket.parameters["showcase_id"] = this.showcaseId;
       }
+
+      this.$children.forEach(function (child) {
+        return child.remove();
+      });
     },
 
     /**
@@ -2272,7 +2276,9 @@ __webpack_require__.r(__webpack_exports__);
      * Invoked when an item is clicked
      */
     __onItemClick: function __onItemClick(item) {
-      navigate.to("".concat(this.route, "/").concat(item.showcaseId), this.route);
+      navigate.to("".concat(this.route, "/").concat(item.showcaseId), {
+        showcase_id: item.showcaseId
+      }, this.route);
     },
 
     /**
@@ -2381,6 +2387,18 @@ __webpack_require__.r(__webpack_exports__);
      */
     onClick: function onClick() {
       this.$parent.__onItemClick(this);
+    },
+
+    /**
+     * Remove the element
+     */
+    remove: function remove() {
+      var _this = this;
+
+      $(this.$refs.item).addClass("hidden");
+      setTimeout(function () {
+        return _this.$destroy;
+      }, 150);
     },
 
     /**
@@ -58184,7 +58202,7 @@ var popState = function popState(state) {
   var ticket = {
     componentKey: pageState.componentKey,
     pushState: false,
-    url: pageState.url
+    url: state.url
   }; // Check if going forward instead of back
 
   if (state.timestamp > pageState.timestamp) {
@@ -58290,7 +58308,7 @@ var sendRequest = function sendRequest(ticket) {
 var onBeforeLoad = function onBeforeLoad(ticket) {
   if (ticket.componentKey in componentMap) {
     if (componentMap[ticket.componentKey].onNavigateBeforeLoad) {
-      componentMap[ticket.componentKey].onNavigateBeforeLoad();
+      componentMap[ticket.componentKey].onNavigateBeforeLoad(ticket);
     }
   } else {
     eventEmitter.emit("beforeload", ticket.url);
@@ -58453,9 +58471,11 @@ window.navigate = {
    * Navigate to a new URL via Ajax
    */
   to: function to(url) {
-    var componentKey = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+    var parameters = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var componentKey = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
     request({
       componentKey: componentKey,
+      parameters: parameters,
       pushState: true,
       url: url
     });

@@ -99,11 +99,12 @@ export default {
         /**
          * Invoked when component navigation is about to send a request
          */
-        onNavigateRequest(request) {
-            console.log("Requested");
-            if (request.slug == null && this.showcaseId != null) {
-                request.parameters["showcase_id"] = this.showcaseId;
+        onNavigateBeforeLoad(ticket) {
+            let slug = ticket.url.substring(this.route.length + 1);
+            if (slug == null && this.showcaseId != null) {
+                ticket.parameters["showcase_id"] = this.showcaseId;
             }
+            this.$children.forEach(child => child.remove());
         },
 
         /**
@@ -124,7 +125,9 @@ export default {
          * Invoked when an item is clicked
          */
         __onItemClick(item) {
-            navigate.to(`${this.route}/${item.showcaseId}`, this.route);
+            navigate.to(`${this.route}/${item.showcaseId}`, {
+                showcase_id: item.showcaseId
+            }, this.route);
         },
 
         /**

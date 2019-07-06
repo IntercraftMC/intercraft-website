@@ -24,6 +24,15 @@ export default {
         onClick() {
             this.$parent.__onItemClick(this);
         },
+
+        /**
+         * Remove the element
+         */
+        remove() {
+            $(this.$refs.item).addClass("hidden");
+            setTimeout(() => this.$destroy, 150);
+        },
+
         /**
          * Reveal the showcase item and indicate if it's visible to the user
          */
@@ -35,7 +44,7 @@ export default {
     },
     props: {
         "showcaseId": {},
-        "thumbnail": String
+        "thumbnail" : String
     }
 }
 </script>

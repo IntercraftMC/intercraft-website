@@ -20,7 +20,7 @@ class ShowcaseController extends Controller
 
     public function api_getProjects()
     {
-
+        return response()->json(["discord_bg.png"]);
     }
 
     public function api_getProject($project)
