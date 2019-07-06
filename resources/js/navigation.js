@@ -88,7 +88,7 @@ var cancelLoading = null;
  */
 const AXIOS_CONFIG = {
     cancelToken: new axios.CancelToken((c) => {
-        cancel = c;
+        cancelLoading = c;
     })
 };
 

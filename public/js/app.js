@@ -58181,7 +58181,7 @@ var cancelLoading = null;
 
 var AXIOS_CONFIG = {
   cancelToken: new axios.CancelToken(function (c) {
-    cancel = c;
+    cancelLoading = c;
   })
 };
 /**
