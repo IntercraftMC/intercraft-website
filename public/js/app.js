@@ -2247,6 +2247,8 @@ __webpack_require__.r(__webpack_exports__);
      * Invoked when component navigation is about to send a request
      */
     onNavigateRequest: function onNavigateRequest(request) {
+      console.log("Requested");
+
       if (request.slug == null && this.showcaseId != null) {
         request.parameters["showcase_id"] = this.showcaseId;
       }
@@ -2262,7 +2264,7 @@ __webpack_require__.r(__webpack_exports__);
     /**
      * Invoked when component navigation yields a response
      */
-    onNavigateResponse: function onNavigateResponse(response) {
+    onNavigateLoad: function onNavigateLoad(response) {
       console.log("Component navigation yielded response:", response);
     },
 
@@ -2270,7 +2272,7 @@ __webpack_require__.r(__webpack_exports__);
      * Invoked when an item is clicked
      */
     __onItemClick: function __onItemClick(item) {
-      navigate.to("".concat(this.route, "/").concat(item.showcaseId));
+      navigate.to("".concat(this.route, "/").concat(item.showcaseId), this.route);
     },
 
     /**
@@ -58287,7 +58289,9 @@ var sendRequest = function sendRequest(ticket) {
 
 var onBeforeLoad = function onBeforeLoad(ticket) {
   if (ticket.componentKey in componentMap) {
-    componentMap[ticket.componentKey].onNavigateBeforeLoad();
+    if (componentMap[ticket.componentKey].onNavigateBeforeLoad) {
+      componentMap[ticket.componentKey].onNavigateBeforeLoad();
+    }
   } else {
     eventEmitter.emit("beforeload", ticket.url);
   }
@@ -58301,7 +58305,9 @@ var onBeforeLoad = function onBeforeLoad(ticket) {
 
 var onLoad = function onLoad(ticket, response) {
   if (ticket.componentKey in componentMap) {
-    componentMap[ticket.componentKey].onNavigateLoad(response);
+    if (componentMap[ticket.componentKey].onNavigateLoad) {
+      componentMap[ticket.componentKey].onNavigateLoad(response);
+    }
   } else {
     onPageLoaded(ticket, response);
   }
@@ -58313,7 +58319,9 @@ var onLoad = function onLoad(ticket, response) {
 
 var onFinish = function onFinish(ticket) {
   if (ticket.componentKey in componentMap) {
-    componentMap[ticket.componentKey].onNavigateFinish();
+    if (componentMap[ticket.componentKey].onNavigateFinish) {
+      componentMap[ticket.componentKey].onNavigateFinish();
+    }
   } else {
     eventEmitter.emit("load");
   }
@@ -58324,8 +58332,10 @@ var onFinish = function onFinish(ticket) {
 
 
 var onError = function onError(ticket, error) {
-  if (ticket.listener) {
-    ticket.listener.onNavigateError(error);
+  if (ticket.componentKey in componentMap) {
+    if (componentMap[ticket.componentKey].onNavigateError) {
+      componentMap[ticket.componentKey].onNavigateError(error);
+    }
   } else {
     eventEmitter.emit("error", error, HTTP_STATUS[error.response.status]);
     console.error("Navigation Error: ", err, {

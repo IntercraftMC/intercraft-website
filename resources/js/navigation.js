@@ -199,7 +199,9 @@ var sendRequest = function (ticket) {
  */
 var onBeforeLoad = function (ticket) {
     if (ticket.componentKey in componentMap) {
-        componentMap[ticket.componentKey].onNavigateBeforeLoad();
+        if (componentMap[ticket.componentKey].onNavigateBeforeLoad) {
+            componentMap[ticket.componentKey].onNavigateBeforeLoad();
+        }
     } else {
         eventEmitter.emit("beforeload", ticket.url);
     }
@@ -211,7 +213,9 @@ var onBeforeLoad = function (ticket) {
  */
 var onLoad = function (ticket, response) {
     if (ticket.componentKey in componentMap) {
-        componentMap[ticket.componentKey].onNavigateLoad(response);
+        if (componentMap[ticket.componentKey].onNavigateLoad) {
+            componentMap[ticket.componentKey].onNavigateLoad(response);
+        }
     } else {
         onPageLoaded(ticket, response);
     }
@@ -222,9 +226,11 @@ var onLoad = function (ticket, response) {
  */
 var onFinish = function (ticket) {
     if (ticket.componentKey in componentMap) {
-        componentMap[ticket.componentKey].onNavigateFinish();
+        if (componentMap[ticket.componentKey].onNavigateFinish) {
+            componentMap[ticket.componentKey].onNavigateFinish();
+        }
     } else {
-        eventEmitter.emit("load")
+        eventEmitter.emit("load");
     }
 };
 
@@ -232,8 +238,10 @@ var onFinish = function (ticket) {
  * Invoked after a navigation Ajax request has errored
  */
 var onError = function (ticket, error) {
-    if (ticket.listener) {
-        ticket.listener.onNavigateError(error);
+    if (ticket.componentKey in componentMap) {
+        if (componentMap[ticket.componentKey].onNavigateError) {
+            componentMap[ticket.componentKey].onNavigateError(error);
+        }
     } else {
         eventEmitter.emit("error", error, HTTP_STATUS[error.response.status]);
         console.error("Navigation Error: ", err, {
