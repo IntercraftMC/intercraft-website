@@ -171,7 +171,6 @@ var setRequestState = function (ticket) {
  * Create and send an Ajax request
  */
 var request = function (ticket) {
-    console.log(ticket.url);
     // Resort to standard navigation if Ajax navigation is not supported
     if (!history.pushState) {
         location.assign(ticket.url);
