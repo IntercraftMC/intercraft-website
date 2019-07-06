@@ -2301,7 +2301,7 @@ __webpack_require__.r(__webpack_exports__);
       $(window).on("scroll", this.__onScroll);
 
       if (this.route) {
-        navigate.componentRouting.register(this, this.route);
+        navigate.registerComponent(this, this.route);
       }
     },
 
@@ -2312,7 +2312,7 @@ __webpack_require__.r(__webpack_exports__);
       $(window).off("scroll", this.__onScroll);
 
       if (this.route) {
-        navigate.componentRouting.unregister(this, this.route);
+        navigate.unregisterComponent(this.route);
       }
     }
   },
@@ -58151,19 +58151,10 @@ var EXP = new RegExp(location.host);
 
 var eventEmitter = new EventEmitter();
 /**
- * Ajax information
+ * Reference to Axios method to cancel active request
  */
 
-var cancel = null;
-var isLoading = false;
-/**
- * Page information
- */
-
-var pageInfo = {
-  title: document.title,
-  url: location.href
-};
+var cancelLoading = null;
 /**
  * The configuration for Axios
  */
@@ -58174,114 +58165,210 @@ var AXIOS_CONFIG = {
   })
 };
 /**
- * Create the listeners for links
+ * Map of all registered components for local navigation
  */
 
-var initLinkListeners = function initLinkListeners() {
-  $(document).on("click", "a[href]", function (event) {
-    if (EXP.test($(this).attr("href"))) {
-      onLinkClick(this);
-      event.preventDefault();
-    }
-  });
+var componentMap = {};
+/**
+ * Store the current page state
+ */
+
+var pageState = {};
+/**
+ * Pop a state off of the history stack
+ */
+
+var popState = function popState(state) {
+  var ticket = {
+    componentKey: pageState.componentKey,
+    pushState: false,
+    url: pageState.url
+  }; // Check if going forward instead of back
+
+  if (state.timestamp > pageState.timestamp) {
+    console.log("Forward");
+    ticket.componentKey = state.componentKey;
+  } else {
+    console.log("Back");
+  }
+
+  pageState.title = state.title;
+  pageState.url = state.url;
+  pageState.componentKey = state.componentKey;
+  pageState.timestamp = state.timestamp;
+  request(ticket);
 };
 /**
- * Prepare an Ajax request
+ * Push a new state onto the history stack
  */
 
 
-var prepareRequest = function prepareRequest(url) {
-  var pushState = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+var pushState = function pushState(state) {
+  pageState.title = state.title;
+  pageState.url = state.url;
+  pageState.componentKey = state.componentKey;
+  pageState.timestamp = state.timestamp || utils.getMilliseconds();
 
-  if (!history.pushState) {
-    location.assign(url);
+  if (cancelLoading) {
+    history.replaceState(pageState, pageState.title, pageState.url);
+  } else {
+    history.pushState(pageState, pageState.title, pageState.url);
+  }
+};
+/**
+ * Replace the current state on the history stack
+ */
+
+
+var replaceState = function replaceState(state) {
+  pageState.title = state.title;
+  pageState.url = state.url;
+  pageState.componentKey = state.componentKey;
+  pageState.timestamp = (history.state || {}).timestamp || state.timestamp || utils.getMilliseconds();
+  history.replaceState(pageState, pageState.title, pageState.url);
+};
+/**
+ * Create and set the state for the next request
+ */
+
+
+var setRequestState = function setRequestState(ticket) {
+  if (!ticket.pushState) {
     return;
   }
 
-  if (isLoading) {
-    navigate.abort();
-  }
+  var state = {
+    componentKey: ticket.componentKey,
+    title: pageState.title,
+    url: ticket.url
+  };
 
-  isLoading = true;
-  pageInfo.url = url; // Component navigation
-
-  var component = navigate.componentRouting.resolve(url);
-
-  if (component) {
-    componentRequest(component, url, pushState);
+  if (cancelLoading) {
+    replaceState(state);
   } else {
-    requestPage(url, pushState);
+    pushState(state);
   }
 };
 /**
- * Perform a request within a Vue component
+ * Create and send an Ajax request
  */
 
 
-var componentRequest = function componentRequest(component, route, pushState) {
-  var url = new URL(route);
-  var request = {
-    parameters: {},
-    slug: url.pathname.split('/')[2] || null,
-    url: url
-  };
-  component.onNavigateRequest(request);
-  axios.get(url, AXIOS_CONFIG).then(function (response) {
-    component.onNavigateResponse(response);
-    onAjaxLoad(response, url, pushState, false);
-  })["catch"](component.onNavigateError).then(function () {
-    isLoading = false;
-  });
+var request = function request(ticket) {
+  console.log(ticket.url); // Resort to standard navigation if Ajax navigation is not supported
+
+  if (!history.pushState) {
+    location.assign(ticket.url);
+    return;
+  }
+
+  setRequestState(ticket);
+  navigate.abort();
+  sendRequest(ticket);
 };
 /**
  * Request a webpage
  */
 
 
-var requestPage = function requestPage(url, pushState) {
-  eventEmitter.emit("beforeload", url);
-  axios.get(url, AXIOS_CONFIG).then(function (response) {
-    return onAjaxLoad(response, url, pushState);
-  })["catch"](onAjaxError).then(function () {
-    isLoading = false;
+var sendRequest = function sendRequest(ticket) {
+  if (!onBeforeLoad(ticket)) {
+    return;
+  }
+
+  axios.get(ticket.url, AXIOS_CONFIG).then(function (response) {
+    return onLoad(ticket, response);
+  })["catch"](function (error) {
+    return onError(ticket, error);
+  }).then(function () {
+    return onFinish(ticket);
+  });
+};
+/**
+ * Invoked before a navigation Ajax request is sent
+ */
+
+
+var onBeforeLoad = function onBeforeLoad(ticket) {
+  if (ticket.componentKey in componentMap) {
+    componentMap[ticket.componentKey].onNavigateBeforeLoad();
+  } else {
+    eventEmitter.emit("beforeload", ticket.url);
+  }
+
+  return true;
+};
+/**
+ * Invoked when a navigation Ajax response is received
+ */
+
+
+var onLoad = function onLoad(ticket, response) {
+  if (ticket.componentKey in componentMap) {
+    componentMap[ticket.componentKey].onNavigateLoad(response);
+  }
+};
+/**
+ * Invoked after a navigation Ajax request is completed
+ */
+
+
+var onFinish = function onFinish(ticket) {
+  if (ticket.componentKey in componentMap) {
+    componentMap[ticket.componentKey].onNavigateFinish();
+  } else {
     eventEmitter.emit("load");
-  });
-};
-/**
- * Invoked when an error occurs
- */
-
-
-var onAjaxError = function onAjaxError(err) {
-  eventEmitter.emit("error", err);
-  console.error("Navigation Error: ", err, {
-    request: err.request,
-    response: err.response
-  });
-};
-/**
- * Invoked when the Ajax completed successfully
- */
-
-
-var onAjaxLoad = function onAjaxLoad(response, url, pushState) {
-  var setContent = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
-  pageInfo.title = response.data.title;
-
-  if (pushState) {
-    history.pushState(pageInfo, response.data.title, url);
-  }
-
-  if (setContent) {
-    page.set(response.data.title, response.data.header, response.data.view);
   }
 };
 /**
- * Invoked when a link is clicked
+ * Invoked after a navigation Ajax request has errored
  */
 
 
-var onLinkClick = function onLinkClick(elem) {
+var onError = function onError(ticket, error) {
+  if (ticket.listener) {
+    ticket.listener.onNavigateError(error);
+  } else {
+    eventEmitter.emit("error", error, HTTP_STATUS[error.response.status]);
+    console.error("Navigation Error: ", err, {
+      request: err.request,
+      response: err.response
+    });
+  }
+};
+/**
+ * Invoked when the page is loaded
+ */
+
+
+var onPageLoaded = function onPageLoaded(response, url, updateState) {
+  pageState.title = response.data.title;
+
+  if (updateState) {
+    replaceState(pageState);
+  }
+
+  page.set(response.data.title, response.data.header, response.data.view);
+};
+/**
+ * Create the listeners for links
+ */
+
+
+var initLinkListeners = function initLinkListeners() {
+  $(document).on("click", "a[href]", function (event) {
+    if (EXP.test($(this).attr("href"))) {
+      onNavigate(this);
+      event.preventDefault();
+    }
+  });
+};
+/**
+ * Invoked when a local link is activated
+ */
+
+
+var onNavigate = function onNavigate(elem) {
   navigate.to($(elem).attr("href"));
 };
 /**
@@ -58292,12 +58379,10 @@ var onLinkClick = function onLinkClick(elem) {
 var onPopState = function onPopState(event) {
   if (event.originalEvent.state) {
     // Don't request new pages if only the hash changes
-    var newHash = (document.URL.match(/#[^?]*/gi) || [""])[0];
+    var newHash = (event.originalEvent.state.url.match(/#[^?]*/gi) || [""])[0];
 
-    if (pageInfo.url.replace(/#[^?]*/gi, newHash) != document.URL) {
-      pageInfo.title = event.originalEvent.state.title;
-      pageInfo.url = event.originalEvent.state.url;
-      prepareRequest(pageInfo.url, false);
+    if (pageState.url.replace(/#[^?]*/gi, newHash) != event.originalEvent.state.URL) {
+      popState(event.originalEvent.state);
     }
   }
 };
@@ -58309,80 +58394,81 @@ var onPopState = function onPopState(event) {
 var onScroll = function onScroll() {
   eventEmitter.emit("scroll", $(window).scrollTop());
 };
-/**
- * Manage routing and navigation for Vue components
- */
-
-
-var componentRouteManager = {
-  /**
-   * Store the route map
-   */
-  map: {},
-
-  /**
-   * Resolve a route to a component
-   */
-  resolve: function resolve(route) {
-    var url = new URL(route);
-    var parts = url.pathname.split('/');
-    return this.map["/".concat(parts[1])];
-  },
-
-  /**
-   * Register a new component route
-   */
-  register: function register(component, baseUrl) {
-    var url = new URL(baseUrl);
-    this.map[url.pathname] = component;
-  },
-
-  /**
-   * Unregister a component route
-   */
-  unregister: function unregister(component, baseUrl) {
-    var url = new URL(baseUrl);
-    delete this.map[url.pathname];
-  }
-};
-/**
- * Navigation module
- */
 
 window.navigate = {
   /**
-   * Store the event emitter
+   * A reference to the event emitter
    */
   event: eventEmitter,
 
   /**
-   * Component routing and navigation
-   */
-  componentRouting: componentRouteManager,
-
-  /**
-   * Initialize the navigation system
-   */
-  init: function init() {
-    initLinkListeners();
-    $(window).on("popstate", onPopState);
-    $(window).scroll(onScroll);
-    history.replaceState(pageInfo, pageInfo.title, pageInfo.url);
-    onScroll();
-  },
-
-  /**
-   * Cancel the current navigation attempt
+   * Abort the current load attempt
    */
   abort: function abort() {
-    if (cancel) cancel();
+    if (cancelLoading) {
+      cancelLoading();
+    }
   },
 
   /**
-   * Go to a URL via Ajax
+   * Go to the previous page via Ajax navigation
+   */
+  back: function back() {
+    history.back();
+  },
+
+  /**
+   * Go forward to the next page via Ajax navigation
+   */
+  forward: function forward() {
+    history.forward();
+  },
+
+  /**
+   * Initialize the navigation module
+   */
+  init: function init() {
+    $(window).on("popstate", onPopState);
+    $(window).scroll(onScroll);
+    initLinkListeners();
+    replaceState({
+      componentKey: undefined,
+      title: document.title,
+      url: location.href
+    });
+  },
+
+  /**
+   * Check if there is an active Ajax request
+   */
+  isLoading: function isLoading() {
+    return Boolean(cancelLoading);
+  },
+
+  /**
+   * Navigate to a new URL via Ajax
    */
   to: function to(url) {
-    prepareRequest(url, true);
+    var componentKey = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+    request({
+      componentKey: componentKey,
+      pushState: true,
+      url: url
+    });
+  },
+
+  /**
+   * Register a component for local navigation
+   */
+  registerComponent: function registerComponent(component, key) {
+    componentMap[key] = component;
+  },
+
+  /**
+   * Unregister a component for local navigation
+   */
+  unregisterComponent: function unregisterComponent(key) {
+    delete componentMap[key];
   }
 };
 
@@ -58552,6 +58638,13 @@ window.utils = {
   isMobile: function isMobile() {
     var a = navigator.userAgent || navigator.vendor || window.opera;
     return Boolean(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0, 4)));
+  },
+
+  /**
+   * Get the current time in milliseconds
+   */
+  getMilliseconds: function getMilliseconds() {
+    return new Date().getTime();
   }
 };
 

@@ -153,7 +153,7 @@ export default {
         __registerEvents() {
             $(window).on("scroll", this.__onScroll);
             if (this.route) {
-                navigate.componentRouting.register(this, this.route);
+                navigate.registerComponent(this, this.route);
             }
         },
 
@@ -163,7 +163,7 @@ export default {
         __unregisterEvents() {
             $(window).off("scroll", this.__onScroll);
             if (this.route) {
-                navigate.componentRouting.unregister(this, this.route);
+                navigate.unregisterComponent(this.route);
             }
         }
     },

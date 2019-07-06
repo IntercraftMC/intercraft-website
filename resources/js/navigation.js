@@ -79,26 +79,181 @@ const EXP = new RegExp(location.host);
 var eventEmitter = new EventEmitter();
 
 /**
- * Ajax information
+ * Reference to Axios method to cancel active request
  */
-var cancel = null;
-var isLoading = false;
-
-/**
- * Page information
- */
-var pageInfo = {
-    title: document.title,
-    url: location.href
-};
+var cancelLoading = null;
 
 /**
  * The configuration for Axios
  */
-var AXIOS_CONFIG = {
+const AXIOS_CONFIG = {
     cancelToken: new axios.CancelToken((c) => {
         cancel = c;
     })
+};
+
+/**
+ * Map of all registered components for local navigation
+ */
+var componentMap = {};
+
+/**
+ * Store the current page state
+ */
+var pageState = {};
+
+/**
+ * Pop a state off of the history stack
+ */
+var popState = function (state) {
+    let ticket = {
+        componentKey: pageState.componentKey,
+        pushState   : false,
+        url         : pageState.url
+    };
+    // Check if going forward instead of back
+    if (state.timestamp > pageState.timestamp) {
+        console.log("Forward");
+        ticket.componentKey = state.componentKey;
+    } else {
+        console.log("Back");
+    }
+    pageState.title        = state.title;
+    pageState.url          = state.url;
+    pageState.componentKey = state.componentKey;
+    pageState.timestamp    = state.timestamp;
+    request(ticket);
+};
+
+/**
+ * Push a new state onto the history stack
+ */
+var pushState = function (state) {
+    pageState.title        = state.title;
+    pageState.url          = state.url;
+    pageState.componentKey = state.componentKey;
+    pageState.timestamp    = state.timestamp || utils.getMilliseconds();
+    if (cancelLoading) {
+        history.replaceState(pageState, pageState.title, pageState.url);
+    } else {
+        history.pushState(pageState, pageState.title, pageState.url);
+    }
+};
+
+/**
+ * Replace the current state on the history stack
+ */
+var replaceState = function (state) {
+    pageState.title        = state.title;
+    pageState.url          = state.url;
+    pageState.componentKey = state.componentKey;
+    pageState.timestamp    = (history.state || {}).timestamp || state.timestamp || utils.getMilliseconds();
+    history.replaceState(pageState, pageState.title, pageState.url);
+};
+
+/**
+ * Create and set the state for the next request
+ */
+var setRequestState = function (ticket) {
+    if (!ticket.pushState) {
+        return;
+    }
+    let state = {
+        componentKey: ticket.componentKey,
+        title       : pageState.title,
+        url         : ticket.url
+    };
+    if (cancelLoading) {
+        replaceState(state);
+    } else {
+        pushState(state);
+    }
+};
+
+/**
+ * Create and send an Ajax request
+ */
+var request = function (ticket) {
+    console.log(ticket.url);
+    // Resort to standard navigation if Ajax navigation is not supported
+    if (!history.pushState) {
+        location.assign(ticket.url);
+        return;
+    }
+    setRequestState(ticket);
+    navigate.abort();
+    sendRequest(ticket);
+};
+
+/**
+ * Request a webpage
+ */
+var sendRequest = function (ticket) {
+    if (!onBeforeLoad(ticket)) {
+        return;
+    }
+    axios.get(ticket.url, AXIOS_CONFIG)
+    .then(response => onLoad(ticket, response))
+        .catch(error => onError(ticket, error))
+        .then(() => onFinish(ticket));
+};
+
+/**
+ * Invoked before a navigation Ajax request is sent
+ */
+var onBeforeLoad = function (ticket) {
+    if (ticket.componentKey in componentMap) {
+        componentMap[ticket.componentKey].onNavigateBeforeLoad();
+    } else {
+        eventEmitter.emit("beforeload", ticket.url);
+    }
+    return true;
+};
+
+/**
+ * Invoked when a navigation Ajax response is received
+ */
+var onLoad = function (ticket, response) {
+    if (ticket.componentKey in componentMap) {
+        componentMap[ticket.componentKey].onNavigateLoad(response);
+    }
+};
+
+/**
+ * Invoked after a navigation Ajax request is completed
+ */
+var onFinish = function (ticket) {
+    if (ticket.componentKey in componentMap) {
+        componentMap[ticket.componentKey].onNavigateFinish();
+    } else {
+        eventEmitter.emit("load")
+    }
+};
+
+/**
+ * Invoked after a navigation Ajax request has errored
+ */
+var onError = function (ticket, error) {
+    if (ticket.listener) {
+        ticket.listener.onNavigateError(error);
+    } else {
+        eventEmitter.emit("error", error, HTTP_STATUS[error.response.status]);
+        console.error("Navigation Error: ", err, {
+            request: err.request,
+            response: err.response
+        });
+    }
+};
+
+/**
+ * Invoked when the page is loaded
+ */
+var onPageLoaded = function (response, url, updateState) {
+    pageState.title = response.data.title;
+    if (updateState) {
+        replaceState(pageState);
+    }
+    page.set(response.data.title, response.data.header, response.data.view);
 };
 
 /**
@@ -107,99 +262,16 @@ var AXIOS_CONFIG = {
 var initLinkListeners = function () {
     $(document).on("click", "a[href]", function (event) {
         if (EXP.test($(this).attr("href"))) {
-            onLinkClick(this);
+            onNavigate(this);
             event.preventDefault();
         }
     });
 };
 
 /**
- * Prepare an Ajax request
+ * Invoked when a local link is activated
  */
-var prepareRequest = function (url, pushState = false) {
-    if (!history.pushState) {
-        location.assign(url);
-        return;
-    }
-    if (isLoading) {
-        navigate.abort();
-    }
-    isLoading = true;
-    pageInfo.url = url;
-
-    // Component navigation
-    let component = navigate.componentRouting.resolve(url);
-    if (component) {
-        componentRequest(component, url, pushState);
-    } else {
-        requestPage(url, pushState);
-    }
-};
-
-/**
- * Perform a request within a Vue component
- */
-var componentRequest = function (component, route, pushState) {
-    let url = new URL(route);
-    let request = {
-        parameters: {},
-        slug      : url.pathname.split('/')[2] || null,
-        url       : url
-    };
-    component.onNavigateRequest(request);
-    axios.get(url, AXIOS_CONFIG)
-        .then((response) => {
-            component.onNavigateResponse(response);
-            onAjaxLoad(response, url, pushState, false);
-        })
-        .catch(component.onNavigateError)
-        .then(() => {
-            isLoading = false;
-        });
-};
-
-/**
- * Request a webpage
- */
-var requestPage = function (url, pushState) {
-    eventEmitter.emit("beforeload", url);
-    axios.get(url, AXIOS_CONFIG)
-        .then(response => onAjaxLoad(response, url, pushState))
-        .catch(onAjaxError)
-        .then(() => {
-            isLoading = false;
-            eventEmitter.emit("load");
-        });
-};
-
-/**
- * Invoked when an error occurs
- */
-var onAjaxError = function (err) {
-    eventEmitter.emit("error", err);
-    console.error("Navigation Error: ", err, {
-        request: err.request,
-        response: err.response
-    });
-};
-
-/**
- * Invoked when the Ajax completed successfully
- */
-var onAjaxLoad = function (response, url, pushState, setContent = true) {
-    pageInfo.title = response.data.title;
-    if (pushState) {
-        history.pushState(pageInfo, response.data.title, url);
-    }
-    if (setContent) {
-        page.set(response.data.title, response.data.header, response.data.view);
-    }
-};
-
-/**
- * Invoked when a link is clicked
- */
-var onLinkClick = function (elem) {
+var onNavigate = function (elem) {
     navigate.to($(elem).attr("href"));
 };
 
@@ -209,11 +281,9 @@ var onLinkClick = function (elem) {
 var onPopState = function (event) {
     if (event.originalEvent.state) {
         // Don't request new pages if only the hash changes
-        let newHash = (document.URL.match(/#[^?]*/gi) || [""])[0];
-        if (pageInfo.url.replace(/#[^?]*/gi, newHash) != document.URL) {
-            pageInfo.title = event.originalEvent.state.title;
-            pageInfo.url = event.originalEvent.state.url;
-            prepareRequest(pageInfo.url, false);
+        let newHash     = (event.originalEvent.state.url.match(/#[^?]*/gi) || [""])[0];
+        if (pageState.url.replace(/#[^?]*/gi, newHash) != event.originalEvent.state.URL) {
+            popState(event.originalEvent.state);
         }
     }
 };
@@ -225,80 +295,79 @@ var onScroll = function () {
     eventEmitter.emit("scroll", $(window).scrollTop());
 };
 
-/**
- * Manage routing and navigation for Vue components
- */
-var componentRouteManager = {
-
-    /**
-     * Store the route map
-     */
-    map: {},
-
-    /**
-     * Resolve a route to a component
-     */
-    resolve(route) {
-        let url = new URL(route);
-        let parts = url.pathname.split('/');
-        return this.map[`/${parts[1]}`];
-    },
-
-    /**
-     * Register a new component route
-     */
-    register(component, baseUrl) {
-        let url = new URL(baseUrl);
-        this.map[url.pathname] = component;
-    },
-
-    /**
-     * Unregister a component route
-     */
-    unregister(component, baseUrl) {
-        let url = new URL(baseUrl);
-        delete this.map[url.pathname];
-    }
-};
-
-/**
- * Navigation module
- */
 window.navigate = {
 
     /**
-     * Store the event emitter
+     * A reference to the event emitter
      */
     event: eventEmitter,
 
     /**
-     * Component routing and navigation
-     */
-    componentRouting: componentRouteManager,
-
-    /**
-     * Initialize the navigation system
-     */
-    init() {
-        initLinkListeners();
-        $(window).on("popstate", onPopState);
-        $(window).scroll(onScroll);
-        history.replaceState(pageInfo, pageInfo.title, pageInfo.url);
-        onScroll();
-    },
-
-    /**
-     * Cancel the current navigation attempt
+     * Abort the current load attempt
      */
     abort() {
-        if (cancel)
-            cancel();
+        if (cancelLoading) {
+            cancelLoading();
+        }
     },
 
     /**
-     * Go to a URL via Ajax
+     * Go to the previous page via Ajax navigation
      */
-    to(url) {
-        prepareRequest(url, true);
+    back() {
+        history.back();
+    },
+
+    /**
+     * Go forward to the next page via Ajax navigation
+     */
+    forward() {
+        history.forward();
+    },
+
+    /**
+     * Initialize the navigation module
+     */
+    init() {
+        $(window).on("popstate", onPopState);
+        $(window).scroll(onScroll);
+        initLinkListeners();
+        replaceState({
+            componentKey: undefined,
+            title       : document.title,
+            url         : location.href
+        });
+    },
+
+    /**
+     * Check if there is an active Ajax request
+     */
+    isLoading() {
+        return Boolean(cancelLoading);
+    },
+
+    /**
+     * Navigate to a new URL via Ajax
+     */
+    to(url, componentKey = null) {
+        request({
+            componentKey: componentKey,
+            pushState   : true,
+            url         : url
+        });
+    },
+
+    /**
+     * Register a component for local navigation
+     */
+    registerComponent(component, key) {
+        componentMap[key] = component;
+    },
+
+    /**
+     * Unregister a component for local navigation
+     */
+    unregisterComponent(key) {
+        delete componentMap[key];
     }
 };
