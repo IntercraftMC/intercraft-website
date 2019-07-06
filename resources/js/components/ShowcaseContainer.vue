@@ -184,7 +184,6 @@ export default {
             "default": null
         },
         "route"     : String,
-        "routeAjax" : String,
         "totalItems": {
             "type"   : Number,
             "default": 0

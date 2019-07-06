@@ -2344,7 +2344,6 @@ __webpack_require__.r(__webpack_exports__);
       "default": null
     },
     "route": String,
-    "routeAjax": String,
     "totalItems": {
       "type": Number,
       "default": 0
@@ -58176,15 +58175,6 @@ var eventEmitter = new EventEmitter();
 
 var cancelLoading = null;
 /**
- * The configuration for Axios
- */
-
-var AXIOS_CONFIG = {
-  cancelToken: new axios.CancelToken(function (c) {
-    cancelLoading = c;
-  })
-};
-/**
  * Map of all registered components for local navigation
  */
 
@@ -58292,7 +58282,11 @@ var sendRequest = function sendRequest(ticket) {
     return;
   }
 
-  axios.get(ticket.url, AXIOS_CONFIG).then(function (response) {
+  axios.get(ticket.url, {
+    cancelToken: new axios.CancelToken(function (cancel) {
+      return cancelLoading = cancel;
+    })
+  }).then(function (response) {
     return onLoad(ticket, response);
   })["catch"](function (error) {
     return onError(ticket, error);
@@ -58355,11 +58349,11 @@ var onError = function onError(ticket, error) {
       componentMap[ticket.componentKey].onNavigateError(error);
     }
   } else {
-    eventEmitter.emit("error", error, HTTP_STATUS[error.response.status]);
-    console.error("Navigation Error: ", err, {
-      request: err.request,
-      response: err.response
+    console.error("Navigation Error: ", error, {
+      request: error.request,
+      response: error.response
     });
+    eventEmitter.emit("error", error, HTTP_STATUS[error.response.status]);
   }
 };
 /**

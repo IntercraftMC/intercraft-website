@@ -84,15 +84,6 @@ var eventEmitter = new EventEmitter();
 var cancelLoading = null;
 
 /**
- * The configuration for Axios
- */
-const AXIOS_CONFIG = {
-    cancelToken: new axios.CancelToken((c) => {
-        cancelLoading = c;
-    })
-};
-
-/**
  * Map of all registered components for local navigation
  */
 var componentMap = {};
@@ -188,8 +179,8 @@ var sendRequest = function (ticket) {
     if (!onBeforeLoad(ticket)) {
         return;
     }
-    axios.get(ticket.url, AXIOS_CONFIG)
-    .then(response => onLoad(ticket, response))
+    axios.get(ticket.url, { cancelToken: new axios.CancelToken(cancel => cancelLoading = cancel) })
+        .then(response => onLoad(ticket, response))
         .catch(error => onError(ticket, error))
         .then(() => onFinish(ticket));
 };
@@ -243,11 +234,11 @@ var onError = function (ticket, error) {
             componentMap[ticket.componentKey].onNavigateError(error);
         }
     } else {
-        eventEmitter.emit("error", error, HTTP_STATUS[error.response.status]);
-        console.error("Navigation Error: ", err, {
-            request: err.request,
-            response: err.response
+        console.error("Navigation Error: ", error, {
+            request: error.request,
+            response: error.response
         });
+        eventEmitter.emit("error", error, HTTP_STATUS[error.response.status]);
     }
 };
 
