@@ -58186,10 +58186,7 @@ var popState = function popState(state) {
   }; // Check if going forward instead of back
 
   if (state.timestamp > pageState.timestamp) {
-    console.log("Forward");
     ticket.componentKey = state.componentKey;
-  } else {
-    console.log("Back");
   }
 
   pageState.title = state.title;
@@ -58306,6 +58303,8 @@ var onBeforeLoad = function onBeforeLoad(ticket) {
 var onLoad = function onLoad(ticket, response) {
   if (ticket.componentKey in componentMap) {
     componentMap[ticket.componentKey].onNavigateLoad(response);
+  } else {
+    onPageLoaded(ticket, response);
   }
 };
 /**
@@ -58341,13 +58340,9 @@ var onError = function onError(ticket, error) {
  */
 
 
-var onPageLoaded = function onPageLoaded(response, url, updateState) {
+var onPageLoaded = function onPageLoaded(ticket, response) {
   pageState.title = response.data.title;
-
-  if (updateState) {
-    replaceState(pageState);
-  }
-
+  replaceState(pageState);
   page.set(response.data.title, response.data.header, response.data.view);
 };
 /**
