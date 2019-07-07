@@ -2204,6 +2204,15 @@ __webpack_require__.r(__webpack_exports__);
     },
 
     /**
+     * Hide the items
+     */
+    clearItems: function clearItems() {
+      this.$children.forEach(function (child) {
+        return child.remove();
+      });
+    },
+
+    /**
      * Reveal an item
      */
     revealNextItem: function revealNextItem() {
@@ -2249,13 +2258,17 @@ __webpack_require__.r(__webpack_exports__);
     onNavigateBeforeLoad: function onNavigateBeforeLoad(ticket) {
       var slug = ticket.url.substring(this.route.length + 1);
 
-      if (slug == null && this.showcaseId != null) {
-        ticket.parameters["showcase_id"] = this.showcaseId;
+      if (slug == null) {
+        ticket.altUrl = this.routeAjax; // Send the slug so we can load the correct number of projects when returning
+
+        if (this.showcaseId != null) {
+          ticket.parameters["showcase_id"] = this.showcaseId;
+        }
+      } else {
+        ticket.altUrl = "".concat(this.routeAjax, "/").concat(slug);
       }
 
-      this.$children.forEach(function (child) {
-        return child.remove();
-      });
+      this.clearItems();
     },
 
     /**
@@ -2344,6 +2357,7 @@ __webpack_require__.r(__webpack_exports__);
       "default": null
     },
     "route": String,
+    "routeAjax": String,
     "totalItems": {
       "type": Number,
       "default": 0
@@ -58282,7 +58296,7 @@ var sendRequest = function sendRequest(ticket) {
     return;
   }
 
-  axios.get(ticket.url, {
+  axios.get(ticket.altUrl || ticket.url, {
     cancelToken: new axios.CancelToken(function (cancel) {
       return cancelLoading = cancel;
     })

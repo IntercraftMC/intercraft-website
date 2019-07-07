@@ -14,9 +14,7 @@ use Illuminate\Http\Request;
 */
 
 /**
- * Ajax Routes
+ * AApi Routes
  */
 Route::middleware('auth:api')->group(function() {
-    Route::get("/showcase")->name("api/showcase");
-    Route::get("/showcase/{project}")->name("api/showcase-project");
 });

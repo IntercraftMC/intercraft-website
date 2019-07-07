@@ -61,6 +61,13 @@ export default {
         },
 
         /**
+         * Hide the items
+         */
+        clearItems() {
+            this.$children.forEach(child => child.remove());
+        },
+
+        /**
          * Reveal an item
          */
         revealNextItem() {
@@ -101,10 +108,16 @@ export default {
          */
         onNavigateBeforeLoad(ticket) {
             let slug = ticket.url.substring(this.route.length + 1);
-            if (slug == null && this.showcaseId != null) {
-                ticket.parameters["showcase_id"] = this.showcaseId;
+            if (slug == null) {
+                ticket.altUrl = this.routeAjax;
+                // Send the slug so we can load the correct number of projects when returning
+                if (this.showcaseId != null) {
+                    ticket.parameters["showcase_id"] = this.showcaseId;
+                }
+            } else {
+                ticket.altUrl = `${this.routeAjax}/${slug}`;
             }
-            this.$children.forEach(child => child.remove());
+            this.clearItems();
         },
 
         /**
@@ -184,6 +197,7 @@ export default {
             "default": null
         },
         "route"     : String,
+        "routeAjax" : String,
         "totalItems": {
             "type"   : Number,
             "default": 0

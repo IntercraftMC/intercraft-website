@@ -179,7 +179,7 @@ var sendRequest = function (ticket) {
     if (!onBeforeLoad(ticket)) {
         return;
     }
-    axios.get(ticket.url, { cancelToken: new axios.CancelToken(cancel => cancelLoading = cancel) })
+    axios.get(ticket.altUrl || ticket.url, { cancelToken: new axios.CancelToken(cancel => cancelLoading = cancel) })
         .then(response => onLoad(ticket, response))
         .catch(error => onError(ticket, error))
         .then(() => onFinish(ticket));
