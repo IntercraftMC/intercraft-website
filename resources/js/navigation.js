@@ -203,6 +203,7 @@ var onBeforeLoad = function (ticket) {
  * Invoked when a navigation Ajax response is received
  */
 var onLoad = function (ticket, response) {
+    cancelLoading = null;
     if (ticket.componentKey in componentMap) {
         if (componentMap[ticket.componentKey].onNavigateLoad) {
             componentMap[ticket.componentKey].onNavigateLoad(response);
@@ -276,7 +277,7 @@ var onNavigate = function (elem) {
 var onPopState = function (event) {
     if (event.originalEvent.state) {
         // Don't request new pages if only the hash changes
-        let newHash     = (event.originalEvent.state.url.match(/#[^?]*/gi) || [""])[0];
+        let newHash = (event.originalEvent.state.url.match(/#[^?]*/gi) || [""])[0];
         if (pageState.url.replace(/#[^?]*/gi, newHash) != event.originalEvent.state.URL) {
             popState(event.originalEvent.state);
         }

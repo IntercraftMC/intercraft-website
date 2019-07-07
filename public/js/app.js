@@ -58316,6 +58316,8 @@ var onBeforeLoad = function onBeforeLoad(ticket) {
 
 
 var onLoad = function onLoad(ticket, response) {
+  cancelLoading = null;
+
   if (ticket.componentKey in componentMap) {
     if (componentMap[ticket.componentKey].onNavigateLoad) {
       componentMap[ticket.componentKey].onNavigateLoad(response);
