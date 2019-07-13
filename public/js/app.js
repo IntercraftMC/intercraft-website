@@ -1494,7 +1494,7 @@ module.exports = function spread(callback) {
 
 
 var bind = __webpack_require__(/*! ./helpers/bind */ "./node_modules/axios/lib/helpers/bind.js");
-var isBuffer = __webpack_require__(/*! is-buffer */ "./node_modules/axios/node_modules/is-buffer/index.js");
+var isBuffer = __webpack_require__(/*! is-buffer */ "./node_modules/is-buffer/index.js");
 
 /*global toString:true*/
 
@@ -1825,28 +1825,6 @@ module.exports = {
   extend: extend,
   trim: trim
 };
-
-
-/***/ }),
-
-/***/ "./node_modules/axios/node_modules/is-buffer/index.js":
-/*!************************************************************!*\
-  !*** ./node_modules/axios/node_modules/is-buffer/index.js ***!
-  \************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-/*!
- * Determine if an object is a Buffer
- *
- * @author   Feross Aboukhadijeh <https://feross.org>
- * @license  MIT
- */
-
-module.exports = function isBuffer (obj) {
-  return obj != null && obj.constructor != null &&
-    typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
-}
 
 
 /***/ }),
@@ -2425,7 +2403,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   props: {
     "showcaseId": {},
-    "thumbnail": String
+    "image": String
   }
 });
 
@@ -7399,6 +7377,28 @@ function unwrapListeners(arr) {
     ret[i] = arr[i].listener || arr[i];
   }
   return ret;
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/is-buffer/index.js":
+/*!*****************************************!*\
+  !*** ./node_modules/is-buffer/index.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/*!
+ * Determine if an object is a Buffer
+ *
+ * @author   Feross Aboukhadijeh <https://feross.org>
+ * @license  MIT
+ */
+
+module.exports = function isBuffer (obj) {
+  return obj != null && obj.constructor != null &&
+    typeof obj.constructor.isBuffer === 'function' && obj.constructor.isBuffer(obj)
 }
 
 
@@ -45298,7 +45298,7 @@ var render = function() {
           _c("img", {
             ref: "thumbnail",
             staticStyle: { width: "100%" },
-            attrs: { src: _vm.thumbnail }
+            attrs: { src: _vm.image + "_thumb.png" }
           })
         ]
       ),
@@ -58702,8 +58702,8 @@ window.utils = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /home/vagrant/intercraft/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /home/vagrant/intercraft/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /home/david/Development/Web/intercraftmc/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /home/david/Development/Web/intercraftmc/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

@@ -8,10 +8,10 @@
         </div>
     </div>
     <showcase-container v-bind:total-items="40" route="{{ route("showcase") }}" route-ajax="{{ route("ajax.showcase") }}">
-        @for ($i = 0; $i < 6; $i++)
-            <showcase-item thumbnail="/img/discord_bg.svg" showcase-id="{{ $i }}">
-                Project {{ $i }}
+        @foreach ($vars["items"] as $item)
+            <showcase-item image="{{ $item->imagePath() }}" showcase-id="{{ $item->id }}">
+                {{ $item->title }}
             </showcase-item>
-        @endfor
+        @endforeach
     </showcase-container>
 </section>

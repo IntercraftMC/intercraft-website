@@ -7,9 +7,16 @@
         "laravel"
     ],
     "license": "MIT",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/IntercraftMC/intercraft-database"
+        }
+    ],
     "require": {
         "php": "^7.1.3",
         "fideloper/proxy": "^4.0",
+        "intercraftmc/database": "*",
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0"
     },

@@ -2,7 +2,7 @@
     <div class="col-12 col-md-6 col-xl-4">
         <div class="showcase-item hidden" ref="item">
             <a v-on:click="onClick()" class="thumbnail-link">
-                <img :src="thumbnail" ref="thumbnail" style="width: 100%;">
+                <img :src="`${image}_thumb.png`" ref="thumbnail" style="width: 100%;">
             </a>
             <div class="title text-center">
                 <slot></slot>
@@ -44,7 +44,7 @@ export default {
     },
     props: {
         "showcaseId": {},
-        "thumbnail" : String
+        "image" : String
     }
 }
 </script>
