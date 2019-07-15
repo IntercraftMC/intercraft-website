@@ -60,7 +60,7 @@ window.utils = {
             let isCanceled = false;
             let result = [];
             let loadNextImage = (images) => {
-                let img = new Image(images.shift());
+                let img = new Image();
                 img.onload = () => {
                     if (!isCanceled) {
                         result.push(img);
@@ -71,6 +71,7 @@ window.utils = {
                         }
                     }
                 };
+                img.src = images.shift();
             };
             onCancel(() => isCanceled = true);
             loadNextImage(images.slice());

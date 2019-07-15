@@ -18,6 +18,9 @@
 </template>
 <script>
 export default {
+    beforeDestroy() {
+        this.$el.parentNode.removeChild(this.$el);
+    },
     data() {
         return {
             isHidden: true
@@ -29,7 +32,9 @@ export default {
          */
         startLoading() {
             $(this.$refs.item).addClass("active");
-            this.$refs.loadingIcon.activate();
+            if (this.$refs.loadingIcon) {
+                this.$refs.loadingIcon.activate();
+            }
         },
 
         /**
@@ -37,7 +42,9 @@ export default {
          */
         stopLoading() {
             $(this.$refs.item).removeClass("active");
-            this.$refs.loadingIcon.deactivate();
+            if (this.$refs.loadingIcon) {
+                this.$refs.loadingIcon.deactivate();
+            }
         },
 
         /**
@@ -55,8 +62,8 @@ export default {
          * Remove the element
          */
         remove() {
-            $(this.$refs.item).addClass("hidden");
-            setTimeout(() => this.$destroy, 150);
+            // $(this.$refs.item).addClass("hidden");
+            setTimeout(() => this.$destroy(), 150);
         },
 
         /**

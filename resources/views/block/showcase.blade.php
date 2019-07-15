@@ -7,7 +7,7 @@
             </div>
         </div>
     </div>
-    <showcase-container v-bind:total-items="40" route="{{ route("showcase") }}" route-ajax="{{ route("ajax.showcase") }}">
+    <showcase-container v-bind:total-items="{{ count($vars["items"]) }}" route="{{ route("showcase") }}" route-ajax="{{ route("ajax.showcase") }}">
         @foreach ($vars["items"] as $item)
             <showcase-item image="{{ $item->imagePath() }}" showcase-id="{{ $item->id }}">
                 {{ $item->title }}

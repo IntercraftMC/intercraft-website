@@ -26,7 +26,8 @@ export default {
             items         : 0,
             hidden        : [],
             queue         : [],
-            revealInterval: null
+            revealInterval: null,
+            loadPromise   : null
         }
     },
     methods: {
@@ -128,6 +129,9 @@ export default {
                 ticket.altUrl = `${this.routeAjax}/${slug}`;
             }
             $(this.$el).addClass("is-loading");
+            if (this.loadPromise) {
+                this.loadPromise.cancel();
+            }
         },
 
         /**
@@ -135,27 +139,37 @@ export default {
          */
         onNavigateError(response) {
             console.log("Component navigation yielded error:", response);
+            $(this.$el).removeClass("is-loading");
         },
 
         /**
          * Invoked when component navigation yields a response
          */
-        onNavigateLoad(response) {
-            let images = [];
-            response.data.forEach((item) => { images.push(`${item.image}.png`); });
-            utils.loadImages(images).then(() => {
-                console.log("Loaded", images);
-            });
-            // this.cancelReveal();
-            // this.clearItems();
-            // setTimeout(() => {
-            //     for (let item of Object.values(response.data)) {
-            //         console.log("Creating item...");
-            //         this.createItem(item.id, item.image, item.title, item.description);
-            //     }
+        async onNavigateLoad(response) {
+            let images = await this.__loadImages(response.data);
+            this.cancelReveal();
+            this.clearItems();
+            setTimeout(() => {
+                $(this.$el).removeClass("is-loading");
+                for (let item of Object.values(response.data)) {
+                    this.createItem(item.id, item.image, item.title, item.description);
+                }
+                this.revealItems();
+            }, 150);
+        },
 
-            //     this.revealItems();
-            // }, 150);
+        /**
+         * Asynchronously load a list of images
+         */
+        __loadImages(responseData) {
+            return new Promise((resolve) => {
+                let images = [];
+                responseData.forEach((item) => { images.push(`${item.image}.png`); });
+                this.loadPromise = utils.loadImages(images).then((result) => {
+                    this.loadPromise = null;
+                    resolve(result);
+                });
+            });
         },
 
         /**
