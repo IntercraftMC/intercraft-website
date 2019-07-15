@@ -2,6 +2,8 @@
     "/js/app.js": "/js/app.js",
     "/css/app.css": "/css/app.css",
     "/img/discord_bg.svg": "/img/discord_bg.svg",
+    "/img/example_thumb.png": "/img/example_thumb.png",
+    "/img/example.png": "/img/example.png",
     "/video/header.mp4": "/video/header.mp4",
     "/video/header.png": "/video/header.png"
 }

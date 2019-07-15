@@ -11453,20 +11453,78 @@ nav.navbar.navbar-top .navbar-nav .nav-item.active a {
 
 .showcase .showcase-item a {
   cursor: pointer;
+  display: block;
+  position: relative;
 }
 
 .showcase .showcase-item a img {
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
-  -webkit-transition: box-shadow 0.2s ease-out, -webkit-transform 0.2s ease-out;
-  transition: box-shadow 0.2s ease-out, -webkit-transform 0.2s ease-out;
-  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, -webkit-transform 0.2s ease-out;
+  -webkit-transition: box-shadow 0.2s ease-out, opacity 0.1s ease-out, -webkit-transform 0.2s ease-out;
+  transition: box-shadow 0.2s ease-out, opacity 0.1s ease-out, -webkit-transform 0.2s ease-out;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, opacity 0.1s ease-out;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, opacity 0.1s ease-out, -webkit-transform 0.2s ease-out;
 }
 
-.showcase .showcase-item a img:hover {
+.showcase .showcase-item a:hover img {
   -webkit-transform: scale(1.04);
           transform: scale(1.04);
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+}
+
+.showcase .showcase-item a .overlay {
+  -webkit-box-align: center;
+          align-items: center;
+  bottom: 0;
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+          flex-direction: row;
+  -webkit-box-pack: center;
+          justify-content: center;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  opacity: 0;
+  -webkit-transition: opacity 0.2s ease-out;
+  transition: opacity 0.2s ease-out;
+}
+
+.showcase .showcase-item a .overlay .loading-icon-container {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 100%;
+  color: white;
+  height: 35%;
+  padding: 10px;
+  position: relative;
+}
+
+.showcase .showcase-item a .overlay .loading-icon-container .loading-icon {
+  height: 100%;
+}
+
+.showcase .showcase-item a .overlay .loading-icon-container .loading-icon rect,
+.showcase .showcase-item a .overlay .loading-icon-container .loading-icon circle {
+  fill: white !important;
+}
+
+.showcase .showcase-item.active a img {
+  -webkit-transform: scale(1.04);
+          transform: scale(1.04);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+}
+
+.showcase .showcase-item.active a img {
+  opacity: 1 !important;
+}
+
+.showcase .showcase-item.active .overlay {
+  opacity: 1;
+}
+
+.showcase.is-loading img {
+  opacity: 0.8;
 }
 
 .showcase .load-more.hidden {

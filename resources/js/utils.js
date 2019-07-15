@@ -1,3 +1,10 @@
+const CancelablePromise = require("bluebird");
+
+/**
+ * Enabled cancellation in CancelablePromise
+ */
+CancelablePromise.config({ cancellation: true });
+
 /**
  * Extend jQuery to allow checking if an element is inside the viewport
  */
@@ -40,5 +47,33 @@ window.utils = {
      */
     getMilliseconds() {
         return new Date().getTime();
+    },
+
+    /**
+     * Asynchronously load a list of images
+     *
+     * @param {Array} images
+     * @return {PromiseLike}
+     */
+    loadImages(images) {
+        return new CancelablePromise((resolve, reject, onCancel) => {
+            let isCanceled = false;
+            let result = [];
+            let loadNextImage = (images) => {
+                let img = new Image(images.shift());
+                img.onload = () => {
+                    if (!isCanceled) {
+                        result.push(img);
+                        if (images.length == 0) {
+                            resolve(result);
+                        } else {
+                            loadNextImage(images);
+                        }
+                    }
+                };
+            };
+            onCancel(() => isCanceled = true);
+            loadNextImage(images.slice());
+        });
     }
 }

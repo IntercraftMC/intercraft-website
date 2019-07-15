@@ -22,22 +22,32 @@ export default {
     },
     data() {
         return {
+            activeItem    : null,
             items         : 0,
             hidden        : [],
             queue         : [],
-            revealInterval: null,
+            revealInterval: null
         }
     },
     methods: {
         /**
+         * Cancel revealing items
+         */
+        cancelReveal() {
+            clearInterval(this.revealInterval);
+            this.revealInterval = null;
+        },
+
+        /**
          * Create and insert a showcase item
          */
-        createItem(id, thumbnail, title) {
+        createItem(id, image, title, description) {
             let ShowcaseItemClass = Vue.extend(ShowcaseItem)
             let instance = new ShowcaseItemClass({
                 propsData: {
                     showcaseId: id,
-                    thumbnail : thumbnail
+                    image : image,
+                    description: description,
                 }
             });
             instance.$slots.default = [title];
@@ -117,7 +127,7 @@ export default {
             } else {
                 ticket.altUrl = `${this.routeAjax}/${slug}`;
             }
-            this.clearItems();
+            $(this.$el).addClass("is-loading");
         },
 
         /**
@@ -131,13 +141,34 @@ export default {
          * Invoked when component navigation yields a response
          */
         onNavigateLoad(response) {
-            console.log("Component navigation yielded response:", response);
+            let images = [];
+            response.data.forEach((item) => { images.push(`${item.image}.png`); });
+            utils.loadImages(images).then(() => {
+                console.log("Loaded", images);
+            });
+            // this.cancelReveal();
+            // this.clearItems();
+            // setTimeout(() => {
+            //     for (let item of Object.values(response.data)) {
+            //         console.log("Creating item...");
+            //         this.createItem(item.id, item.image, item.title, item.description);
+            //     }
+
+            //     this.revealItems();
+            // }, 150);
         },
 
         /**
          * Invoked when an item is clicked
          */
         __onItemClick(item) {
+            if (this.showcaseId) {
+                return;
+            }
+            if (this.activeItem) {
+                this.activeItem.stopLoading();
+            }
+            this.activeItem = item;
             navigate.to(`${this.route}/${item.showcaseId}`, {
                 showcase_id: item.showcaseId
             }, this.route);
