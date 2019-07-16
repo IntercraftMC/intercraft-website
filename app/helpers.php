@@ -12,12 +12,11 @@ function ajax_view(string $page, $title, $args = [])
             "view"   => (string) view("page.$page", $args)
         ])->header("Vary", "X-Requested-With");
     }
-    return view("base.master", [
+    return view("base.master", array_merge($args, [
         "header" => config("header.$page", Null),
         "page"   => "page.$page",
         "title"  => __($title),
-        "vars"   => $args
-    ]);
+    ]));
 }
 
 /**
